@@ -23,4 +23,6 @@ Checklist
   - cvs tag RELEASE_2_0_BETA_1
 - Update the BRANCH and VERSION vars in the Makefile
 - run "make clean" then "CVSROOT=:ext:bharat@cvs.sf.net:/cvsroot/gallery make"
-
+- run "make export"
+- Release the package on sf.net (hide the version N-2 ago).
+- Post announcements/*

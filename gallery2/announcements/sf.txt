@@ -1,0 +1,33 @@
+Gallery is a slick, intuitive web based photo gallery with
+authenticated users and privileged albums. Easy to install, configure
+and use. Photo management includes automatic thumbnails, resizing,
+rotation, etc. User privileges make this great for communities.
+
+This is the first installment in the Gallery 2 beta cycle.  In the
+past 4 months we've made considerable improvements to the product.
+This release is a big milestone for many reasons, not the least of
+which is that we are now providing a well tested upgrade path from
+here until the final Gallery release.  If you're using Gallery 2 Alpha
+4 or more recent, you can upgrade without losing any of your data.
+
+As before, this is a technology release so that we're providing you
+can get an idea of how the product is maturing.  It is stable and
+reliable, but does not yet have all the features that you will find in
+Gallery 1.x.  Download the latest code and play with it!  Before you
+ask for help, please, please read the README -- we've made an effort
+to answer all of your questions there.  Especially read the known
+issues section.  If you're upgrading, be sure to read the instructions
+(it's really easy).  Then head on over to the G2 Forums and let us
+know what you think!
+
+The more feedback you give us now, the better the final version of G2
+will be.  Thanks for your continued support!
+
+Links:
+  README:       http://tinyurl.com/5tfke
+  What's new:   http://tinyurl.com/5tfke#whats_new
+  Download:     http://tinyurl.com/4au5f
+  Help!         http://tinyurl.com/5gnbs
+  Known Issues: http://tinyurl.com/5tfke#known_issues
+  Upgrading:    http://tinyurl.com/5tfke#updating
+  G2 Forums:    http://tinyurl.com/3rgzx

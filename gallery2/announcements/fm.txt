@@ -1,0 +1,25 @@
+ 	
+  Preview of release 2.0-beta-1 (2.0 branch)
+ by Bharat Mediratta - Fri, Mar 4th 2005 11:40 PDT 	
+
+About: Gallery is a slick Web-based photo album written using PHP. It is easy to install, includes a config wizard, and provides users with the ability to create and maintain their own albums in the album collection via an intuitive Web interface. Photo management includes automatic thumbnail creation, image resizing, rotation, ordering, captioning and more. Albums can have read, write, and caption permissions per individual authenticated user for an additional level of privacy.
+
+Changes: This version adds 7 new modules including multilanguage support, url rewriting, size limiting and more. It now supports upgrading from one version of G2 to the next. Many performance and feature enhancements, large and small and a large number of bugs squished.
+
+Focus 	License
+5 - Major feature enhancements 	GNU General Public License (GPL)
+
+Homepage:
+http://gallery.sourceforge.net/
+Tar/GZ:
+http://prdownloads.sourceforge.net/[..]llery/gallery-2.0-beta-1.tar.gz?download
+Zip:
+http://prdownloads.sourceforge.net/gallery/gallery-2.0-beta-1.zip?download
+Changelog:
+http://cvs.sourceforge.net/[..]/gallery2/README.html?rev=1.70#whats_new
+CVS tree (cvsweb):
+http://cvs.sourceforge.net/viewcvs.py/gallery/gallery2/
+Bug tracker:
+http://sourceforge.net/tracker/?group_id=7130&atid=107130
+freshmeat project page:
+http://freshmeat.net/projects/the_gallery/ 
