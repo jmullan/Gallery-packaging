@@ -1,14 +1,26 @@
-
 Preliminary release checklist
 
 Checklist
-- update all translations
-- create a branch (if necessary)
-- make sure all image files are binary
+- If this is a follow-on release in a branch, switch to that
+  branch before making any changes:
+  - cvs update -r BRANCH_2_0_BETA_1
 - make sure all unit tests pass
-- update the version number in main.php
 - review and update the README.html.  
   - Make sure that its logo buttons are correct
+- Make sure templates/global.tpl has correct logo and version text
+- bump core/module.inc CoreModule::setVersion (update modules/core/CoreModulesExtras::upgrade, too)
+- bump core/module.inc CoreModule::setGalleryVersion
+- update all translations
+- update all MANIFEST files
+- Sync a different workspace and verify:
+  - upgrading works
+  - installer system check doesn't report any missing/modified files
+- make sure all image files are binary
+- create a branch (if necessary)
+  - cvs tag -b BRANCH_2_0_BETA_1
 - tag the release
+  - cvs update -r BRANCH_2_0_BETA_1
+  - cvs tag RELEASE_2_0_BETA_1
 - Update the BRANCH and VERSION vars in the Makefile
+- run "make clean" then "CVSROOT=:ext:bharat@cvs.sf.net:/cvsroot/gallery make"
 
