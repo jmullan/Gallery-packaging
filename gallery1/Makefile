@@ -1,6 +1,6 @@
 # $Id$
 
-BRANCH = BRANCH_1_4_2
+BRANCH = BRANCH_1_4_3
 TARDIR = tardir
 CVS = cvs -z3 -d ${CVSROOT}
 VERSION_PHP = ${TARDIR}/gallery/Version.php
@@ -26,7 +26,11 @@ ${TARDIR}/gallery: ${TARDIR}/docs
 	(mkdir ${TARDIR}/gallery/locale) && \
 	(mv ${TARDIR}/gallery/en_US_temp ${TARDIR}/gallery/locale/en_US) && \
 	(cd ${TARDIR}/docs && ./gen g1package) && \
-	mv ${TARDIR}/docs/dist/g1package ${TARDIR}/gallery/docs
+	(mv ${TARDIR}/docs/dist/g1package ${TARDIR}/gallery/docs) && \
+	(cd ${TARDIR}) && \
+	(wget http://jpmullan.com/galleryupdates/remote/current_gallery_remote_applets.zip) && \
+	(unzip current_gallery_remote_applets.zip -d ${TARDIR}/gallery/java) && \
+	(rm current_gallery_remote_applets.zip)
 
 # Export the docs module
 #
