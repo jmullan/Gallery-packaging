@@ -1,6 +1,6 @@
 # $Id$
 
-BRANCH = BRANCH_1_4
+BRANCH = HEAD
 
 TARDIR = tardir
 
