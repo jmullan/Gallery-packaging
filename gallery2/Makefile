@@ -1,9 +1,9 @@
 # $Id$
 
-BRANCH = BRANCH_2_0_ALPHA_3
+BRANCH = BRANCH_2_0_ALPHA_4
 TARDIR = tardir
 CVS = cvs -z3 -d ${CVSROOT}
-VERSION = 2.0-alpha-3
+VERSION = 2.0-alpha-4
 TARBALL = gallery-${VERSION}.tar.gz
 ZIPBALL = gallery-${VERSION}.zip
 
