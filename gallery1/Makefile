@@ -4,8 +4,6 @@ BRANCH = BRANCH_1_4
 
 TARDIR = tardir
 
-CVSROOT = :ext:beckettmw@cvs.sourceforge.net:/cvsroot/gallery
-
 CVS = cvs -z3 -d ${CVSROOT}
 TARBALL = cat gallery/Version.php | perl -ne 'if (/\$$gallery->version.*"(.*)"/) { ($$x = $$1) =~ s/ //g; print "gallery-$$x.tgz"; }'
 
