@@ -19,7 +19,7 @@ package:
 	(cd ${TARDIR} && ${CVS} export -r ${BRANCH} gallery) && \
 	mv ${TARDIR}/docs/dist/g1package ${TARDIR}/gallery/docs && \
 	(cd ${TARDIR} && tar czf ../`${TARBALL}` gallery) && \
-	(cd ${TARDIR} && zip ../`${ZIPBALL}` gallery) && \
+	(cd ${TARDIR} && zip -r ../`${ZIPBALL}` gallery) && \
 	/bin/rm -rf ${TARDIR}
 
 export:
