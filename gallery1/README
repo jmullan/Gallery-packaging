@@ -24,6 +24,9 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
    directory called "gallery".  Never do anything with this gallery!  It must
    always be in a pristine state.  You only need to do this once.
 
+   Also check out a new version of the docs into the current directory in a 
+   sub directory called "docs".
+
 4. type "make package"
 
    This will spit out a new tarball containing only the files that should be in
