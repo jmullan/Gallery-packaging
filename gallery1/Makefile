@@ -1,11 +1,11 @@
 # $Id$
 
 BRANCH = HEAD
-
 TARDIR = tardir
 
 CVS = cvs -z3 -d ${CVSROOT}
-TARBALL = cat gallery/Version.php | perl -ne 'if (/\$$gallery->version.*"(.*)"/) { ($$x = $$1) =~ s/ //g; print "gallery-$$x.tgz"; }'
+TARBALL = cat gallery/Version.php | perl -ne 'if (/\$$gallery->version.*"(.*)"/) { ($$x = $$1) =~ s/ //g; print "gallery-$$x.tar.gz"; }'
+ZIPBALL = cat gallery/Version.php | perl -ne 'if (/\$$gallery->version.*"(.*)"/) { ($$x = $$1) =~ s/ //g; print "gallery-$$x.zip"; }'
 
 package:
 	@if [ -z "${CVSROOT}" ]; then \
@@ -19,10 +19,11 @@ package:
 	(cd ${TARDIR} && ${CVS} export -r ${BRANCH} gallery) && \
 	mv ${TARDIR}/docs/dist/g1package ${TARDIR}/gallery/docs && \
 	(cd ${TARDIR} && tar czf ../`${TARBALL}` gallery) && \
+	(cd ${TARDIR} && zip ../`${ZIPBALL}` gallery) && \
 	/bin/rm -rf ${TARDIR}
 
 export:
-	ncftpput -u anonymous -p gallery@ upload.sourceforge.net /incoming `${TARBALL}`
+	ncftpput -u anonymous -p gallery@ upload.sourceforge.net /incoming `${TARBALL}` `${ZIPBALL}`
 
 clean:
-	rm -fr ${TARDIR} *.tgz
+	rm -fr ${TARDIR} `${TARBALL}` `${ZIPBALL}`
