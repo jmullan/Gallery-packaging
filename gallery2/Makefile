@@ -1,0 +1,33 @@
+# $Id$
+
+BRANCH = HEAD
+TARDIR = tardir
+CVS = cvs -z3 -d ${CVSROOT}
+VERSION = 2.0-alpha-1
+TARBALL = gallery-${VERSION}.tar.gz
+ZIPBALL = gallery-${VERSION}.zip
+
+package: ${TARDIR} ${TARDIR}/gallery2
+	(cd ${TARDIR} && tar czf ${TARBALL} gallery2) && \
+	(cd ${TARDIR} && zip -r ${ZIPBALL} gallery2)
+
+${TARDIR}/gallery2:
+	@if [ -z "${CVSROOT}" ]; then \
+		echo "CVSROOT needs to be set for this script to run."; \
+		exit 1; \
+	fi
+	(cd ${TARDIR} && ${CVS} export -r ${BRANCH} gallery2) && \
+
+${TARDIR}:
+	mkdir ${TARDIR}
+
+export:
+	ncftpput -u anonymous -p gallery@ upload.sourceforge.net /incoming ${TARDIR}/${TARBALL} ${TARDIR}/${ZIPBALL}
+
+clean:
+	rm -rf ${TARDIR}
+
+version:
+	echo ${VERSION}
+
+.PHONY: cvsroot
