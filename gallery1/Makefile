@@ -26,4 +26,4 @@ export:
 	ncftpput -u anonymous -p gallery@ upload.sourceforge.net /incoming `${TARBALL}` `${ZIPBALL}`
 
 clean:
-	rm -fr ${TARDIR} `${TARBALL}` `${ZIPBALL}`
+	rm -rf ${TARDIR} gallery-*.zip gallery-*.tar.gz
