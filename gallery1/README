@@ -13,12 +13,16 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
 	1.3.4-RC2
 
 2. Update the ChangeLog and put in a divider of some kind (look for 
-   others farther down for examples)
+   others farther down for examples).  
 
-3. Rebuild the file manifest and commit.  This must be the *last* commit
-   you make because it calculates file version information.
+3. Rebuild the file manifest, 
+       php tools/build_manifest.php
+  [Note can only be run from command line].       
 
-4. cvs tag the "gallery", "java", and "docs" modules.  You can't use
+4. Commit these three changed files.
+
+
+5. cvs tag the "gallery", "java", and "docs" modules.  You can't use
    rtag because it will apply to the HEAD and you're almost definitely
    working off of a release branch.  So make sure that your modules
    are *up to date* with "cvs update" before tagging!  You have to tag
@@ -29,11 +33,23 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
    or:
 	RELEASE_1_4_1_RC4
 
-5. Set CVSROOT to an appropriate value, something like:
+6. Remove tags from any files that should not be in the release.  For 
+   instance, nothing in the locale directory except en_US should be 
+   included in a standard release.  So untag everything in locale except en_US.
+
+eg	cd gallery
+	cvs tag RELEASE_1_4_1
+	cd locale
+	cvs tag -d RELEASE_1_4_1
+	cd en_US
+	cvs tag RELEASE_1_4_1
+
+
+7. Set CVSROOT to an appropriate value, something like:
 	:ext:user@cvs.sourceforge.net:/cvsroot/gallery
    and edit Makefile to point to the BRANCH you have just created.
 	
-6. type "make clean"
+8. type "make clean"
 	"make package"
 
    This will spit out a new tarball in the tardir directory containing
@@ -48,9 +64,9 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
    
 	gallery-1.3.4-cvs-b39.tar.gz
 
-7. Type "make export" and the file will get ftp'd to sourceforge.net
+9. Type "make export" and the file will get ftp'd to sourceforge.net
 
-8. Go to sf.net and do a file release of the new version.  Take great care the
+10. Go to sf.net and do a file release of the new version.  Take great care the
    first time you do it (it's not totally intuitive) to follow the patterns set
    up by the existing file releases.
 
@@ -59,14 +75,16 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
    visible.  So if you just published 1.3.4, make sure that only 1.3.4 and
    1.3.3 are visible.
 
-9. Make announcements here:
-	http://gallery.sourceforge.net
+11. Make announcements here:
+	http://gallery.sourceforge.net->News
+	update http://gallery.sourceforge.net->Downloads->Core Gallery
 	http://mods.postnuke.com
 		(http://mods.postnuke.com/modules.php?op=modload&name=News&file=article&sid=1422)
 	http://www.phpnuke.com
 		(http://www.phpnuke.org/modules.php?name=News&file=article&sid=5188)
 	http://www.freshmeat.net
+	http://www.nukedgallery.net
 
     Old posts in (parens) are ones you can copy.
 
-10.  Rejoice!
+12.  Rejoice!
