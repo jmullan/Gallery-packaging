@@ -2,7 +2,6 @@
 
 BRANCH = HEAD
 TARDIR = tardir
-
 CVS = cvs -z3 -d ${CVSROOT}
 VERSION_PHP = ${TARDIR}/gallery/Version.php
 VERSION_CODE = php -r 'include("${VERSION_PHP}"); print $$gallery->version;'
@@ -22,6 +21,10 @@ ${TARDIR}/gallery: ${TARDIR}/docs
 		exit 1; \
 	fi
 	(cd ${TARDIR} && ${CVS} export -r ${BRANCH} gallery) && \
+	(cp -R ${TARDIR}/gallery/locale/en_US ${TARDIR}/gallery/en_US_temp) && \
+	(rm -rf ${TARDIR}/gallery/locale) && \
+	(mkdir ${TARDIR}/gallery/locale) && \
+	(mv ${TARDIR}/gallery/en_US_temp ${TARDIR}/gallery/locale/en_US) && \
 	(cd ${TARDIR}/docs && ./gen g1package) && \
 	mv ${TARDIR}/docs/dist/g1package ${TARDIR}/gallery/docs
 
