@@ -1,5 +1,5 @@
 
-VERSION = `cat gallery/Version.php | perl -ne 'if (/version.*"(.*)"/) { ($$x = $$1) =~ s/ //g; print $$x; }'`
+VERSION = `cat gallery/Version.php | perl -ne 'if (/\$$gallery->version.*"(.*)"/) { ($$x = $$1) =~ s/ //g; print $$x; }'`
 
 package:
 	cd gallery ; cvs update -r HEAD
