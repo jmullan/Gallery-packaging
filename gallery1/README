@@ -36,6 +36,7 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
 6. Remove tags from any files that should not be in the release.  For 
    instance, nothing in the locale directory except en_US should be 
    included in a standard release.  So untag everything in locale except en_US.
+   Similarly, tools should not be tagged.
 
 ie	cd gallery
 	cvs tag RELEASE_1_4_1
