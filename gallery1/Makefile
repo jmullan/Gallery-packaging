@@ -22,7 +22,7 @@ ${TARDIR}/gallery: ${TARDIR}/docs
 	fi
 	(cd ${TARDIR} && ${CVS} export -r ${BRANCH} gallery) && \
 	(cd ${TARDIR}/docs && ./gen g1package) && \
-	mv ${TARDIR}/docs/dist/g1package ${TARDIR}/gallery/docs && \
+	mv ${TARDIR}/docs/dist/g1package ${TARDIR}/gallery/docs
 
 # Export the docs module
 #
