@@ -11,23 +11,23 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
 	1.3.4-RC1
 	1.3.4-RC2
 
-2. cvs rtag both the "gallery" and "java" modules.  Using rtag tags the repository
-   code so there's no issue if you have something checked out in your
-   dev tree.  You have to tag java as well as gallery since the image crop java applet
-   is in there.  Use a tag like this:
+2. cvs tag both the "gallery" and "java" modules.  You can't use rtag because
+   it will apply to the HEAD and you're almost definitely working off of a 
+   release branch.  So make sure that your modules are *up to date* with 
+   "cvs update" before tagging!  You have to tag docs and java as well
+   as gallery since the image crop java applet is in there.  Use a tag
+   like this:
 
 	RELEASE_1_3_4
    or:
 	RELEASE_1_3_4_RC1
 
-3. In the current directory, cvs checkout a new version of gallery into a sub
-   directory called "gallery".  Never do anything with this gallery!  It must
-   always be in a pristine state.  You only need to do this once.
-
-   Also check out a new version of the docs into the current directory in a 
-   sub directory called "docs".
-
-4. type "make package"
+3. Set CVSROOT to an appropriate value, something like:
+	:ext:user@cvs.sourceforge.net:/cvsroot/gallery
+   and edit Makefile to point to the BRANCH you have just created.
+	
+4. type "make clean"
+	"make package"
 
    This will spit out a new tarball containing only the files that should be in
    the release.  It will be marked with the current version from the Version file
