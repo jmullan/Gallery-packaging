@@ -1,0 +1,14 @@
+
+Preliminary release checklist
+
+Checklist
+- update all translations
+- create a branch (if necessary)
+- make sure all image files are binary
+- make sure all unit tests pass
+- update the version number in main.php
+- review and update the README.html.  
+  - Make sure that its logo buttons are correct
+- tag the release
+- Update the BRANCH and VERSION vars in the Makefile
+
