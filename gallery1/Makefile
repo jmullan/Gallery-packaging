@@ -10,7 +10,7 @@ TARBALL = gallery-$(shell ${VERSION_CODE}).tar.gz
 ZIPBALL = gallery-$(shell ${VERSION_CODE}).zip
 
 package: ${TARDIR} ${TARDIR}/gallery
-	(cd $(TARDIR)/gallery && php -f build_manifest.php) && \
+	(cd $(TARDIR)/gallery && php -f tools/build_manifest.php) && \
 	(cd ${TARDIR} && tar czf ${TARBALL} gallery) && \
 	(cd ${TARDIR} && zip -r ${ZIPBALL} gallery)
 
