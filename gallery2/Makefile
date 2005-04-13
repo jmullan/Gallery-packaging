@@ -1,6 +1,6 @@
 # $Id$
 
-BRANCH = BRANCH_2_0_BETA_1
+BRANCH = BRANCH_2_0_BETA_2
 TMPDIR = tmp
 DISTDIR = dist
 CVS = cvs -z3 -d ${CVSROOT}
