@@ -1,20 +1,18 @@
 Preliminary release checklist
 
 Checklist
-- If this is a follow-on release in a branch, switch to that
-  branch before making any changes:
-  - cvs update -r BRANCH_2_0_BETA_1
 - make sure all unit tests pass
 - review and update the README.html.  
   - Make sure that its logo buttons are correct
+- update all translations
+- bump core/module.inc CoreModule::setGalleryVersion
 - Make sure templates/global.tpl has correct logo and version text
 - bump core/module.inc CoreModule::setVersion (update modules/core/CoreModulesExtras::upgrade, too)
-- bump core/module.inc CoreModule::setGalleryVersion
-- update all translations
 - update all MANIFEST files
 - Sync a different workspace and verify:
   - upgrading works
   - installer system check doesn't report any missing/modified files
+    (verify on Unix and Windows)
 - make sure all image files are binary
 - create a branch (if necessary)
   - cvs tag -b BRANCH_2_0_BETA_1
@@ -25,7 +23,7 @@ Checklist
 - make clean
 - sh: CVSROOT=:ext:bharat@cvs.sf.net:/cvsroot/gallery make
   or
-  tcsh: (setenv CVSROOT :ext:bharat@cvs.sf.net:/cvsroot/gallery && gmake)
+  tcsh: (setenv CVSROOT :ext:bharat@cvs.sf.net:/cvsroot/gallery && make)
 - make export
 - Release the package on sf.net (hide the version N-2 ago).
 - Post announcements/*
