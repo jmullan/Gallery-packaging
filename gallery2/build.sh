@@ -40,7 +40,7 @@ if [ ! -d $DISTDIR ]; then mkdir $DISTDIR; fi
 
 case $1 in
     nightly)
-	#checkout
+	checkout
 	manifest
 	package
 	;;
