@@ -2,7 +2,7 @@ Preliminary release checklist
 
 Checklist
 - make sure all unit tests pass
-- review and update the README.html.  
+- review and update the README.html.
   - Make sure that its logo buttons are correct
 - update all translations
 - bump core/module.inc CoreModule::setGalleryVersion
@@ -19,11 +19,9 @@ Checklist
 - tag the release
   - cvs update -r BRANCH_2_0_BETA_1
   - cvs tag RELEASE_2_0_BETA_1
-- Update the BRANCH var in the Makefile
-- make clean
-- sh: CVSROOT=:ext:bharat@cvs.sf.net:/cvsroot/gallery make
-  or
-  tcsh: (setenv CVSROOT :ext:bharat@cvs.sf.net:/cvsroot/gallery && make)
-- make export
+- Update the BRANCH var in build.sh
+- build.sh clean
+- build.sh release
+- build.sh export
 - Release the package on sf.net (hide the version N-2 ago).
 - Post announcements/*
