@@ -16,7 +16,7 @@ function getVersion {
 
 function checkout {
     echo -n "Checking out code..."
-    (cd $TMPDIR && $CVS cxheckout -r $BRANCH gallery2 || error "Checkout failed")
+    (cd $TMPDIR && $CVS checkout -r $BRANCH gallery2 || error "Checkout failed")
     echo "done."
 }
 
