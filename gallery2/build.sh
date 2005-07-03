@@ -3,7 +3,7 @@ CVSROOT=":ext:`whoami`@cvs.sf.net:/cvsroot/gallery"
 BRANCH="HEAD"
 TMPDIR="`pwd`/tmp"
 DISTDIR="`pwd`/dist"
-CVS="cvs -z3 -d $CVSROOT"
+CVS="cvs -Q -z3 -d $CVSROOT"
 
 function getVersion {
     MODULEINC=tmp/gallery2/modules/core/module.inc
@@ -15,18 +15,25 @@ function getVersion {
 }
 
 function checkout {
-    (cd $TMPDIR && $CVS checkout -r $BRANCH gallery2)
+    echo -n "Checking out code..."
+    (cd $TMPDIR && $CVS cxheckout -r $BRANCH gallery2 || error "Checkout failed")
+    echo "done."
 }
 
 function manifest {
-    (cd $TMPDIR/gallery2 && perl lib/tools/bin/makeManifest.pl)
+    echo "Building manifest..."
+    (cd $TMPDIR/gallery2 && perl lib/tools/bin/makeManifest.pl 2>&1 | perl -pe 's/^/> /')
 }
 
 function package {
     getPackageNames
-    (cd $TMPDIR && \
-	tar czf $TARBALL --exclude CVS gallery2 && \
-	zip -r $ZIPBALL gallery2 -x \*CVS\*)
+    (cd $TMPDIR && tar czf $TARBALL --exclude CVS gallery2 || error "Error building tarball")
+    (cd $TMPDIR && zip -q -r $ZIPBALL gallery2 -x \*CVS\* || error "Error building zipball")
+}
+
+function error {
+    echo "ERROR: $1";
+    exit 1;
 }
 
 function getPackageNames {
