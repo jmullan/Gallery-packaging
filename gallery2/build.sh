@@ -62,6 +62,7 @@ case $1 in
 	;;
 
     export)
+	getPackageNames
 	ncftpput -u anonymous -p gallery@ upload.sourceforge.net /incoming $TARBALL $ZIPBALL
 	;;
 

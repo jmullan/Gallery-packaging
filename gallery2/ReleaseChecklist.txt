@@ -5,8 +5,8 @@ Checklist
 - review and update the README.html.
   - Make sure that its logo buttons are correct
 - update all translations
-- bump core/module.inc CoreModule::setGalleryVersion
-- Make sure templates/global.tpl has correct logo and version text
+- bump modules/core/module.inc CoreModule::setGalleryVersion
+- Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo and version text
 - bump core/module.inc CoreModule::setVersion (update modules/core/CoreModulesExtras::upgrade, too)
 - update all MANIFEST files
 - Sync a different workspace and verify:

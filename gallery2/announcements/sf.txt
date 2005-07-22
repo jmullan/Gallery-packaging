@@ -1,18 +1,18 @@
-Gallery 2 Beta 3 (Bingo!) Released!
+Gallery 2 Beta 4 (Flippin' Sweet!) Released!
 
 Gallery is a slick, intuitive web based photo gallery with authenticated users and privileged albums. Easy to install, configure and use. Photo management includes automatic thumbnails, resizing, rotation, etc. User privileges make this great for communities.
 
-This is the third installment in the Gallery 2 beta cycle.  In the past 5 weeks we've made considerable improvements to the product.  We're getting very close to having a final product.  All releases in the beta cycle provide a well tested upgrade path from here until the final Gallery release.  If you're using Gallery 2 Alpha 4 or more recent, you can upgrade without losing any of your data.
+This is the fourth and final installment in the Gallery 2 beta cycle.  In the past two months we've made huge improvements to hte product.  After this, we're going to be making only minor changes as we head into release candidates and then the final release.  As with all releases in the beta cycle, we support upgrading from Gallery 2 Alpha 4 or more recent.
 
-As before, this is a technology release so that we're providing you can get an idea of how the product is maturing.  It is stable and reliable.  It is missing a few features from Gallery 1.x, but it has most of the Gallery 1 functionality and many, many new features that Gallery 1 lacks.  We encourage you to download the latest code and play with it!  Before you ask for help, please, please read the README -- we've made an effort to answer all of your questions there.  Especially read the known issues section.  If you're upgrading, be sure to scan the instructions first (it's really easy).  Then head on over to the G2 Forums and let us know what you think!
+This is a stable and reliable technology release.  It has almost all of the features of Gallery 1, and many many new features that Gallery 1 lacks.  We encourage you to download the latest code and play with it!  Before you ask for help, please, please read the README -- we've made an effort to answer all of your questions there.  Especially read the known issues section.  If you're upgrading, be sure to scan the instructions first (it's really easy).  Then head on over to the G2 Forums and let us know what you think!
 
 The more feedback you give us now, the better the final version of G2 will be.  Thanks for your continued support!
 
 Links:
-  README:       http://tinyurl.com/b3lod
-  What's new:   http://tinyurl.com/b3lod#whats_new
+  README:       http://tinyurl.com/cmarl
+  What's new:   http://tinyurl.com/cmarl#whats_new
   Download:     http://tinyurl.com/4au5f
   Help!         http://tinyurl.com/5gnbs
-  Known Issues: http://tinyurl.com/b3lod#known_issues
-  Upgrading:    http://tinyurl.com/b3lod#updating
+  Known Issues: http://tinyurl.com/cmarl#known_issues
+  Upgrading:    http://tinyurl.com/cmarl#updating
   G2 Forums:    http://tinyurl.com/3rgzx

@@ -1,10 +1,10 @@
 
-  Preview of release 2.0-beta-3 (2.0 branch)
- by Bharat Mediratta - Wed, May 18th 2005 01:18 PDT	
+  Preview of release 2.0-beta-4 (2.0 branch)
+ by Bharat Mediratta - Wed, May 18th 2005 01:18 PDT
 
 About: Gallery is a slick Web-based photo album written using PHP. It is easy to install, includes a config wizard, and provides users with the ability to create and maintain their own albums in the album collection via an intuitive Web interface. Photo management includes automatic thumbnail creation, image resizing, rotation, ordering, captioning and more. Albums can have read, write, and caption permissions per individual authenticated user for an additional level of privacy.
 
-Changes: This version adds 5 new modules including features such as user/group quotas, sexy icons, support for RAW images, Windows XP Publishing, fullscreen slideshow, hotlinked image protection, read only IPTC support, more flexible short URLs, password recover, 4 new system maintenance tasks and more. Performance increases make thumbnails load very quickly without sacrificing security, many bugs fixed.
+Changes: This version adds a new and simpler theme system, a more powerful multisite system, guest preview mode, improved and more robust upgrader and installer and more.
 
 Focus	 License
 5 - Major feature enhancements	GNU General Public License (GPL)
@@ -12,9 +12,9 @@ Focus	 License
 Homepage:
 http://gallery.sourceforge.net/
 Tar/GZ:
-http://prdownloads.sourceforge.net/[..]llery/gallery-2.0-beta-3.tar.gz?download
+http://prdownloads.sourceforge.net/[..]llery/gallery-2.0-beta-4.tar.gz?download
 Zip:
-http://prdownloads.sourceforge.net/gallery/gallery-2.0-beta-3.zip?download
+http://prdownloads.sourceforge.net/gallery/gallery-2.0-beta-4.zip?download
 Changelog:
 http://cvs.sourceforge.net/[..]gallery2/README.html?rev=1.101#whats_new
 Debian package:
@@ -28,4 +28,4 @@ http://gallery.menalto.com/[..]php?name=PNphpBB2&file=viewtopic&t=21047
 freshmeat project page:
 http://freshmeat.net/projects/the_gallery/
 
-	
+
