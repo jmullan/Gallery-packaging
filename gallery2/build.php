@@ -66,12 +66,51 @@ function getPackages() {
 
     foreach (glob("$TMPDIR/gallery2/themes/*/theme.inc") as $path) {
 	$id = basename(dirname($path));
+	$code = file_get_contents($path);
+
+	/* Get the version */
+	preg_match('/\$this->setVersion\(\'(.*?)\'\)/', $code, $matches);
+	$packages['themes'][$id]['version'] = $matches[1];
+
 	$packages['recommended']['themes'][$id] = true;
 	$packages['all']['themes'][$id] = true;
 	$packages['core']['themes'][$id] = ($id == 'matrix' || $id == 'siriux');
     }
 
     return $packages;
+}
+
+function buildPluginPackage($type, $id, $version) {
+    global $BASEDIR, $TMPDIR, $DISTDIR;
+
+    print "Build plugin $id ($version)...";
+    chdir("$TMPDIR/gallery2");
+
+    $relative = "${type}s/$id";
+    $files = explode("\n", `find $relative -type f`);
+
+    /* Exclude CVS */
+    $files = preg_grep('|CVS|', $files, PREG_GREP_INVERT);
+
+    /* Dump the list to a tmp file */
+    $fd = fopen("$TMPDIR/files.txt", 'w+');
+    fwrite($fd, join("\n", $files));
+    fclose($fd);
+
+    /* Tar and zip it */
+    system("tar czf $DISTDIR/$type-$version-$id.tar.gz --files-from=$TMPDIR/files.txt", $return);
+    if ($return) {
+	die('Tar failed');
+    }
+
+    system("zip -q -r $DISTDIR/$type-$version-$id.zip ${type}s/$id -i@$TMPDIR/files.txt", $return);
+    if ($return) {
+	die('Zip failed');
+    }
+
+    print "done\n";
+
+    chdir($BASEDIR);
 }
 
 function buildPackage($version, $tag, $packages, $developer) {
@@ -176,6 +215,14 @@ case 'release':
     buildPackage($packages['version'], 'typical', $packages['recommended'], false);
     buildPackage($packages['version'], 'full', $packages['all'], false);
     buildPackage($packages['version'], 'developer', $packages['all'], true);
+
+    foreach ($packages['themes'] as $id => $info) {
+	buildPluginPackage('theme', $id, $info['version']);
+    }
+
+    foreach ($packages['modules'] as $id => $info) {
+	buildPluginPackage('module', $id, $info['version']);
+    }
     break;
 
 case 'export':
