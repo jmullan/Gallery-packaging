@@ -20,7 +20,7 @@ Checklist
   - cvs update -r BRANCH_2_0_BETA_1
   - cvs tag RELEASE_2_0_BETA_1
 - Update the BRANCH var in build.php
-- build.php clean
+- build.php scrub
 - build.php release
 - build.php export
 - Release the package on sf.net (hide the version N-2 ago).
