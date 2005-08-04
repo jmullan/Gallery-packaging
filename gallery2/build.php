@@ -3,17 +3,18 @@
 $BRANCH = 'HEAD';
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
 $BASEDIR = dirname(__FILE__);
+$SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
 $CVS = 'cvs -Q -z3 -d ' . $CVSROOT;
-$SKIP_CHECKOUT = false;
+$SKIP_CHECKOUT = true;
 
 function checkOut() {
-    global $TMPDIR, $BASEDIR, $CVS, $BRANCH, $SKIP_CHECKOUT;
+    global $SRCDIR, $BASEDIR, $CVS, $BRANCH, $SKIP_CHECKOUT;
 
     print 'Checking out code...';
 
-    chdir($TMPDIR);
+    chdir($SRCDIR);
     if ($SKIP_CHECKOUT) {
 	print 'Skipping checkout...';
     } else {
@@ -32,9 +33,9 @@ class GalleryModule {
 }
 
 function getPackages() {
-    global $TMPDIR;
+    global $SRCDIR;
 
-    foreach (glob("$TMPDIR/gallery2/modules/*/module.inc") as $path) {
+    foreach (glob("$SRCDIR/gallery2/modules/*/module.inc") as $path) {
 	$id = basename(dirname($path));
 	$code = file_get_contents($path);
 
@@ -64,7 +65,7 @@ function getPackages() {
 	$packages['core']['modules'][$id] = ($id == 'netpbm' || $id == 'imagemagick' || $id == 'gd');
     }
 
-    foreach (glob("$TMPDIR/gallery2/themes/*/theme.inc") as $path) {
+    foreach (glob("$SRCDIR/gallery2/themes/*/theme.inc") as $path) {
 	$id = basename(dirname($path));
 	$code = file_get_contents($path);
 
@@ -81,10 +82,10 @@ function getPackages() {
 }
 
 function buildPluginPackage($type, $id, $version) {
-    global $BASEDIR, $TMPDIR, $DISTDIR;
+    global $BASEDIR, $SRCDIR, $TMPDIR, $DISTDIR;
 
     print "Build plugin $id ($version)...";
-    chdir("$TMPDIR/gallery2");
+    chdir("$SRCDIR/gallery2");
 
     $relative = "${type}s/$id";
     $files = explode("\n", `find $relative -type f`);
@@ -103,18 +104,21 @@ function buildPluginPackage($type, $id, $version) {
 	die('Tar failed');
     }
 
-    system("zip -q -r $DISTDIR/$type-$version-$id.zip ${type}s/$id -i@$TMPDIR/files.txt", $return);
+    escapePatterns("$TMPDIR/files.txt", "$TMPDIR/escapedFiles.txt");
+    system("zip -9 -q -r $DISTDIR/$type-$version-$id.zip ${type}s/$id -i@$TMPDIR/escapedFiles.txt", $return);
     if ($return) {
 	die('Zip failed');
     }
 
-    print "done\n";
-
+    unlink('$TTMPDIR/files.txt');
+    unlink('$TTMPDIR/escapedFiles.txt');
     chdir($BASEDIR);
+
+    print "done\n";
 }
 
 function buildPackage($version, $tag, $packages, $developer) {
-    global $BASEDIR, $TMPDIR, $DISTDIR;
+    global $BASEDIR, $SRCDIR, $TMPDIR, $DISTDIR;
 
     print "Build $tag of $version";
     if ($developer) {
@@ -123,11 +127,11 @@ function buildPackage($version, $tag, $packages, $developer) {
     print '...';
 
     /* Get all files */
-    chdir($TMPDIR);
+    chdir($SRCDIR);
     $files = explode("\n", `find gallery2 -type f`);
 
     /* Exclude CVS */
-    $files = preg_grep('|CVS|', $files, PREG_GREP_INVERT);
+    $originalFiles = $files = preg_grep('|CVS|', $files, PREG_GREP_INVERT);
 
     /* Pull all non developer files, if necessary */
     if (!$developer) {
@@ -149,26 +153,60 @@ function buildPackage($version, $tag, $packages, $developer) {
 	}
     }
 
-    /* Dump the list to a tmp file */
-    $fd = fopen('files.txt', 'w+');
+    /* Dump the lists to tmp files */
+    $fd = fopen("$TMPDIR/files.txt", 'w+');
     fwrite($fd, join("\n", $files));
     fclose($fd);
 
+    $fd = fopen("$TMPDIR/originalFiles.txt", 'w+');
+    fwrite($fd, join("\n", $originalFiles));
+    fclose($fd);
+
+    /* Copy our chosen files to our tmp dir */
+    system("rm -rf $TMPDIR/gallery2");
+    mkdir("$TMPDIR/gallery2");
+    system("(cd $SRCDIR && tar cf - --files-from=$TMPDIR/files.txt) | " .
+	   "(cd $TMPDIR && tar xf -)", $return);
+    if ($return) {
+	die('Temporary copy via tar failed');
+    }
+
+    /* Update manifests to reflect files we've removed */
+    system("perl $SRCDIR/gallery2/lib/tools/bin/filterManifests.pl " .
+	   "--basedir=$TMPDIR/gallery2 " .
+	   "--files=$TMPDIR/files.txt " .
+	   "--originalFiles=$TMPDIR/originalFiles.txt", $return);
+    if ($return) {
+	die('Manifest filter failed');
+    }
+
     /* Tar and zip it */
-    system("tar czf $DISTDIR/gallery-$version-$tag.tar.gz --files-from=files.txt", $return);
+    chdir($TMPDIR);
+    system("tar czf $DISTDIR/gallery-$version-$tag.tar.gz --files-from=$TMPDIR/files.txt", $return);
     if ($return) {
 	die('Tar failed');
     }
 
-    system("zip -q -r $DISTDIR/gallery-$version-$tag.zip gallery2 -i@files.txt", $return);
+    escapePatterns("$TMPDIR/files.txt", "$TMPDIR/escapedFiles.txt");
+    system("zip -q -r $DISTDIR/gallery-$version-$tag.zip gallery2 -i@$TMPDIR/escapedFiles.txt", $return);
     if ($return) {
 	die('Zip failed');
     }
 
-    unlink('files.txt');
+    unlink('$TTMPDIR/files.txt');
+    unlink('$TTMPDIR/escapedFiles.txt');
+    unlink('$TTMPDIR/originalFiles.txt');
     chdir($BASEDIR);
 
     print "done\n";
+}
+
+function escapePatterns($infile, $outfile) {
+    $fd = fopen($outfile, "w");
+    foreach (file($infile) as $line) {
+	fwrite($fd, preg_quote($line));
+    }
+    fclose($fd);
 }
 
 function buildManifest() {
@@ -188,7 +226,7 @@ if ($argc < 2) {
     die(usage());
 }
 
-foreach (array($TMPDIR, $DISTDIR) as $dir) {
+foreach (array($TMPDIR, $SRCDIR, $DISTDIR) as $dir) {
     if (!file_exists($dir)) {
 	mkdir($dir) || die("Unable to mkdir($dir)");
     }
@@ -243,6 +281,9 @@ case 'export':
 case 'clean':
     system("rm -rf $TMPDIR $DISTDIR");
     break;
+
+default:
+    die(usage());
 }
 
 ?>
