@@ -7,7 +7,7 @@ $SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
 $CVS = 'cvs -Q -z3 -d ' . $CVSROOT;
-$SKIP_CHECKOUT = true;
+$SKIP_CHECKOUT = false;
 
 function checkOut() {
     global $SRCDIR, $BASEDIR, $CVS, $BRANCH, $SKIP_CHECKOUT;
