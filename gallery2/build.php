@@ -278,6 +278,10 @@ case 'export':
     chdir($BASEDIR);
     break;
 
+case 'scrub':
+    system("rm -rf $SRCDIR");
+    /* Fall through to the 'clean' target */
+
 case 'clean':
     system("rm -rf $TMPDIR $DISTDIR");
     break;
