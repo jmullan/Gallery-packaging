@@ -110,8 +110,8 @@ function buildPluginPackage($type, $id, $version) {
 	die('Zip failed');
     }
 
-    unlink('$TTMPDIR/files.txt');
-    unlink('$TTMPDIR/escapedFiles.txt');
+    unlink('$TMPDIR/files.txt');
+    unlink('$TMPDIR/escapedFiles.txt');
     chdir($BASEDIR);
 
     print "done\n";
@@ -193,9 +193,9 @@ function buildPackage($version, $tag, $packages, $developer) {
 	die('Zip failed');
     }
 
-    unlink('$TTMPDIR/files.txt');
-    unlink('$TTMPDIR/escapedFiles.txt');
-    unlink('$TTMPDIR/originalFiles.txt');
+    unlink('$TMPDIR/files.txt');
+    unlink('$TMPDIR/escapedFiles.txt');
+    unlink('$TMPDIR/originalFiles.txt');
     chdir($BASEDIR);
 
     print "done\n";
