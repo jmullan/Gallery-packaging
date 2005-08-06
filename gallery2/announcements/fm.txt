@@ -1,22 +1,22 @@
 
-  Preview of release 2.0-beta-4 (2.0 branch)
- by Bharat Mediratta - Wed, May 18th 2005 01:18 PDT
+  Preview of release 2.0-rc-1 (2.0 branch)
+ by Bharat Mediratta - Fri, Aug 5th 2005 19:19 PDT
 
 About: Gallery is a slick Web-based photo album written using PHP. It is easy to install, includes a config wizard, and provides users with the ability to create and maintain their own albums in the album collection via an intuitive Web interface. Photo management includes automatic thumbnail creation, image resizing, rotation, ordering, captioning and more. Albums can have read, write, and caption permissions per individual authenticated user for an additional level of privacy.
 
-Changes: This version adds a new and simpler theme system, a more powerful multisite system, guest preview mode, improved and more robust upgrader and installer and more.
+Changes: New packaging system, added back the Siriux theme, more user contributed themes, new installer log. Many, many bugs fixed.
 
 Focus	 License
-5 - Major feature enhancements	GNU General Public License (GPL)
+4 - Minor feature enhancements	GNU General Public License (GPL)
 
 Homepage:
 http://gallery.sourceforge.net/
 Tar/GZ:
-http://prdownloads.sourceforge.net/[..]llery/gallery-2.0-beta-4.tar.gz?download
+http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-1-typical.tar.gz
 Zip:
-http://prdownloads.sourceforge.net/gallery/gallery-2.0-beta-4.zip?download
+http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-1-typical.zip
 Changelog:
-http://cvs.sourceforge.net/[..]gallery2/README.html?rev=1.101#whats_new
+http://cvs.sourceforge.net/[..]ery/gallery2/README.html?1.124#whats_new
 Debian package:
 http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=297629
 CVS tree (cvsweb):
@@ -27,5 +27,3 @@ Demo site:
 http://gallery.menalto.com/[..]php?name=PNphpBB2&file=viewtopic&t=21047
 freshmeat project page:
 http://freshmeat.net/projects/the_gallery/
-
-

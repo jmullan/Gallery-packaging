@@ -1,18 +1,33 @@
-Gallery 2 Beta 4 (Flippin' Sweet!) Released!
+Gallery 2 Release Candidate 1 (+5 Insightful) Released!
 
-Gallery is a slick, intuitive web based photo gallery with authenticated users and privileged albums. Easy to install, configure and use. Photo management includes automatic thumbnails, resizing, rotation, etc. User privileges make this great for communities.
+This is the first release candidate of Gallery 2. We do not anticipate
+making any substantial changes between now and the final version. The
+purpose of this release candidate is to let the product cool for a
+couple of weeks so that we can identify any fix any last minute issues
+that you may discover. So download, install and start test it.
 
-This is the fourth and final installment in the Gallery 2 beta cycle.  In the past two months we've made huge improvements to hte product.  After this, we're going to be making only minor changes as we head into release candidates and then the final release.  As with all releases in the beta cycle, we support upgrading from Gallery 2 Alpha 4 or more recent.
+We have made small improvements since the Beta 4 release. One new
+thing you'll notice is that now we offer up 4 different flavors of
+packages for you to download so that you can pick one that suits your
+needs. This will make it easier for those of you who are using FTP to
+transfer Gallery up to your webserver. You can read all about it on
+our Gallery 2 Download Page. Note that if you downsize from the more
+inclusive larger Gallery 2 beta package to one of the smaller RC ones,
+you should remember to download any extra plugins that you are using.
 
-This is a stable and reliable technology release.  It has almost all of the features of Gallery 1, and many many new features that Gallery 1 lacks.  We encourage you to download the latest code and play with it!  Before you ask for help, please, please read the README -- we've made an effort to answer all of your questions there.  Especially read the known issues section.  If you're upgrading, be sure to scan the instructions first (it's really easy).  Then head on over to the G2 Forums and let us know what you think!
+As always before you ask for help, please, please read the README --
+we've made an effort to answer all of your questions there. Especially
+read the known issues section. If you're upgrading, be sure to scan
+the super easy updating instructions first. Then head on over to the
+G2 Forums and let us know what you think!
 
-The more feedback you give us now, the better the final version of G2 will be.  Thanks for your continued support!
+Thanks for your continued support!
 
 Links:
-  README:       http://tinyurl.com/cmarl
-  What's new:   http://tinyurl.com/cmarl#whats_new
-  Download:     http://tinyurl.com/4au5f
+  README:       http://tinyurl.com/8bprb
+  What's new:   http://tinyurl.com/8bprb#whats_new
+  Download:     http://codex.gallery2.org/index.php/Gallery2:Download
   Help!         http://tinyurl.com/5gnbs
-  Known Issues: http://tinyurl.com/cmarl#known_issues
-  Upgrading:    http://tinyurl.com/cmarl#updating
+  Known Issues: http://tinyurl.com/8bprb#known_issues
+  Upgrading:    http://tinyurl.com/8bprb#updating
   G2 Forums:    http://tinyurl.com/3rgzx
