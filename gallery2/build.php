@@ -99,13 +99,13 @@ function buildPluginPackage($type, $id, $version) {
     fclose($fd);
 
     /* Tar and zip it */
-    system("tar czf $DISTDIR/$type-$version-$id.tar.gz --files-from=$TMPDIR/files.txt", $return);
+    system("tar czf $DISTDIR/g2-$type-$id-$version.tar.gz --files-from=$TMPDIR/files.txt", $return);
     if ($return) {
 	die('Tar failed');
     }
 
     escapePatterns("$TMPDIR/files.txt", "$TMPDIR/escapedFiles.txt");
-    system("zip -9 -q -r $DISTDIR/$type-$version-$id.zip ${type}s/$id -i@$TMPDIR/escapedFiles.txt", $return);
+    system("zip -9 -q -r $DISTDIR/g2-$type-$id-$version.zip ${type}s/$id -i@$TMPDIR/escapedFiles.txt", $return);
     if ($return) {
 	die('Zip failed');
     }
@@ -259,6 +259,9 @@ case 'release':
     }
 
     foreach ($packages['modules'] as $id => $info) {
+	if ($id == 'core') {
+	    continue;
+	}
 	buildPluginPackage('module', $id, $info['version']);
     }
     break;
