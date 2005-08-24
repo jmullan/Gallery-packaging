@@ -1,19 +1,14 @@
-Gallery 2 Release Candidate 1 (+5 Insightful) Released!
+Gallery 2 Release Candidate 2 (kthxbye) Released!
 
-This is the first release candidate of Gallery 2. We do not anticipate
-making any substantial changes between now and the final version. The
-purpose of this release candidate is to let the product cool for a
-couple of weeks so that we can identify any fix any last minute issues
-that you may discover. So download, install and start test it.
+This is the second release candidate of Gallery 2.  If all goes well,
+the next release will be the final version.  The purpose of this
+release candidate is to let the product cool for a couple of weeks so
+that we can identify any fix any last minute issues that you may
+discover.  You should download and use it as if it were the final release.
 
-We have made small improvements since the Beta 4 release. One new
-thing you'll notice is that now we offer up 4 different flavors of
-packages for you to download so that you can pick one that suits your
-needs. This will make it easier for those of you who are using FTP to
-transfer Gallery up to your webserver. You can read all about it on
-our Gallery 2 Download Page. Note that if you downsize from the more
-inclusive larger Gallery 2 beta package to one of the smaller RC ones,
-you should remember to download any extra plugins that you are using.
+We have made small improvements since the RC-1 release.  As with RC-1,
+we have 4 different packages for you to choose from.  You can read all
+about it on our Gallery 2 Download Page.
 
 As always before you ask for help, please, please read the README --
 we've made an effort to answer all of your questions there. Especially
@@ -24,10 +19,10 @@ G2 Forums and let us know what you think!
 Thanks for your continued support!
 
 Links:
-  README:       http://tinyurl.com/8bprb
-  What's new:   http://tinyurl.com/8bprb#whats_new
+  README:       http://tinyurl.com/cnklu
+  What's new:   http://tinyurl.com/cnklu#whats_new
   Download:     http://codex.gallery2.org/index.php/Gallery2:Download
   Help!         http://tinyurl.com/5gnbs
-  Known Issues: http://tinyurl.com/8bprb#known_issues
-  Upgrading:    http://tinyurl.com/8bprb#updating
+  Known Issues: http://tinyurl.com/cnklu#known_issues
+  Upgrading:    http://tinyurl.com/cnklu#updating
   G2 Forums:    http://tinyurl.com/3rgzx

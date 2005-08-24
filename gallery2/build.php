@@ -1,6 +1,6 @@
 #!/usr/bin/php -f
 <?php
-$BRANCH = 'HEAD';
+$BRANCH = 'BRANCH_2_0_RC_2';
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';

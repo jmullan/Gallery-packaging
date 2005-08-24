@@ -1,24 +1,24 @@
 
-  Preview of release 2.0-rc-1 (2.0 branch)
- by Bharat Mediratta - Fri, Aug 5th 2005 19:19 PDT
+  Preview of release 2.0-rc-2 (2.0 branch)
+ by Bharat Mediratta - Wed, Aug 24th 2005 00:48 PDT
 
 About: Gallery is a slick Web-based photo album written using PHP. It is easy to install, includes a config wizard, and provides users with the ability to create and maintain their own albums in the album collection via an intuitive Web interface. Photo management includes automatic thumbnail creation, image resizing, rotation, ordering, captioning and more. Albums can have read, write, and caption permissions per individual authenticated user for an additional level of privacy.
 
-Changes: New packaging system, added back the Siriux theme, more user contributed themes, new installer log. Many, many bugs fixed.
+Changes: Migration now handles custom fields, hidden photos, and does a better job with truncated captions. Added custom date format support. Improved localization. Small XSS fix.
 
 Focus	 License
-4 - Minor feature enhancements	GNU General Public License (GPL)
+3 - Code cleanup	GNU General Public License (GPL)
 
 Homepage:
 http://gallery.sourceforge.net/
 Tar/GZ:
-http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-1-typical.tar.gz
+http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-2-typical.tar.gz
 Zip:
-http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-1-typical.zip
+http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-2-typical.zip
 Changelog:
-http://cvs.sourceforge.net/[..]ery/gallery2/README.html?1.124#whats_new
+http://cvs.sourceforge.net/[..]ery/gallery2/README.html?1.131#whats_new
 Debian package:
-http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=297629
+http://packages.debian.org/unstable/web/gallery2
 CVS tree (cvsweb):
 http://cvs.sourceforge.net/viewcvs.py/gallery/gallery2/
 Bug tracker:
@@ -27,3 +27,5 @@ Demo site:
 http://gallery.menalto.com/[..]php?name=PNphpBB2&file=viewtopic&t=21047
 freshmeat project page:
 http://freshmeat.net/projects/the_gallery/
+
+
