@@ -15,14 +15,15 @@ Checklist
     (verify on Unix and Windows)
 - make sure all image files are binary
 - create a branch (if necessary)
-  - cvs tag -b BRANCH_2_0_RC_2
+  - cvs tag -b BRANCH_2_0
 - tag the release
-  - cvs update -r BRANCH_2_0_RC_2
-  - cvs tag RELEASE_2_0_RC_2
+  - cvs update -r BRANCH_2_0
+  - cvs tag RELEASE_2_0
 - Update the BRANCH var in build.php
 - build.php scrub
 - build.php release
 - build.php export
 - Release the package on sf.net (hide the version N-2 ago).
 - Update Gallery2:Download on the codex
+- Update http://gallery.menalto.com/downloadblock
 - Post announcements/*
