@@ -1,5 +1,9 @@
 #!/usr/bin/php -f
 <?php
+$SOURCE_DIR = dirname(dirname(dirname(__FILE__))) . '/gallery2';
+$PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/combined/';
+$RELEASE = 'gallery-2.0-rc-2';
+
 if (!empty($_SERVER['SERVER_NAME'])) {
     print "You must run this from the command line\n";
     exit(1);
@@ -28,13 +32,11 @@ class GalleryStub {
 }
 $gallery = new GalleryStub();
 
-require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryCoreApi.class');
-require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryModule.class');
-require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryTheme.class');
+require_once($SOURCE_DIR . '/modules/core/classes/GalleryCoreApi.class');
+require_once($SOURCE_DIR . '/modules/core/classes/GalleryModule.class');
+require_once($SOURCE_DIR . '/modules/core/classes/GalleryTheme.class');
 
-$RELEASE = 'gallery-2.0-rc-2';
 $PACKAGE_TYPES = array('Typical', 'Full', 'Minimal', 'Developer');
-$PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/combined/';
 $DOWNLOAD_PREFIX = 'http://prdownloads.sourceforge.net/gallery/';
 
 function updateDownloadPage() {
@@ -91,7 +93,7 @@ function getModuleHtml() {
     global $DOWNLOAD_PREFIX;
     $moduleFilePrefix = 'g2-module';
 
-    foreach (glob(dirname(__FILE__) . '/../../../modules/*/module.inc') as $moduleInc) {
+    foreach (glob($SOURCE_DIR . '/modules/*/module.inc') as $moduleInc) {
 	$moduleId = basename(dirname($moduleInc));
 	if ($moduleId == 'core') {
 	    continue;
@@ -142,7 +144,7 @@ function getThemeHtml() {
     $themeFilePrefix = 'g2-theme';
     global $DOWNLOAD_PREFIX;
 
-    foreach (glob(dirname(__FILE__) . '/../../../themes/*/theme.inc') as $themeInc) {
+    foreach (glob($SOURCE_DIR . '/themes/*/theme.inc') as $themeInc) {
 	include($themeInc);
 	$themeId = basename(dirname($themeInc));
 	$themeClass = "{$themeId}Theme";
