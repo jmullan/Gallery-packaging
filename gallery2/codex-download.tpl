@@ -61,7 +61,7 @@
 ! Tar.gz
 |-
 <?php endif; ?>
-| <?php print $module['name'] ?>
+| [[Gallery2:Modules:<?php print $module['id'] ?>|<?php print $module['name'] ?>]]
 
 | <?php print $module['description'] ?>
 
