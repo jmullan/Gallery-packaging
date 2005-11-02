@@ -2,11 +2,36 @@
 <?php
 $SOURCE_DIR = dirname(dirname(dirname(__FILE__))) . '/gallery2';
 $PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/combined/';
-$RELEASE = 'gallery-2.0-rc-2';
+$RELEASE = 'gallery-2.0.1';
 
-if (!empty($_SERVER['SERVER_NAME'])) {
-    print "You must run this from the command line\n";
-    exit(1);
+/*
+ * Usage:
+ *   Change the SOURCE_DIR and PACKAGE_DIR constants to match your environment and update
+ *   the RELEASE constant to reflect the current release.
+ *   Type
+ *     ./update-codex-download-page.php > new-page.txt
+ *   to generate an updated version of the download page.
+ *   Type
+ *     ./update-codex-download-page.php -- -d > new-page.txt
+ *   to download the missing packages, modules and themes automatically with wget.
+ */
+if (strpos(strtolower(php_sapi_name()), 'cli') !== 0) {
+    die("You must run this from the command line\n");
+}
+/* e.g. glob() requires php 4.3.0+ */
+if (version_compare(phpversion(), '4.3.0', '<')) {
+    die("PHP Version must be 4.3.0 or later");
+}
+
+/*
+ * This script will download all necessary packages on request, requires wget
+ *   switch.dl.sourceforge.net is fine for Europe
+ *   internap.dl.sourceforge.net is fine for North America
+ */
+$DIRECT_DOWNLOAD_PREFIX = 'http://internap.dl.sourceforge.net/sourceforge/gallery/';
+$DOWNLOAD_FILES_IF_REQUIRED = false;
+if ($argc > 1 && in_array('-d', $argv)) {
+    $DOWNLOAD_FILES_IF_REQUIRED = true;
 }
 
 class GalleryStatusStub {
@@ -29,6 +54,15 @@ class GalleryStub {
     function getTranslator() {
 	return new GalleryTranslatorStub();
     }
+
+    function getConfig($key) {
+	switch($key) {
+	case 'plugins.dirname':
+	    return 'plugins';
+	default:
+	    return '';
+	}
+    }
 }
 $gallery = new GalleryStub();
 
@@ -48,7 +82,7 @@ function updateDownloadPage() {
     $body = `wget -q -O- http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download`;
 
     /* Pull out the content we want and tokenize the parts we'll replace */
-    $body = preg_replace('|.*<text>(.*)</text>.*|s', '$1', $body);
+    $body = preg_replace('|.*<text[^>]*>(.*)</text>.*|s', '$1', $body);
     $body = html_entity_decode($body);
     foreach (array('PACKAGES' => $packages, 'MODULES' => $modules, 'THEMES' => $themes)
 	     as $key => $value) {
@@ -90,9 +124,10 @@ function getPackageHtml() {
 }
 
 function getModuleHtml() {
-    global $DOWNLOAD_PREFIX;
+    global $DOWNLOAD_PREFIX, $SOURCE_DIR;
     $moduleFilePrefix = 'g2-module';
 
+    $modules = array();
     foreach (glob($SOURCE_DIR . '/modules/*/module.inc') as $moduleInc) {
 	$moduleId = basename(dirname($moduleInc));
 	if ($moduleId == 'core') {
@@ -142,7 +177,7 @@ function getModuleHtml() {
 
 function getThemeHtml() {
     $themeFilePrefix = 'g2-theme';
-    global $DOWNLOAD_PREFIX;
+    global $DOWNLOAD_PREFIX, $SOURCE_DIR;
 
     foreach (glob($SOURCE_DIR . '/themes/*/theme.inc') as $themeInc) {
 	include($themeInc);
@@ -180,9 +215,18 @@ function getThemeHtml() {
 }
 
 function getFilesize($fileName) {
-    global $PACKAGE_DIR;
+    global $PACKAGE_DIR, $DIRECT_DOWNLOAD_PREFIX, $DOWNLOAD_FILES_IF_REQUIRED;
 
     $path = $PACKAGE_DIR . $fileName;
+    
+    if (!file_exists($path) && $DOWNLOAD_FILES_IF_REQUIRED) {
+	/* Download the file */
+	$cmd = sprintf('wget %s%s -O %s', $DIRECT_DOWNLOAD_PREFIX, $fileName, $path);
+	exec($cmd, $results, $status);
+	if ($status != 0) {
+	    die("$cmd did not return the expected status 0\n");
+	}
+    }
 
     $size = '';
     if (file_exists($path)) {
@@ -197,6 +241,8 @@ function getFilesize($fileName) {
 		$size = $size  . 'B';
 	    }
 	}
+    } else {
+	print "WARNING: file $fileName is missing\n";
     }
 
     return $size;

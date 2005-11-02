@@ -62,7 +62,6 @@
 |-
 <?php endif; ?>
 | [[Gallery2:Modules:<?php print $module['id'] ?>|<?php print $module['name'] ?>]]
-
 | <?php print $module['description'] ?>
 
 | <?php print $module['version'] ?>
