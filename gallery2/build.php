@@ -28,10 +28,6 @@ function checkOut() {
     print "done.\n";
 }
 
-class GalleryModule {
-    function isRecommendedDuringInstall() { return false; }
-}
-
 function getPackages() {
     global $SRCDIR;
 
@@ -49,20 +45,13 @@ function getPackages() {
 	    continue;
 	}
 
-	/* Hack out the constructor and anything that'll mess up eval */
-	$code = str_replace('<?php', '', $code);
-	$code = str_replace('?>', '', $code);
-	$code = preg_replace("/function {$id}module\(\) {.*?}/si", "function ${id}module() { }",
-			     $code);
-
-	eval($code);
-	$pluginClass = "${id}module";
-	$plugin = new $pluginClass;
-
-	/* Run it and find out if it's recommended */
-	$packages['recommended']['modules'][$id] = $plugin->isRecommendedDuringInstall();
 	$packages['all']['modules'][$id] = true;
-	$packages['core']['modules'][$id] = ($id == 'netpbm' || $id == 'imagemagick' || $id == 'gd');
+	$packages['recommended']['modules'][$id] =
+	    in_array($id, array('imagemagick', 'netpbm', 'gd', 'ffmpeg',
+				'archiveupload', 'comment', 'exif', 'icons', 'migrate',
+				'rearrange', 'rewrite', 'search', 'shutterfly', 'slideshow'));
+	$packages['core']['modules'][$id] =
+	    in_array($id, array('imagemagick', 'netpbm', 'gd'));
     }
 
     foreach (glob("$SRCDIR/gallery2/themes/*/theme.inc") as $path) {
@@ -73,9 +62,9 @@ function getPackages() {
 	preg_match('/\$this->setVersion\(\'(.*?)\'\)/', $code, $matches);
 	$packages['themes'][$id]['version'] = $matches[1];
 
-	$packages['recommended']['themes'][$id] = true;
 	$packages['all']['themes'][$id] = true;
-	$packages['core']['themes'][$id] = ($id == 'matrix' || $id == 'siriux');
+	$packages['recommended']['themes'][$id] = true;
+	$packages['core']['themes'][$id] = in_array($id, array('matrix', 'siriux'));
     }
 
     return $packages;
