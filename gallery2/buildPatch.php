@@ -1,9 +1,9 @@
 <?php
 /* This cvs should be current for: BRANCH_2_0 */
-$LAST_RELEASE = 'RELEASE_2_0';
-$PATCH = '201';
+$LAST_RELEASE = 'RELEASE_2_0_1';
+$PATCH = '201-to-202';
 
-$patchFile = 'patch' . $PATCH . '.txt';
+$patchFile = 'patch-' . $PATCH . '.txt';
 system("cvs -q diff -Nur $LAST_RELEASE > $patchFile");
 
 foreach (file($patchFile) as $line) {
@@ -17,7 +17,7 @@ foreach (file($patchFile) as $line) {
     }
 }
 
-$dir = 'changedFiles' . $PATCH;
+$dir = 'changedFiles-' . $PATCH;
 mkdir($dir);
 chdir($dir);
 foreach ($changedFiles as $changedFile) {
