@@ -109,11 +109,7 @@ function buildPluginPackage($type, $id, $version) {
 function buildPackage($version, $tag, $packages, $developer) {
     global $BASEDIR, $SRCDIR, $TMPDIR, $DISTDIR;
 
-    print "Build $tag of $version";
-    if ($developer) {
-	print ' (developer)';
-    }
-    print '...';
+    print "Build $tag of $version...";
 
     /* Get all files */
     chdir($SRCDIR);
@@ -142,13 +138,9 @@ function buildPackage($version, $tag, $packages, $developer) {
 	}
     }
 
-    /* Dump the lists to tmp files */
+    /* Dump the list to a tmp file */
     $fd = fopen("$TMPDIR/files.txt", 'w+');
     fwrite($fd, join("\n", $files));
-    fclose($fd);
-
-    $fd = fopen("$TMPDIR/originalFiles.txt", 'w+');
-    fwrite($fd, join("\n", $originalFiles));
     fclose($fd);
 
     /* Copy our chosen files to our tmp dir */
@@ -161,16 +153,10 @@ function buildPackage($version, $tag, $packages, $developer) {
     }
 
     /* Update manifests to reflect files we've removed */
-    system("perl $SRCDIR/gallery2/lib/tools/bin/filterManifests.pl " .
-	   "--basedir=$TMPDIR/gallery2 " .
-	   "--files=$TMPDIR/files.txt " .
-	   "--originalFiles=$TMPDIR/originalFiles.txt", $return);
-    if ($return) {
-	die('Manifest filter failed');
-    }
+    chdir($TMPDIR);
+    filterManifests($originalFiles, $files);
 
     /* Tar and zip it */
-    chdir($TMPDIR);
     system("tar czf $DISTDIR/gallery-$version-$tag.tar.gz --files-from=$TMPDIR/files.txt", $return);
     if ($return) {
 	die('Tar failed');
@@ -184,10 +170,36 @@ function buildPackage($version, $tag, $packages, $developer) {
 
     unlink("$TMPDIR/files.txt");
     unlink("$TMPDIR/escapedFiles.txt");
-    unlink("$TMPDIR/originalFiles.txt");
     chdir($BASEDIR);
 
     print "done\n";
+}
+
+function filterManifests($originalFiles, $files) {
+    foreach (preg_grep('|/MANIFEST$|', $files) as $manifest) {
+	if (!($fd = fopen("$manifest.new", "w"))) {
+	    die("Error opening $manifest.new for write");
+	}
+	foreach (file($manifest) as $line) {
+	    if (!preg_match("{^(#|R\t)}", $line)) {
+		$split = explode("\t", $line);
+		$file = 'gallery2/' . $split[0];
+		if (!in_array($file, $originalFiles)) {
+		    die("Unexpected file <$file>");
+		}
+		if (!in_array($file, $files)) {
+		    continue;
+		}
+	    }
+	    fwrite($fd, $line);
+	}
+	fclose($fd);
+	if (filesize("$manifest.new") != filesize($manifest)) {
+	    rename("$manifest.new", $manifest);
+	} else {
+	    unlink("$manifest.new");
+	}
+    }
 }
 
 function escapePatterns($infile, $outfile) {
