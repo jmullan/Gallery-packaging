@@ -1,6 +1,7 @@
 #!/usr/bin/php -f
 <?php
 $BRANCH = 'BRANCH_2_0';
+$PATCH_FOR = array('RELEASE_2_0_1', 'RELEASE_2_0');
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -8,6 +9,7 @@ $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
 $CVS = 'cvs -Q -z3 -d ' . $CVSROOT;
 $SKIP_CHECKOUT = false;
+
 
 function checkOut() {
     global $SRCDIR, $BASEDIR, $CVS, $BRANCH, $SKIP_CHECKOUT;
@@ -217,6 +219,43 @@ function buildManifest() {
     chdir($BASEDIR);
 }
 
+function buildPatch($patchFromTag, $newVersion) {
+    global $TMPDIR, $SRCDIR, $BASEDIR;
+
+    print "Build patch for $patchFromTag...";
+
+    $newVersion = strtr($newVersion, '.', '_');
+    $patchVersion = str_replace('RELEASE_', '', $patchFromTag);
+    mkdir($patchDir = "$TMPDIR/$patchVersion");
+    $patchTmp = "$TMPDIR/patch_$patchVersion.txt";
+    chdir("$SRCDIR/gallery2");
+    system("cvs -q diff -Nur $patchFromTag > $patchTmp");
+    chdir($BASEDIR);
+
+    foreach ($patchLines = file($patchTmp) as $i => $line) {
+	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i+1], 0, 7) == '=======') {
+	    $changedFile = $changedFiles[] = rtrim(substr($line, 7));
+	    preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
+	    $patchToken = (empty($matches) || $matches[1] == 'core') ? '' : '_' . $matches[1];
+	    if (!isset($patchFD[$patchToken])) {
+		$patchFD[$patchToken] =
+		    fopen("$patchDir/patch_${patchVersion}_to_$newVersion$patchToken.txt", 'w');
+	    }
+	    $fd = $patchFD[$patchToken];
+	}
+	fwrite($fd, $line);
+    }
+    foreach ($patchFD as $fd) {
+	fclose($fd);
+    }
+    foreach ($changedFiles as $changedFile) {
+	system("mkdir -p $patchDir/gallery2/" . dirname($changedFile));
+	system("cp $SRCDIR/gallery2/$changedFile $patchDir/gallery2/$changedFile");
+    }
+
+    print "done\n";
+}
+
 function usage() {
     return "usage: build.php <cmd>\n" .
 	"\n" .
@@ -264,6 +303,10 @@ case 'release':
 	    continue;
 	}
 	buildPluginPackage('module', $id, $info['version']);
+    }
+
+    foreach ($PATCH_FOR as $patchFromTag) {
+	buildPatch($patchFromTag, $packages['version']);
     }
     break;
 
