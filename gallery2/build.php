@@ -219,15 +219,14 @@ function buildManifest() {
     chdir($BASEDIR);
 }
 
-function buildPatch($patchFromTag, $newVersion) {
+function buildPatch($patchFromTag) {
     global $TMPDIR, $SRCDIR, $BASEDIR;
 
     print "Build patch for $patchFromTag...";
 
-    $newVersion = strtr($newVersion, '.', '_');
-    $patchVersion = str_replace('RELEASE_', '', $patchFromTag);
+    $patchVersion = strtr(str_replace('RELEASE_', '', $patchFromTag), '_', '.');
     mkdir($patchDir = "$TMPDIR/$patchVersion");
-    $patchTmp = "$TMPDIR/patch_$patchVersion.txt";
+    $patchTmp = "$TMPDIR/patch-$patchVersion.txt";
     chdir("$SRCDIR/gallery2");
     system("cvs -q diff -Nur $patchFromTag > $patchTmp");
     chdir($BASEDIR);
@@ -236,10 +235,9 @@ function buildPatch($patchFromTag, $newVersion) {
 	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i+1], 0, 7) == '=======') {
 	    $changedFile = $changedFiles[] = rtrim(substr($line, 7));
 	    preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
-	    $patchToken = (empty($matches) || $matches[1] == 'core') ? '' : '_' . $matches[1];
+	    $patchToken = empty($matches) ? 'core' : $matches[1];
 	    if (!isset($patchFD[$patchToken])) {
-		$patchFD[$patchToken] =
-		    fopen("$patchDir/patch_${patchVersion}_to_$newVersion$patchToken.txt", 'w');
+		$patchFD[$patchToken] = fopen("$patchDir/patch-$patchToken.txt", 'w');
 	    }
 	    $fd = $patchFD[$patchToken];
 	}
@@ -258,8 +256,7 @@ function buildPatch($patchFromTag, $newVersion) {
 
 function usage() {
     return "usage: build.php <cmd>\n" .
-	"\n" .
-	"command is one of nightly, release, export, clean\n";
+	"command is one of nightly, release, export, scrub, clean\n";
 }
 
 if ($argc < 2) {
@@ -306,7 +303,7 @@ case 'release':
     }
 
     foreach ($PATCH_FOR as $patchFromTag) {
-	buildPatch($patchFromTag, $packages['version']);
+	buildPatch($patchFromTag);
     }
     break;
 
