@@ -1,8 +1,8 @@
 #!/usr/bin/php -f
 <?php
 $SOURCE_DIR = dirname(dirname(dirname(__FILE__))) . '/gallery2';
-$PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/combined/';
-$RELEASE = 'gallery-2.0.1';
+$PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/dist/';
+$RELEASE = 'gallery-2.1-rc-1';
 
 /*
  * Usage:
@@ -218,7 +218,7 @@ function getFilesize($fileName) {
     global $PACKAGE_DIR, $DIRECT_DOWNLOAD_PREFIX, $DOWNLOAD_FILES_IF_REQUIRED;
 
     $path = $PACKAGE_DIR . $fileName;
-    
+
     if (!file_exists($path) && $DOWNLOAD_FILES_IF_REQUIRED) {
 	/* Download the file */
 	$cmd = sprintf('wget %s%s -O %s', $DIRECT_DOWNLOAD_PREFIX, $fileName, $path);
