@@ -1,7 +1,7 @@
 #!/usr/bin/php -f
 <?php
-$BRANCH = 'BRANCH_2_0';
-$PATCH_FOR = array('RELEASE_2_0_1', 'RELEASE_2_0');
+$BRANCH = 'RELEASE_2_1_RC_1';
+$PATCH_FOR = array(); //'RELEASE_2_0_1', 'RELEASE_2_0');
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -49,7 +49,7 @@ function getPackages() {
 
 	$packages['all']['modules'][$id] = true;
 	$packages['recommended']['modules'][$id] =
-	    in_array($id, array('imagemagick', 'netpbm', 'gd', 'ffmpeg',
+	    in_array($id, array('imagemagick', 'netpbm', 'gd', 'ffmpeg', 'rating',
 				'archiveupload', 'comment', 'exif', 'icons', 'migrate',
 				'rearrange', 'rewrite', 'search', 'shutterfly', 'slideshow'));
 	$packages['core']['modules'][$id] =
