@@ -1,13 +1,16 @@
 Preliminary release checklist
 
 Checklist
+- before RC-1 of any release: check for available updates of adodb, smarty, etc
+- commit language updates from translations tracker
 - make sure all unit tests pass
 - review and update the README.html.
   - Make sure that its logo buttons are correct
-- update all translations
+- bump version for every plugin that has changed since last release but hasn't changed version
 - bump modules/core/module.inc CoreModule::setGalleryVersion
-- Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo and version text
 - bump core/module.inc CoreModule::setVersion (update modules/core/CoreModulesExtras::upgrade, too)
+- Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo and version text
+- update all translations
 - update all MANIFEST files
 - Sync a different workspace and verify:
   - upgrading works
@@ -19,11 +22,12 @@ Checklist
 - tag the release
   - cvs update -r BRANCH_2_0
   - cvs tag RELEASE_2_0
-- Update the BRANCH var in build.php
+- Update the BRANCH and PATCH_FOR vars in build.php
 - build.php scrub
 - build.php release
 - build.php export
 - Release the package on sf.net (hide the version N-2 ago).
 - Update Gallery2:Download on the codex
 - Update http://gallery.menalto.com/downloadblock
+- Update http://gallery.menalto.com/downloads
 - Post announcements/*
