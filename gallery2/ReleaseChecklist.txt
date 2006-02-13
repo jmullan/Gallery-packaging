@@ -3,6 +3,7 @@ Preliminary release checklist
 Checklist
 - before RC-1 of any release: check for available updates of adodb, smarty, etc
 - commit language updates from translations tracker
+- add/update Gallery2:module:* codex pages
 - make sure all unit tests pass
 - review and update the README.html.
   - Make sure that its logo buttons are correct
@@ -31,3 +32,4 @@ Checklist
 - Update http://gallery.menalto.com/downloadblock
 - Update http://gallery.menalto.com/downloads
 - Post announcements/*
+- check http://gallery.menalto.com/sfvote/stats and send emails for completed items
