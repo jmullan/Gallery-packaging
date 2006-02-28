@@ -4,6 +4,7 @@ Checklist
 - before RC-1 of any release:
   - check for available updates of adodb, smarty, etc
   - bump version in GalleryTemplate.class to trigger clear of smarty cache for upgraders
+  - bump version number in header images for installer/upgrader
 - commit language updates from translations tracker
 - add/update Gallery2:module:* codex pages
 - make sure all unit tests pass
