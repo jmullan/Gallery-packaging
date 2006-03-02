@@ -1,13 +1,13 @@
 #!/usr/bin/php -f
 <?php
-$BRANCH = 'RELEASE_2_1_RC_1';
-$PATCH_FOR = array(); //'RELEASE_2_0_1', 'RELEASE_2_0');
+$BRANCH = 'RELEASE_2_0_3';
+$PATCH_FOR = array('RELEASE_2_0_2', 'RELEASE_2_0_1', 'RELEASE_2_0');
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
-$CVS = 'cvs -Q -z3 -d ' . $CVSROOT;
+$CVS = 'cvs -f -Q -z3 -d ' . $CVSROOT;
 $SKIP_CHECKOUT = false;
 
 
@@ -220,43 +220,153 @@ function buildManifest() {
 }
 
 function buildPatch($patchFromTag) {
-    global $TMPDIR, $SRCDIR, $BASEDIR;
+    global $TMPDIR, $SRCDIR, $BASEDIR, $BRANCH;
+    $CVS_DIFF = 'cvs -f -q diff -Nur';
 
     print "Build patch for $patchFromTag...";
+    $finalPackage = array();
+
+    $fromVersionTag = extractVersionTag($patchFromTag);
+    $toVersionTag = extractVersionTag($BRANCH);
+
+    ob_start();
+    include(dirname(__FILE__) . '/patch-README.txt.inc');
+    $readmeText = ob_get_contents();
+    ob_end_clean();
 
     $patchVersion = strtr(str_replace('RELEASE_', '', $patchFromTag), '_', '.');
-    mkdir($patchDir = "$TMPDIR/$patchVersion");
-    $patchTmp = "$TMPDIR/patch-$patchVersion.txt";
-    chdir("$SRCDIR/gallery2");
-    system("cvs -q diff -Nur $patchFromTag > $patchTmp");
-    chdir($BASEDIR);
+    $patchDir = "$TMPDIR/$patchVersion";
+    @mkdir($patchDir);
+    $patchTmp = "$patchDir/patch-$patchVersion.txt";
 
+    $readme = fopen("$patchDir/README.txt", "wb");
+    fwrite($readme, $readmeText);
+    fclose($readme);
+    $finalPackage['README.txt'] = 1;
+
+    /*
+     * We want to drop all XxxTest.class related lines from the diff because the user may not have
+     * unit tests so we can't patch them.  This means that we also need to drop those lines from
+     * the MANIFEST diffs.  CVS will let us elide those lines, but only if we diff the MANIFEST
+     * files individually.  So the plan is to run one diff to get all the files that changed and
+     * split them into MANIFEST files vs. everything else (excluding test files) and then diff
+     * them in two batches.
+     */
+    chdir("$SRCDIR/gallery2");
+
+    system("$CVS_DIFF $patchFromTag > $patchTmp.raw");
+
+    $manifestFiles = array();
+    $regularFiles = array();
+    foreach ($patchLines = file("$patchTmp.raw") as $i => $line) {
+	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i+1], 0, 7) == '=======') {
+	    $changedFile = rtrim(substr($line, 7));
+	    if (preg_match('/MANIFEST/', $changedFile)) {
+		$manifestFiles[$changedFile] = 1;
+	    } else if ($changedFile != 'docs/LOCALIZING' &&
+		       !preg_match('/Test.class$/', $changedFile)) {
+		/* We ditched docs/LOCALIZING in 2.0.2 -- don't want it in the patch */
+		/* Leave XxxTest.class files out of the patch */
+		$regularFiles[$changedFile] = 1;
+	    }
+	}
+    }
+
+    @unlink($patchTmp);
+    system(sprintf("$CVS_DIFF $patchFromTag %s >> $patchTmp",
+    		   join(' ', array_keys($regularFiles))));
+    system(sprintf("$CVS_DIFF $patchFromTag --ignore-matching-lines='.*Test.class' %s >> $patchTmp",
+    		   join(' ', array_keys($manifestFiles))));
+
+    /*
+     * Now $patchTmp contains only files that we care about, and no extraneous MANIFEST
+     * entries.
+     * NOTE: docs/LOCALIZING is an exceptional case: we didn't ship the changed file but
+     *       we marked it as removed in the manifest in the 2.0.2 patch.  Preserve that
+     *       behavior going forward.
+     */
+    chdir($BASEDIR);
     foreach ($patchLines = file($patchTmp) as $i => $line) {
 	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i+1], 0, 7) == '=======') {
-	    $changedFile = $changedFiles[] = rtrim(substr($line, 7));
+	    $changedFile = rtrim(substr($line, 7));
+	    $changedFiles[] = $changedFile;
 	    preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
 	    $patchToken = empty($matches) ? 'core' : $matches[1];
 	    if (!isset($patchFD[$patchToken])) {
 		$patchFD[$patchToken] = fopen("$patchDir/patch-$patchToken.txt", 'w');
+		$finalPackage["patch-$patchToken.txt"] = 1;
 	    }
 	    $fd = $patchFD[$patchToken];
 	}
 	fwrite($fd, $line);
     }
+    fwrite($fd, $line);
+
     foreach ($patchFD as $fd) {
 	fclose($fd);
     }
+
+    $needToPackage = array();
     foreach ($changedFiles as $changedFile) {
-	system("mkdir -p $patchDir/gallery2/" . dirname($changedFile));
-	system("cp $SRCDIR/gallery2/$changedFile $patchDir/gallery2/$changedFile");
+	preg_match('{^(modules|themes)/([^/]*)(.*?)$}', $changedFile, $matches);
+	if (empty($matches)) {
+	    $patchToken = 'core';
+	    $relativePath = $changedFile;
+	} else {
+	    $patchToken = $matches[2];
+	    $relativePath = $matches[1] . "/" . $matches[2] . $matches[3];
+	}
+	$needToPackage[$patchToken] = 1;
+
+	system("mkdir -p $patchDir/$patchToken/" . dirname($relativePath));
+	if (basename($relativePath) == 'MANIFEST') {
+	    /* Filter out test files so that we don't pollute non-dev dists with dev data */
+	    $lines = file("$SRCDIR/gallery2/$changedFile");
+	    $lines = preg_grep('|^modules/\w+/test/|', $lines, PREG_GREP_INVERT);
+	    $lines = preg_grep('|^lib/tools|', $lines, PREG_GREP_INVERT);
+	    $new = fopen("$patchDir/$patchToken/$relativePath", 'wb');
+	    fwrite($new, join("\n", $lines));
+	    fclose($new);
+	} else {
+	    system("cp $SRCDIR/gallery2/$changedFile $patchDir/$patchToken/" . dirname($relativePath));
+	}
     }
+
+    foreach (array_keys($needToPackage) as $plugin) {
+	chdir("$patchDir/$plugin");
+	system("zip -q -r ../changed-files-$plugin.zip *");
+	$finalPackage["changed-files-$plugin.zip"] = 1;
+    }
+
+    /*
+     * Due to some weirdness in the way that we deal with modules/exif/lib/JPEG/JPEG.inc
+     * caused (I think) by the fact that it gained a -kb sticky bit, we generate a
+     * MANIFEST-only patch for the exif module that leaves the expected size of this file
+     * in the MANIFEST out of sync with the actual file size unless we replace it.  The
+     * easiest thing to do is to just drop those changes from releases that don't need it.
+     */
+    unset($finalPackage["changed-files-exif.zip"]);
+    unset($finalPackage["patch-exif.txt"]);
+
+    chdir("$patchDir");
+
+    system(sprintf("zip -q -r ../update-$fromVersionTag-to-$toVersionTag.zip %s",
+		   join(' ', array_keys($finalPackage))));
+
+    #system("/bin/rm -rf $patchDir");
 
     print "done\n";
 }
 
+function extractVersionTag($input) {
+    $input = preg_replace('/RELEASE_(.*)/', '$1', $input);
+    $input = preg_replace('/_/', '.', $input);
+    return $input;
+}
+
 function usage() {
     return "usage: build.php <cmd>\n" .
-	"command is one of nightly, release, export, scrub, clean\n";
+	"command is one of nightly, release, patches, export, scrub, clean\n";
 }
 
 if ($argc < 2) {
@@ -301,7 +411,9 @@ case 'release':
 	}
 	buildPluginPackage('module', $id, $info['version']);
     }
+    /* fall through and build patches also */
 
+case 'patches':
     foreach ($PATCH_FOR as $patchFromTag) {
 	buildPatch($patchFromTag);
     }
