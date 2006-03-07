@@ -32,6 +32,7 @@ Checklist
 - build.php export
 - Release the package on sf.net (hide the version N-2 ago).
 - Update Gallery2:Download on the codex
+- For RC releases, post forum topic for reporting/tracking issues
 - Update http://gallery.menalto.com/downloadblock
 - Update http://gallery.menalto.com/downloads
 - Post announcements/*
