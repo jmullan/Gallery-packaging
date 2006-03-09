@@ -2,7 +2,14 @@
 <?php
 $SOURCE_DIR = dirname(dirname(dirname(__FILE__))) . '/gallery2';
 $PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/dist/';
-$RELEASE = 'gallery-2.1-rc-1a';
+$RELEASE = 'gallery-2.1-rc-2';
+$EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download';
+
+/*
+ * If we're pulling from a historical version, like when we let 2.0.x releases leapfrog
+ * 2.1.x releases, then you can use an older version of the page here.
+ */
+// $EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download?oldid=7470';
 
 /*
  * Usage:
@@ -74,12 +81,14 @@ $PACKAGE_TYPES = array('Typical', 'Full', 'Minimal', 'Developer');
 $DOWNLOAD_PREFIX = 'http://prdownloads.sourceforge.net/gallery/';
 
 function updateDownloadPage() {
+    global $EXPORT_PAGE;
+
     $packages = getPackageHtml();
     $themes = getThemeHtml();
     $modules = getModuleHtml();
 
     /* Fetch current version */
-    $body = `wget -q -O- http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download`;
+    $body = `wget -q -O- $EXPORT_PAGE`;
 
     /* Pull out the content we want and tokenize the parts we'll replace */
     $body = preg_replace('|.*<text[^>]*>(.*)</text>.*|s', '$1', $body);
