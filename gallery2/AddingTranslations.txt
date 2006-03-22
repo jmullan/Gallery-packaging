@@ -1,0 +1,15 @@
+Steps to commit translation updates submitted on sourceforge.net
+----------------------------------------------------------------
+1) Download attachments
+2) Check each file to see what paths are in the archive, then extract all.
+   Check for any out-of-place files, skip any given *.mo files.
+3) perl lib/tools/po/update-all-translations.pl --permissions
+4) Use update-all-translations.pl with --po and --pattern flags to compile
+   all the new translations.  Correct any reported errors.
+5) perl lib/tools/po/update-all-translations.pl --cvs-add
+6) Run unit tests with filter: codeaudit
+   Correct any reported errors.
+7) cvs -q ci
+8) Close tracker items on sourceforge.net:
+   Set Assigned To, Status = Closed, Resolution = Accepted
+
