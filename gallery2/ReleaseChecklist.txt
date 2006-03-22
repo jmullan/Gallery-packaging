@@ -9,8 +9,11 @@ Checklist
 - add/update Gallery2:module:* codex pages
 - make sure all unit tests pass
 - review and update the README.html.
-  - Make sure that its logo buttons are correct
+  - Make sure that its title, codename/introduction and logo buttons are correct
 - bump version for every plugin that has changed since last release but hasn't changed version
+  - something like: cvs -q log -h -S -d ">2006-02-01" | perl -naF: -e '$F[1]=~s/^\s*(.*?)\s*$/$1/; ($f=$F[1])=~s|^.*?gallery2/([^/]*(?:/[^/]*)?).*,v$|$1| if ($F[0] eq "RCS file"); $h=$F[1] if ($F[0] eq "head"); print "$f\n" if ($F[0] =~ /RELEASE_2_1_RC_2$/ and $h ne $F[1])' | sort -u
+  - (replace 2006-02-01 with any cutoff date just to limit the amount of data to parse,
+     and replace RELEASE_2_1_RC_2 with the last tagged release)
 - bump modules/core/module.inc CoreModule::setGalleryVersion
 - bump core/module.inc CoreModule::setVersion (update modules/core/CoreModulesExtras::upgrade, too)
 - Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo and version text
@@ -21,7 +24,7 @@ Checklist
   - installer system check doesn't report any missing/modified files
     (verify on Unix and Windows)
 - make sure all image files are binary
-- create a branch (if necessary)   <----------- DONT FORGET TO DO THIS FOR THE 2.1 FINAL RELEASE!
+- create a branch (if necessary)   <---------- DON'T FORGET TO DO THIS FOR EACH OFFICIAL RELEASE!
   - cvs tag -b BRANCH_2_0
 - tag the release
   - cvs update -r BRANCH_2_0

@@ -1,7 +1,8 @@
 #!/usr/bin/php -f
 <?php
-$BRANCH = 'RELEASE_2_1_RC_2';
-// $PATCH_FOR = array('RELEASE_2_0_2', 'RELEASE_2_0_1', 'RELEASE_2_0');
+$BRANCH = 'RELEASE_2_1';
+// $PATCH_FOR = array('RELEASE_2_0_4', 'RELEASE_2_0_3',
+//		      'RELEASE_2_0_2', 'RELEASE_2_0_1', 'RELEASE_2_0');
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
