@@ -36,8 +36,18 @@ Checklist
   exist in sf.net.  Make sure those packages didn't miss a version bump, and
   if they didn't change since the last release delete them from dist/
 - build.php export
-- Release the package on sf.net (hide the version N-2 ago).
+- Release the package on sf.net
+  - Create a new release in the 'gallery2' release (if necessary) and upload the
+    distributions via the web interface
+  - Create a new release in the 'gallery2 plugins' release (if necessary) and add
+    all the modules and themes to the release via the web interface
+  - use releaseforge.sf.net to set the file types and architecture
+  - hide the N-2 releases
 - Update Gallery2:Download on the codex
+  - Edit RELEASE in update-codex-download-page.php
+  - Run update-codex-download-page.php
+  - Cut and paste its output on to Gallery2:Download
+  - Click "show changes" and verify what you see
 - For RC releases, post forum topic for reporting/tracking issues
 - Update http://gallery.menalto.com/downloadblock
 - Update http://gallery.menalto.com/downloads
