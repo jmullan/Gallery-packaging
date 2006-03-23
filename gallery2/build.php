@@ -1,6 +1,6 @@
 #!/usr/bin/php -f
 <?php
-$BRANCH = 'RELEASE_2_1';
+$TAG = 'RELEASE_2_1';
 // $PATCH_FOR = array('RELEASE_2_0_4', 'RELEASE_2_0_3',
 //		      'RELEASE_2_0_2', 'RELEASE_2_0_1', 'RELEASE_2_0');
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
@@ -12,8 +12,8 @@ $CVS = 'cvs -f -Q -z3 -d ' . $CVSROOT;
 $SKIP_CHECKOUT = false;
 
 
-function checkOut() {
-    global $SRCDIR, $BASEDIR, $CVS, $BRANCH, $SKIP_CHECKOUT;
+function checkOut($useTag=true) {
+    global $SRCDIR, $BASEDIR, $CVS, $TAG, $SKIP_CHECKOUT;
 
     print 'Checking out code...';
 
@@ -21,7 +21,7 @@ function checkOut() {
     if ($SKIP_CHECKOUT) {
 	print 'Skipping checkout...';
     } else {
-	$cmd = "$CVS checkout -r $BRANCH gallery2";
+	$cmd = "$CVS checkout" . ($useTag ? " -r $TAG" : '') . ' gallery2';
 	system($cmd, $result);
 	if ($result) {
 	    die('Checkout failed');
@@ -221,14 +221,14 @@ function buildManifest() {
 }
 
 function buildPatch($patchFromTag) {
-    global $TMPDIR, $SRCDIR, $BASEDIR, $BRANCH;
+    global $TMPDIR, $SRCDIR, $BASEDIR, $TAG;
     $CVS_DIFF = 'cvs -f -q diff -Nur';
 
     print "Build patch for $patchFromTag...";
     $finalPackage = array();
 
     $fromVersionTag = extractVersionTag($patchFromTag);
-    $toVersionTag = extractVersionTag($BRANCH);
+    $toVersionTag = extractVersionTag($TAG);
 
     ob_start();
     include(dirname(__FILE__) . '/patch-README.txt.inc');
@@ -382,7 +382,7 @@ foreach (array($TMPDIR, $SRCDIR, $DISTDIR) as $dir) {
 
 switch($argv[1]) {
 case 'nightly':
-    checkOut();
+    checkOut(false);
     buildManifest();
     $packages = getPackages();
     buildPackage($packages['version'], 'nightly', $packages['all'], true);
