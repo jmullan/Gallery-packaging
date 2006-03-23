@@ -214,8 +214,8 @@ function escapePatterns($infile, $outfile) {
 }
 
 function buildManifest() {
-    global $TMPDIR, $BASEDIR;
-    chdir("$TMPDIR/gallery2");
+    global $SRCDIR, $BASEDIR;
+    chdir("$SRCDIR/gallery2");
     system("perl lib/tools/bin/makeManifest.pl");
     chdir($BASEDIR);
 }
