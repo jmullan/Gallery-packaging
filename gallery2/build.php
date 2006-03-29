@@ -21,7 +21,7 @@ function checkOut($useTag=true) {
     if ($SKIP_CHECKOUT) {
 	print 'Skipping checkout...';
     } else {
-	$cmd = "$CVS checkout" . ($useTag ? " -r $TAG" : '') . ' gallery2';
+	$cmd = "$CVS checkout" . ($useTag ? " -r $TAG" : '') . ' -P gallery2';
 	system($cmd, $result);
 	if ($result) {
 	    die('Checkout failed');
