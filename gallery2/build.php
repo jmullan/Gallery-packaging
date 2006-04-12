@@ -365,9 +365,21 @@ function extractVersionTag($input) {
     return $input;
 }
 
+function buildPreinstaller() {
+    global $DISTDIR;
+
+    $results = preg_grep('/^ \* @versionId (.*)/', file("preinstaller/preinstall.php"));
+    $results = array_values($results);
+    $result = $results[0];
+    preg_match('/versionId (.*)/', $result, $matches);
+    $VERSION = $matches[1];
+    system("zip -j -q $DISTDIR/gallery2-preinstaller-$VERSION.zip " .
+	   "preinstaller/LICENSE preinstaller/README.txt preinstaller/preinstall.php");
+}
+
 function usage() {
     return "usage: build.php <cmd>\n" .
-	"command is one of nightly, release, patches, export, scrub, clean\n";
+	"command is one of nightly, release, preinstaller, patches, export, scrub, clean\n";
 }
 
 if ($argc < 2) {
@@ -381,11 +393,16 @@ foreach (array($TMPDIR, $SRCDIR, $DISTDIR) as $dir) {
 }
 
 switch($argv[1]) {
+case 'preinstaller':
+    buildPreinstaller();
+    break;
+
 case 'nightly':
     checkOut(false);
     buildManifest();
     $packages = getPackages();
     buildPackage($packages['version'], 'nightly', $packages['all'], true);
+    buildPreinstaller();
     break;
 
 case 'release':

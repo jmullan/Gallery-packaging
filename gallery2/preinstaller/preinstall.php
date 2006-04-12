@@ -4,7 +4,7 @@ $passPhrase = "";
 
 /*
  * $RCSfile$
- * 
+ *
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
@@ -31,7 +31,7 @@ $passPhrase = "";
  * @version $Revision$ $Date$
  * @package Preinstaller
  * @author: Andy Staudacher <ast@gmx.ch>
- * @versionId 1.0
+ * @versionId 2.1
  */
 error_reporting(E_ALL);
 set_time_limit(900);
@@ -253,7 +253,7 @@ class PreInstaller {
 		} else if (!empty($capabilities['anyArchiveExists'])) {
 		    $statusMessage = 'Archive ready for extraction';
 		} else {
-		    $statusMessage = 
+		    $statusMessage =
 			'No archive in current working directory, please start with step 1';
 		}
 		$capabilities['statusMessage'] = $statusMessage;
@@ -261,7 +261,7 @@ class PreInstaller {
 		if (!empty($capabilities['downloadMethods'])) {
 		    foreach ($capabilities['downloadMethods'] as $dMethod) {
 		    	if ($dMethod['isSupported']) {
-			    $capabilities['showRcVersion'] = 
+			    $capabilities['showRcVersion'] =
 		    			$this->shouldShowRcVersion(new $dMethod['command']);
 		    	    break;
 		    	}
@@ -377,10 +377,10 @@ class PreInstaller {
     	/* TODO, check for the existence of modules, lib, themes, main.php */
         return true;
     }
-    
+
     function getDownloadUrl($version, $extension, $downloader) {
     	global $mirrors, $nightlySnapshotSite;
-    	
+
     	$url = $this->_getDownloadFilename($version, $extension, $downloader);
     	if ($version != 'nightly') {
 	    /* Prepend the mirror string */
@@ -388,38 +388,38 @@ class PreInstaller {
     	} else {
     	    $url = $nightlySnapshotSite . $url;
     	}
-    	
+
     	return $url;
     }
-    
+
     /* Returns the */
     function _getDownloadFilename($version, $extension, $downloader) {
     	global $downloadUrls;
-    	
+
     	/* Default to the last known good version */
 	$filename = $downloadUrls[$version];
-	
+
     	/* Try to get the latest version string */
     	$currentDownloadUrls = $this->getLatestVersions($downloader);
     	if (!empty($currentDownloadUrls[$version])) {
     	    $filename = $currentDownloadUrls[$version];
     	}
-    	
+
     	$filename .= '.' . $extension;
-    	
+
     	return $filename;
     }
-    
+
     function getLatestVersions($downloader) {
 	global $versionCheckUrl, $availableVersions;
-	
+
 	$tempFile = dirname(__FILE__) . '/availableVersions.txt';
 	$currentVersions = array();
-	/* 
+	/*
 	 * Fetch the version information from a remote server and if we already have it,
 	 * update it if it's older than an hour
 	 */
-	if (!file_exists($tempFile) || !(($stat = @stat($tempFile)) && 
+	if (!file_exists($tempFile) || !(($stat = @stat($tempFile)) &&
 		isset($stat['mtime']) && $stat['mtime'] > time() - 3600)) {
 	    $downloader->download($versionCheckUrl, $tempFile);
 	}
@@ -430,33 +430,33 @@ class PreInstaller {
 		foreach ($contents as $line) {
 		    /* Each line is of the format key=value */
 		    $versionStrings = implode('|', $availableVersions);
-		    if (preg_match('/^(' . $versionStrings . 
-				')=((?:[A-Za-z0-9-_]+\.?)+)$/', 
+		    if (preg_match('/^(' . $versionStrings .
+				')=((?:[A-Za-z0-9-_]+\.?)+)$/',
 		    		   $line, $match)) {
-			
+
 			$currentVersions[$match[1]] = $match[2];
 		    }
 		}
 	    }
 	}
-	
+
 	return $currentVersions;
     }
-    
+
     function shouldShowRcVersion($downloader) {
 	/*
-	 * Only show the rc version (along with the stable and nightly) if we're in a 
+	 * Only show the rc version (along with the stable and nightly) if we're in a
 	 * release candidate stage
 	 */
 
 	 $currentDownloadUrls = $this->getLatestVersions($downloader);
 	 return isset($currentDownloadUrls['rc']);
     }
-    
+
     function afterDownloadHandling($downloader, $version, $extension) {
 	if ($version == 'nightly') return;
 	$filename = $this->_getDownloadFilename($version, $extension, $downloader);
-	@$download->download('http://prdownloads.sourceforge.net/gallery/' . $filename, 
+	@$download->download('http://prdownloads.sourceforge.net/gallery/' . $filename,
 			     dirname(__FILE__) . '/tmp' . rand() . '.txt');
     }
 }
@@ -1049,7 +1049,7 @@ function render($renderType, $args=array()) {
      </div>
      <?php elseif ($renderType == 'passwordTooShort'): ?>
      <div class="error">
-       The setup password in your <?php print $self; ?> file is too short. It must be at least 
+       The setup password in your <?php print $self; ?> file is too short. It must be at least
        6 characters long.
      </div>
      <?php elseif ($renderType == 'passwordForm'): ?>
@@ -1116,7 +1116,7 @@ function render($renderType, $args=array()) {
          </table>
          <span class="subtitle">Select a download method:</span>
          <table class="choice">
-         <?php $first = true; 
+         <?php $first = true;
                foreach ($args['downloadMethods'] as $method):
            $disabled = empty($method['isSupported']) ? 'disabled="true"' : '';
            $notSupported = empty($method['isSupported']) ? 'not supported by this platform' : '&nbsp;';
