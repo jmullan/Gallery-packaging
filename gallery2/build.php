@@ -373,7 +373,7 @@ function buildPreinstaller() {
     $result = $results[0];
     preg_match('/versionId (.*)/', $result, $matches);
     $VERSION = $matches[1];
-    system("zip -j -q $DISTDIR/gallery2-preinstaller-$VERSION.zip " .
+    system("zip -j -q $DISTDIR/preinstaller-$VERSION.zip " .
 	   "preinstaller/LICENSE preinstaller/README.txt preinstaller/preinstall.php");
 }
 
