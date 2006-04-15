@@ -1,8 +1,7 @@
 #!/usr/bin/php -f
 <?php
-$TAG = 'RELEASE_2_1';
-// $PATCH_FOR = array('RELEASE_2_0_4', 'RELEASE_2_0_3',
-//		      'RELEASE_2_0_2', 'RELEASE_2_0_1', 'RELEASE_2_0');
+$TAG = 'RELEASE_2_1_1';
+$PATCH_FOR = array('RELEASE_2_1');
 $CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -10,7 +9,6 @@ $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
 $CVS = 'cvs -f -Q -z3 -d ' . $CVSROOT;
 $SKIP_CHECKOUT = false;
-
 
 function checkOut($useTag=true) {
     global $SRCDIR, $BASEDIR, $CVS, $TAG, $SKIP_CHECKOUT;
@@ -371,7 +369,7 @@ function buildPreinstaller() {
     $results = preg_grep('/^ \* @versionId (.*)/', file("preinstaller/preinstall.php"));
     $results = array_values($results);
     $result = $results[0];
-    preg_match('/versionId (.*)/', $result, $matches);
+    preg_match('/versionId ([0-9\.]+)/', $result, $matches);
     $VERSION = $matches[1];
     system("zip -j -q $DISTDIR/preinstaller-$VERSION.zip " .
 	   "preinstaller/LICENSE preinstaller/README.txt preinstaller/preinstall.php");
