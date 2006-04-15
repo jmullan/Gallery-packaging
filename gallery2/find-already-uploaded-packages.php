@@ -1,5 +1,16 @@
 #!/usr/bin/php -f
 <?php
+$DELETE = false;
+
+$argv = $_SERVER['argv'];
+array_shift($argv);
+while (count($argv) > 0) {
+    $arg = array_shift($argv);
+    if ($arg == '--delete') {
+	$DELETE = true;
+    }
+}
+
 $dist_dir = 'dist';
 $downloads_html = 'tmp/downloads.html';
 if (!file_exists($downloads_html)) {
@@ -14,9 +25,15 @@ foreach ($lines as $line) {
 	if ($file == '..') {
 	    continue;
 	}
-	if (file_exists($dist_dir . '/' . $file)) {
-	    print "$file already uploaded\n";
+	$path = $dist_dir . '/' . $file;
+	if (file_exists($path)) {
+	    print "$file already uploaded";
 	    $conflicts++;
+	    if ($DELETE) {
+		unlink($path);
+		print " (deleted)";
+	    }
+	    print "\n";
 	}
     }
 }
