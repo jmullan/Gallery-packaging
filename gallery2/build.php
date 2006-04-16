@@ -263,7 +263,8 @@ function buildPatch($patchFromTag) {
 	    if (preg_match('/MANIFEST/', $changedFile)) {
 		$manifestFiles[$changedFile] = 1;
 	    } else if ($changedFile != 'docs/LOCALIZING' &&
-		       !preg_match('/Test.class$/', $changedFile)) {
+		       !preg_match('/Test.class$/', $changedFile) &&
+		       !preg_match('|^lib/tools/|', $changedFile)) {
 		/* We ditched docs/LOCALIZING in 2.0.2 -- don't want it in the patch */
 		/* Leave XxxTest.class files out of the patch */
 		$regularFiles[$changedFile] = 1;
@@ -274,7 +275,8 @@ function buildPatch($patchFromTag) {
     @unlink($patchTmp);
     system(sprintf("$CVS_DIFF $patchFromTag %s >> $patchTmp",
     		   join(' ', array_keys($regularFiles))));
-    system(sprintf("$CVS_DIFF $patchFromTag --ignore-matching-lines='.*Test.class' %s >> $patchTmp",
+    system(sprintf("$CVS_DIFF $patchFromTag --ignore-matching-lines='.*Test.class' " .
+		   "--ignore-matching-lines='lib/tools.*' %s >> $patchTmp",
     		   join(' ', array_keys($manifestFiles))));
 
     /*
@@ -324,10 +326,11 @@ function buildPatch($patchFromTag) {
 	    $lines = preg_grep('|^modules/\w+/test/|', $lines, PREG_GREP_INVERT);
 	    $lines = preg_grep('|^lib/tools|', $lines, PREG_GREP_INVERT);
 	    $new = fopen("$patchDir/$patchToken/$relativePath", 'wb');
-	    fwrite($new, join("\n", $lines));
+	    fwrite($new, join("", $lines));
 	    fclose($new);
 	} else {
-	    system("cp $SRCDIR/gallery2/$changedFile $patchDir/$patchToken/" . dirname($relativePath));
+	    system("cp $SRCDIR/gallery2/$changedFile $patchDir/$patchToken/" .
+		   dirname($relativePath));
 	}
     }
 
