@@ -10,7 +10,11 @@
 
 | '''<?php print $package['type'] ?>'''
 | [<?php print $package['url']['zip'] . " " . $package['size']['zip'] ?>]
+<?php if (!empty($package['url']['tar.gz'])): ?>
 | [<?php print $package['url']['tar.gz']. " " . $package['size']['tar.gz'] ?>]
+<?php else: ?>
+| &nbsp;
+<?php endif ?>
 |-
 <?php endforeach; ?>
 |}

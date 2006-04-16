@@ -2,7 +2,8 @@
 <?php
 $SOURCE_DIR = dirname(__FILE__) . '/src/gallery2';
 $PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/dist/';
-$RELEASE = 'gallery-2.1.1';
+$VERSION = '2.1.1';
+$RELEASE = "gallery-$VERSION";
 $EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download';
 
 /*
@@ -103,7 +104,7 @@ function updateDownloadPage() {
 }
 
 function getPackageHtml() {
-    global $DOWNLOAD_PREFIX, $RELEASE, $PACKAGE_TYPES;
+    global $DOWNLOAD_PREFIX, $RELEASE, $PACKAGE_TYPES, $VERSION;
 
     $packages = array();
     foreach ($PACKAGE_TYPES as $type) {
@@ -123,6 +124,14 @@ function getPackageHtml() {
 	}
 	$packages[] = $package;
     }
+
+    $preinstallerFile = "preinstaller-$VERSION.zip";
+    $packages[] = array(
+	'release' => "preinstaller-$VERSION",
+	'type' => 'Preinstaller',
+	'fileName' => $preinstallerFile,
+	'size' => array('zip' => getFilesize($preinstallerFile)),
+	'url' => array('zip' => $DOWNLOAD_PREFIX . $preinstallerFile));
 
     ob_start();
     include(dirname(__FILE__) . '/codex-download.tpl');
