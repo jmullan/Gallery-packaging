@@ -24,17 +24,31 @@ Checklist
   - installer system check doesn't report any missing/modified files
     (verify on Unix and Windows)
 - make sure all image files are binary
-- create a branch (if necessary)   <---------- DON'T FORGET TO DO THIS FOR EACH OFFICIAL RELEASE!
+- create a branch (if necessary)   <---------- DON'T FORGET TO DO THIS FOR EACH .0 RELEASE!
   - cvs tag -b BRANCH_2_0
 - tag the release
   - cvs update -r BRANCH_2_0
   - cvs tag RELEASE_2_0
+- Update preinstaller/preinstall.php
+  - Update @versionId to match current version
+  - Update release numbers in various urls
 - Update the BRANCH and PATCH_FOR vars in build.php
 - build.php scrub
 - build.php release
-- run find-already-uploaded-packages.php to find any packages that already
+  * mv tmp/update-...-.zip to dist
+- build.php preinstaller
+- run "find-already-uploaded-packages.php --delete" to remove any packages that already
   exist in sf.net.  Make sure those packages didn't miss a version bump, and
   if they didn't change since the last release delete them from dist/
+
+  <================ PROBLEM
+  Running this means that "build.php export" won't try to upload stuff that is already
+  out in the repository, but it means that update-codex-download-page.php is going to
+  fail because it won't be able to get file sizes for anything that gets deleted.
+  Possible solution: Tweak "build.php export" to not upload anything that's already
+  out there.
+  <===============
+
 - build.php export
 - Release the package on sf.net
   - Create a new release in the 'gallery2' release (if necessary) and upload the
@@ -48,6 +62,7 @@ Checklist
   - Run update-codex-download-page.php
   - Cut and paste its output on to Gallery2:Download
   - Click "show changes" and verify what you see
+- Update Gallery2:Upgrading_to_2.1.x if necessary
 - For RC releases, post forum topic for reporting/tracking issues
 - Update http://gallery.menalto.com/downloadblock
 - Update http://gallery.menalto.com/downloads

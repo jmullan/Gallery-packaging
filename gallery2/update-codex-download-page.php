@@ -1,8 +1,8 @@
 #!/usr/bin/php -f
 <?php
-$SOURCE_DIR = dirname(dirname(dirname(__FILE__))) . '/gallery2';
+$SOURCE_DIR = dirname(__FILE__) . '/src/gallery2';
 $PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/dist/';
-$RELEASE = 'gallery-2.1';
+$RELEASE = 'gallery-2.1.1';
 $EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download';
 
 /*
@@ -35,7 +35,7 @@ if (version_compare(phpversion(), '4.3.0', '<')) {
  *   switch.dl.sourceforge.net is fine for Europe
  *   internap.dl.sourceforge.net is fine for North America
  */
-$DIRECT_DOWNLOAD_PREFIX = 'http://internap.dl.sourceforge.net/sourceforge/gallery/';
+$DIRECT_DOWNLOAD_PREFIX = 'http://superb-west.dl.sourceforge.net/sourceforge/gallery/';
 $DOWNLOAD_FILES_IF_REQUIRED = false;
 if ($argc > 1 && in_array('-d', $argv)) {
     $DOWNLOAD_FILES_IF_REQUIRED = true;
@@ -251,7 +251,7 @@ function getFilesize($fileName) {
 	    }
 	}
     } else {
-	print "WARNING: file $fileName is missing\n";
+	fwrite(STDERR, "WARNING: file $fileName is missing\n");
     }
 
     return $size;
