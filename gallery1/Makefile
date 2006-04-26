@@ -1,8 +1,9 @@
 # $Id$
 
-BRANCH = BRANCH_1_4_4
+# branches/{branchname} or tags/{tagname} or trunk
+BRANCH = branches/BRANCH_1_4_4
 TARDIR = tardir
-CVS = cvs -z3 -d ${CVSROOT}
+SVNURL = https://svn.sourceforge.net/svnroot/gallery/${BRANCH}
 VERSION_PHP = ${TARDIR}/gallery/Version.php
 VERSION_CODE = php -r 'include("${VERSION_PHP}"); print $$gallery->version;'
 TARBALL = gallery-$(shell ${VERSION_CODE}).tar.gz
@@ -16,11 +17,7 @@ package: ${TARDIR} ${TARDIR}/gallery
 # Export the gallery module, generate the docs and copy them into the exported gallery
 #
 ${TARDIR}/gallery: ${TARDIR}/docs
-	@if [ -z "${CVSROOT}" ]; then \
-		echo "CVSROOT needs to be set for this script to run."; \
-		exit 1; \
-	fi
-	(cd ${TARDIR} && ${CVS} export -r ${BRANCH} gallery) && \
+	(cd ${TARDIR} && svn export ${SVNURL}/gallery) && \
 	(cp -R ${TARDIR}/gallery/locale/en_US ${TARDIR}/gallery/en_US_temp) && \
 	(rm -rf ${TARDIR}/gallery/locale) && \
 	(mkdir ${TARDIR}/gallery/locale) && \
@@ -32,11 +29,7 @@ ${TARDIR}/gallery: ${TARDIR}/docs
 # Export the docs module
 #
 ${TARDIR}/docs: 
-	@if [ -z "${CVSROOT}" ]; then \
-		echo "CVSROOT needs to be set for this script to run."; \
-		exit 1; \
-	fi
-	(cd ${TARDIR} && ${CVS} export -r ${BRANCH} docs)
+	(cd ${TARDIR} && svn export ${SVNURL}/docs)
 
 ${TARDIR}:
 	mkdir ${TARDIR}
@@ -50,4 +43,3 @@ clean:
 version:
 	echo ${VERSION}
 
-.PHONY: cvsroot
