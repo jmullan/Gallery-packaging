@@ -16,15 +16,15 @@ http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-2-typical.tar.gz
 Zip:
 http://prdownloads.sourceforge.net/gallery/gallery-2.0-rc-2-typical.zip
 Changelog:
-http://cvs.sourceforge.net/[..]ery/gallery2/README.html?1.131#whats_new
+http://svn.sourceforge.net/[..]ery/gallery2/README.html?1131#whats_new
 Debian package:
 http://packages.debian.org/unstable/web/gallery2
-CVS tree (cvsweb):
-http://cvs.sourceforge.net/viewcvs.py/gallery/gallery2/
+SVN tree (viewvc):
+http://svn.sourceforge.net/viewcvs.cgi/gallery/trunk/gallery2/
 Bug tracker:
 http://sourceforge.net/tracker/?group_id=7130&atid=107130
 Demo site:
-http://gallery.menalto.com/[..]php?name=PNphpBB2&file=viewtopic&t=21047
+http://gallery.menalto.com/forum/g2_demo_sites
 freshmeat project page:
 http://freshmeat.net/projects/the_gallery/
 

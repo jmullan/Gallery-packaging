@@ -2,12 +2,11 @@
 <?php
 $TAG = 'RELEASE_2_1_1';
 $PATCH_FOR = array('RELEASE_2_1');
-$CVSROOT = ":ext:$_SERVER[USER]@cvs.sf.net:/cvsroot/gallery";
+$SVNURL = 'https://svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
-$CVS = 'cvs -f -Q -z3 -d ' . $CVSROOT;
 $SKIP_CHECKOUT = false;
 
 function checkOut($useTag=true) {
@@ -19,7 +18,7 @@ function checkOut($useTag=true) {
     if ($SKIP_CHECKOUT) {
 	print 'Skipping checkout...';
     } else {
-	$cmd = "$CVS checkout" . ($useTag ? " -r $TAG" : '') . ' -P gallery2';
+	$cmd = 'svn checkout -q ' . $SVNURL . ($useTag ? "tags/$TAG" : 'trunk') . '/gallery2';
 	system($cmd, $result);
 	if ($result) {
 	    die('Checkout failed');
@@ -78,10 +77,7 @@ function buildPluginPackage($type, $id, $version) {
     chdir("$SRCDIR/gallery2");
 
     $relative = "${type}s/$id";
-    $files = explode("\n", `find $relative -type f`);
-
-    /* Exclude CVS */
-    $files = preg_grep('|CVS|', $files, PREG_GREP_INVERT);
+    $files = explode("\n", `find $relative -name .svn -prune -o -type f -print`);
 
     /* Dump the list to a tmp file */
     $fd = fopen("$TMPDIR/files.txt", 'w+');
@@ -114,10 +110,7 @@ function buildPackage($version, $tag, $packages, $developer) {
 
     /* Get all files */
     chdir($SRCDIR);
-    $files = explode("\n", `find gallery2 -type f`);
-
-    /* Exclude CVS */
-    $originalFiles = $files = preg_grep('|CVS|', $files, PREG_GREP_INVERT);
+    $originalFiles = $files = explode("\n", `find gallery2 -name .svn -prune -o -type f -print`);
 
     /* Pull all non developer files, if necessary */
     if (!$developer) {

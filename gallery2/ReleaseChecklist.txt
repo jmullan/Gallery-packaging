@@ -11,9 +11,7 @@ Checklist
 - review and update the README.html.
   - Make sure that its title, codename/introduction and logo buttons are correct
 - bump version for every plugin that has changed since last release but hasn't changed version
-  - something like: cvs -q log -h -S -d ">2006-02-01" | perl -naF: -e '$F[1]=~s/^\s*(.*?)\s*$/$1/; ($f=$F[1])=~s|^.*?gallery2/([^/]*(?:/[^/]*)?).*,v$|$1| if ($F[0] eq "RCS file"); $h=$F[1] if ($F[0] eq "head"); print "$f\n" if ($F[0] =~ /RELEASE_2_1_RC_2$/ and $h ne $F[1])' | sort -u
-  - (replace 2006-02-01 with any cutoff date just to limit the amount of data to parse,
-     and replace RELEASE_2_1_RC_2 with the last tagged release)
+  (update values in changed-plugins.sh and run it)
 - bump modules/core/module.inc CoreModule::setGalleryVersion
 - bump core/module.inc CoreModule::setVersion (update modules/core/CoreModulesExtras::upgrade, too)
 - Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo and version text
@@ -25,10 +23,10 @@ Checklist
     (verify on Unix and Windows)
 - make sure all image files are binary
 - create a branch (if necessary)   <---------- DON'T FORGET TO DO THIS FOR EACH .0 RELEASE!
-  - cvs tag -b BRANCH_2_0
+  - svn mkdir https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
+  - svn copy https://svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
 - tag the release
-  - cvs update -r BRANCH_2_0
-  - cvs tag RELEASE_2_0
+  - svn copy https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1 https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_1
 - Update preinstaller/preinstall.php
   - Update @versionId to match current version
   - Update release numbers in various urls
