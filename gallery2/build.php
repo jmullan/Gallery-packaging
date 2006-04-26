@@ -10,7 +10,7 @@ $DISTDIR = $BASEDIR . '/dist';
 $SKIP_CHECKOUT = false;
 
 function checkOut($useTag=true) {
-    global $SRCDIR, $BASEDIR, $CVS, $TAG, $SKIP_CHECKOUT;
+    global $SRCDIR, $BASEDIR, $SVNURL, $TAG, $SKIP_CHECKOUT;
 
     print 'Checking out code...';
 
@@ -402,8 +402,8 @@ case 'nightly':
 case 'release':
     /*
      * Note: Don't build the manifests for final releases.  When we do a
-     * release, the manifests should be up to date in CVS.  If something
-     * has gone wrong and we're divergent from CVS then building the
+     * release, the manifests should be up to date in SVN.  If something
+     * has gone wrong and we're divergent from SVN then building the
      * MANIFESTs here will obscure that.
      */
     checkOut();
