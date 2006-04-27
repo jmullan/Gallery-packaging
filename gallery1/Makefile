@@ -1,7 +1,7 @@
 # $Id$
 
 # branches/{branchname} or tags/{tagname} or trunk
-BRANCH = branches/BRANCH_1_4_4
+BRANCH = trunk
 TARDIR = tardir
 SVNURL = https://svn.sourceforge.net/svnroot/gallery/${BRANCH}
 VERSION_PHP = ${TARDIR}/gallery/Version.php
@@ -17,7 +17,7 @@ package: ${TARDIR} ${TARDIR}/gallery
 # Export the gallery module, generate the docs and copy them into the exported gallery
 #
 ${TARDIR}/gallery: ${TARDIR}/docs
-	(cd ${TARDIR} && svn export ${SVNURL}/gallery) && \
+	(cd ${TARDIR} && svn export -q ${SVNURL}/gallery) && \
 	(cp -R ${TARDIR}/gallery/locale/en_US ${TARDIR}/gallery/en_US_temp) && \
 	(rm -rf ${TARDIR}/gallery/locale) && \
 	(mkdir ${TARDIR}/gallery/locale) && \
@@ -29,7 +29,7 @@ ${TARDIR}/gallery: ${TARDIR}/docs
 # Export the docs module
 #
 ${TARDIR}/docs: 
-	(cd ${TARDIR} && svn export ${SVNURL}/docs)
+	(cd ${TARDIR} && svn export -q ${SVNURL}/docs)
 
 ${TARDIR}:
 	mkdir ${TARDIR}
