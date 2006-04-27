@@ -3,9 +3,6 @@
 $passPhrase = "";
 
 /*
- * $RCSfile$
- *
- *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2006 Bharat Mediratta
  *
@@ -79,8 +76,8 @@ $preInstaller->main();
 class PreInstaller {
 
     function main() {
-    	/* Authentication */
-    	$this->authenticate();
+	/* Authentication */
+	$this->authenticate();
 
 	/* Register all extract / download methods */
 	$this->_extractMethods =  array(new UnzipExtractor(),
@@ -105,23 +102,23 @@ class PreInstaller {
 	else $command = trim($_POST['command']);
 	switch ($command) {
 	    case 'extract':
-	        /* Input validation / sanitation */
-	    	if (empty($_POST['method'])) $method = '';
-	    	else $method = trim($_POST['method']);
-	    	if (!preg_match('/^[a-z]+extractor$/', $method)) $method = '';
-	    	/* Handle the request */
-	    	if (class_exists($method)) {
-	    	    global $archiveBaseName;
-	    	    $extractor = new $method;
-	    	    if ($extractor->isSupported()) {
-	    	    	$archiveName = dirname(__FILE__) . '/' .
+		/* Input validation / sanitation */
+		if (empty($_POST['method'])) $method = '';
+		else $method = trim($_POST['method']);
+		if (!preg_match('/^[a-z]+extractor$/', $method)) $method = '';
+		/* Handle the request */
+		if (class_exists($method)) {
+		    global $archiveBaseName;
+		    $extractor = new $method;
+		    if ($extractor->isSupported()) {
+			$archiveName = dirname(__FILE__) . '/' .
 				$archiveBaseName .  '.' . $extractor->getSupportedExtension();
-	    	    	if (file_exists($archiveName)) {
-	    	    	    $results = $extractor->extract($archiveName);
-	    	    	    if ($results === true) {
-	    	    	    	/* Make sure the dirs and files were extracted successfully */
+			if (file_exists($archiveName)) {
+			    $results = $extractor->extract($archiveName);
+			    if ($results === true) {
+				/* Make sure the dirs and files were extracted successfully */
 				if (!$this->integrityCheck()) {
-	    			    render('results', array('failure' => 'Extraction was successful, but coarse integrity check failed'));
+				    render('results', array('failure' => 'Extraction was successful, but coarse integrity check failed'));
 				} else {
 				    render('results', array('success' => 'Archive successfully extracted'));
 
@@ -131,125 +128,125 @@ class PreInstaller {
 				     */
 				    @chmod(dirname(__FILE__) . '/gallery2', 0777);
 				}
-	    	    	    } else {
-	    	    	    	render('results', array('failure' => $results));
-	    	    	    }
-	    	        } else {
-	    	            render('results', array('failure' => "Archive $archiveName does not exist in the current working directory"));
-	    	    	}
-	    	    } else {
-	    	    	render('results', array('failure' => "Method $method is not supported by this platform!"));
-	    	    }
-	    	} else {
-	    	    render('results', array('failure' => 'Extract method is not defined or does not exist!'));
-	    	}
-	    	break;
- 	    case 'download':
- 	        /* Input validation / sanitation */
- 	        /* The download method */
-	    	if (empty($_POST['method'])) $method = '';
-	    	else $method = trim($_POST['method']);
-	    	if (!preg_match('/^[a-z]+downloader$/', $method)) $method = '';
-	    	/* ... archive extension */
-	    	if (empty($_POST['extension'])) $extension = '';
-	    	else $extension = trim($_POST['extension']);
-	    	if (!preg_match('/^([a-z]{2,4}+\.)?[a-z]{2,4}$/', $extension)) {
-	    	    render('results', array('failure' => 'Filetype for download not defined, please retry'));
-	    	    exit;
-	    	}
-	    	global $availableExtensions, $availableVersions;
-	    	if (!in_array($extension, $availableExtensions)) $extension = 'zip';
-	    	/* Gallery 2 version (stable, rc, nightly snapshot) */
-	    	if (empty($_POST['version'])) $version = '';
-	    	else $version = trim($_POST['version']);
-	    	if (!in_array($version, $availableVersions)) $version = 'stable';
-	    	if (class_exists($method)) {
-	    	    $downloader = new $method;
-	    	    if ($downloader->isSupported()) {
-	    	    	global $archiveBaseName;
-	    	    	$archiveName = dirname(__FILE__) . '/' . $archiveBaseName . '.' . $extension;
-	    	    	/* Assemble the downlod URL */
-	    	    	$url = $this->getDownloadUrl($version, $extension, $downloader);
-	    	    	$results = $downloader->download($url, $archiveName);
-	    	    	if ($results === true) {
-	    	    	    if (file_exists($archiveName)) {
-	    	    	    	@chmod($archiveName, 0777);
-	    	    	    	render('results', array('success' => 'File successfully downloaded'));
-	    	    	    	$this->afterDownloadHandling($downloader, $version, $extension);
-	    	    	    } else {
-	    	    	    	render('results', array('failure' => "Download failed, local file $archiveName does not exist"));
-	    	    	    }
-	    	    	} else {
-	    	    	    render('results', array('failure' => $results));
-	    	    	}
-	    	    } else {
-	    	    	render('results', array('failure' => "Method $method is not supported by this platform!"));
-	    	    }
-	    	} else {
-	    	    render('results', array('failure' => 'Method is not defined or does not exist!'));
-	    	}
-	   	break;
+			    } else {
+				render('results', array('failure' => $results));
+			    }
+			} else {
+			    render('results', array('failure' => "Archive $archiveName does not exist in the current working directory"));
+			}
+		    } else {
+			render('results', array('failure' => "Method $method is not supported by this platform!"));
+		    }
+		} else {
+		    render('results', array('failure' => 'Extract method is not defined or does not exist!'));
+		}
+		break;
+	    case 'download':
+		/* Input validation / sanitation */
+		/* The download method */
+		if (empty($_POST['method'])) $method = '';
+		else $method = trim($_POST['method']);
+		if (!preg_match('/^[a-z]+downloader$/', $method)) $method = '';
+		/* ... archive extension */
+		if (empty($_POST['extension'])) $extension = '';
+		else $extension = trim($_POST['extension']);
+		if (!preg_match('/^([a-z]{2,4}+\.)?[a-z]{2,4}$/', $extension)) {
+		    render('results', array('failure' => 'Filetype for download not defined, please retry'));
+		    exit;
+		}
+		global $availableExtensions, $availableVersions;
+		if (!in_array($extension, $availableExtensions)) $extension = 'zip';
+		/* Gallery 2 version (stable, rc, nightly snapshot) */
+		if (empty($_POST['version'])) $version = '';
+		else $version = trim($_POST['version']);
+		if (!in_array($version, $availableVersions)) $version = 'stable';
+		if (class_exists($method)) {
+		    $downloader = new $method;
+		    if ($downloader->isSupported()) {
+			global $archiveBaseName;
+			$archiveName = dirname(__FILE__) . '/' . $archiveBaseName . '.' . $extension;
+			/* Assemble the downlod URL */
+			$url = $this->getDownloadUrl($version, $extension, $downloader);
+			$results = $downloader->download($url, $archiveName);
+			if ($results === true) {
+			    if (file_exists($archiveName)) {
+				@chmod($archiveName, 0777);
+				render('results', array('success' => 'File successfully downloaded'));
+				$this->afterDownloadHandling($downloader, $version, $extension);
+			    } else {
+				render('results', array('failure' => "Download failed, local file $archiveName does not exist"));
+			    }
+			} else {
+			    render('results', array('failure' => $results));
+			}
+		    } else {
+			render('results', array('failure' => "Method $method is not supported by this platform!"));
+		    }
+		} else {
+		    render('results', array('failure' => 'Method is not defined or does not exist!'));
+		}
+		break;
 	   case 'chmod':
 		/* Input validation / sanitation */
-	   	if (empty($_POST['folderName'])) $folderName = '';
-	    	else $folderName = trim($_POST['folderName']);
-	    	/* Remove trailing / leading slashes */
-	    	$folderName = str_replace(array('/', "\\", '..'), '', $folderName);
-	    	if (!preg_match('/^\w+(\.\w+)*$/', $folderName)) {
-	    	    render('results', array('failure' => "Folder $folderName has invalid characters. Can only change the permissions of folders in the current working directory."));
-	    	    exit;
-	    	}
-	    	$folderName = dirname(__FILE__) . '/' .  $folderName;
-	    	if (!file_exists($folderName)) {
-	    	    render('results', array('failure' => "Folder $folderName does not exist!"));
-	    	    exit;
-	    	}
-	    	if (empty($_POST['folderPermissions'])) $folderPermissions = '';
-	    	else $folderPermissions= trim($_POST['folderPermissions']);
-	    	/* Handle the request */
-	    	global $folderPermissionList;
-	    	if (in_array($folderPermissions, $folderPermissionList)) {
-	    	    $folderPermissions = (string)('0' . (int)$folderPermissions);
-	    	    $success = @chmod($folderName, octdec($folderPermissions));
-	    	    if (!$success) {
-	    	    	render('results', array('failure' => "Attempt to change permissions of folder $folderName to $folderPermissions failed!"));
-	    	    } else {
-	    	    	render('results', array('success' => "Successfully changed permissions of $folderName to $folderPermissions"));
-	    	    }
+		if (empty($_POST['folderName'])) $folderName = '';
+		else $folderName = trim($_POST['folderName']);
+		/* Remove trailing / leading slashes */
+		$folderName = str_replace(array('/', "\\", '..'), '', $folderName);
+		if (!preg_match('/^\w+(\.\w+)*$/', $folderName)) {
+		    render('results', array('failure' => "Folder $folderName has invalid characters. Can only change the permissions of folders in the current working directory."));
+		    exit;
+		}
+		$folderName = dirname(__FILE__) . '/' .  $folderName;
+		if (!file_exists($folderName)) {
+		    render('results', array('failure' => "Folder $folderName does not exist!"));
+		    exit;
+		}
+		if (empty($_POST['folderPermissions'])) $folderPermissions = '';
+		else $folderPermissions= trim($_POST['folderPermissions']);
+		/* Handle the request */
+		global $folderPermissionList;
+		if (in_array($folderPermissions, $folderPermissionList)) {
+		    $folderPermissions = (string)('0' . (int)$folderPermissions);
+		    $success = @chmod($folderName, octdec($folderPermissions));
+		    if (!$success) {
+			render('results', array('failure' => "Attempt to change permissions of folder $folderName to $folderPermissions failed!"));
+		    } else {
+			render('results', array('success' => "Successfully changed permissions of $folderName to $folderPermissions"));
+		    }
 		} else {
 		    render('results', array('failure' => "Invalid permissions $folderPermissions"));
-	    	}
-	    	break;
+		}
+		break;
 	    case 'rename':
-	   	if (empty($_POST['folderName'])) $folderName = '';
-	    	else $folderName = trim($_POST['folderName']);
-	    	/* Remove trailing / leading slashes */
-	    	$folderName = str_replace(array('/', "\\", '.'), '', $folderName);
-	    	if (!preg_match('/^\w+$/', $folderName)) {
-	    	    render('results', array('failure' => "Folder name $folderName has invalid characters. Can only rename within the current working directory."));
-	    	    exit;
-	    	}
-	    	$folderName = dirname(__FILE__) . '/' .  $folderName;
-	    	$oldFolderName = $this->findGallery2Folder();
-	    	if (empty($oldFolderName) || !file_exists(dirname(__FILE__) . '/' . $oldFolderName)) {
-	    	    render('results', array('failure' => "No Gallery 2 folder found in  the current working directory."));
-	    	    exit;
-	    	}
-	    	$oldFolderName = dirname(__FILE__) . '/' . $oldFolderName;
-	    	$success = @rename($oldFolderName, $folderName);
-	    	if (!$success) {
-	    	    render('results', array('failure' => "Attempt to rename $oldFolderName to $folderName failed!"));
-	    	} else {
-	    	    render('results', array('success' => "Successfully renamed $oldFolderName to $folderName"));
-	    	}
-	    	break;
+		if (empty($_POST['folderName'])) $folderName = '';
+		else $folderName = trim($_POST['folderName']);
+		/* Remove trailing / leading slashes */
+		$folderName = str_replace(array('/', "\\", '.'), '', $folderName);
+		if (!preg_match('/^\w+$/', $folderName)) {
+		    render('results', array('failure' => "Folder name $folderName has invalid characters. Can only rename within the current working directory."));
+		    exit;
+		}
+		$folderName = dirname(__FILE__) . '/' .  $folderName;
+		$oldFolderName = $this->findGallery2Folder();
+		if (empty($oldFolderName) || !file_exists(dirname(__FILE__) . '/' . $oldFolderName)) {
+		    render('results', array('failure' => "No Gallery 2 folder found in  the current working directory."));
+		    exit;
+		}
+		$oldFolderName = dirname(__FILE__) . '/' . $oldFolderName;
+		$success = @rename($oldFolderName, $folderName);
+		if (!$success) {
+		    render('results', array('failure' => "Attempt to rename $oldFolderName to $folderName failed!"));
+		} else {
+		    render('results', array('success' => "Successfully renamed $oldFolderName to $folderName"));
+		}
+		break;
 	    default:
-	    	/* Discover the capabilities of this PHP installation / platform */
+		/* Discover the capabilities of this PHP installation / platform */
 		$capabilities = $this->discoverCapabilities();
 		$capabilities['gallery2FolderName'] = $this->findGallery2Folder();
 		if (!empty($capabilities['gallery2FolderName'])) {
 		    $statusMessage  = "Ready for installation (Gallery 2 folder '" .
-		    	$capabilities['gallery2FolderName'] . "' found)";
+			$capabilities['gallery2FolderName'] . "' found)";
 		} else if (!empty($capabilities['anyArchiveExists'])) {
 		    $statusMessage = 'Archive ready for extraction';
 		} else {
@@ -260,154 +257,154 @@ class PreInstaller {
 		/* Are we in RC stage?*/
 		if (!empty($capabilities['downloadMethods'])) {
 		    foreach ($capabilities['downloadMethods'] as $dMethod) {
-		    	if ($dMethod['isSupported']) {
+			if ($dMethod['isSupported']) {
 			    $capabilities['showRcVersion'] =
-		    			$this->shouldShowRcVersion(new $dMethod['command']);
-		    	    break;
-		    	}
+					$this->shouldShowRcVersion(new $dMethod['command']);
+			    break;
+			}
 		    }
 		}
- 	        render('options', $capabilities);
+		render('options', $capabilities);
 	}
     }
 
     function authenticate() {
-        global $passPhrase;
+	global $passPhrase;
 
-    	/* Check authentication */
-    	if (empty($passPhrase)) {
-    	    render('missingPassword');
-    	    exit;
-    	} else if (strlen($passPhrase) < 6) {
-    	    render('passwordTooShort');
-    	    exit;
-    	} else if (!empty($_COOKIE['G2PREINSTALLER']) &&
-    			trim($_COOKIE['G2PREINSTALLER']) == md5($passPhrase)) {
-    	    /* Already logged in, got a cookie */
-    	    return true;
-    	} else if (!empty($_POST['g2_password'])) {
-    	    /* Login attempt */
-    	    if ($_POST['g2_password'] == $passPhrase) {
-    	    	setcookie("G2PREINSTALLER",md5($passPhrase),0);
-    		return true;
-    	    } else {
-    		render('passwordForm', array('incorrectPassword' => 1));
-    		exit;
-    	    }
-    	} else {
-    	    render('passwordForm');
-    	    exit;
-    	}
+	/* Check authentication */
+	if (empty($passPhrase)) {
+	    render('missingPassword');
+	    exit;
+	} else if (strlen($passPhrase) < 6) {
+	    render('passwordTooShort');
+	    exit;
+	} else if (!empty($_COOKIE['G2PREINSTALLER']) &&
+			trim($_COOKIE['G2PREINSTALLER']) == md5($passPhrase)) {
+	    /* Already logged in, got a cookie */
+	    return true;
+	} else if (!empty($_POST['g2_password'])) {
+	    /* Login attempt */
+	    if ($_POST['g2_password'] == $passPhrase) {
+		setcookie("G2PREINSTALLER",md5($passPhrase),0);
+		return true;
+	    } else {
+		render('passwordForm', array('incorrectPassword' => 1));
+		exit;
+	    }
+	} else {
+	    render('passwordForm');
+	    exit;
+	}
     }
 
     function discoverCapabilities() {
-    	global $archiveBaseName;
-        $capabilities = array();
+	global $archiveBaseName;
+	$capabilities = array();
 
-        $extractMethods = array();
-        $extensions = array();
-        $anyExtensionSupported = 0;
-        $anyArchiveExists = 0;
-        foreach	($this->_extractMethods as $method) {
-            $archiveName = $archiveBaseName . '.' . $method->getSupportedExtension();
-            $archiveExists = file_exists(dirname(__FILE__) . '/' . $archiveName);
-            $isSupported = $method->isSupported();
-            $extractMethods[] = array('isSupported' => $isSupported,
-            			      'name' => $method->getName(),
-            			      'command' => strtolower(get_class($method)),
-            			      'archiveExists' => $archiveExists,
-            			      'archiveName' => $archiveName);
-            if (empty($extensions[$method->getSupportedExtension()])) {
-                $extensions[$method->getSupportedExtension()] = (int)$isSupported;
-            }
-            if ($isSupported) {
-            	$anyExtensionSupported = 1;
-            }
-            if ($archiveExists) {
-            	$anyArchiveExists = 1;
-            }
-        }
-        $capabilities['extractMethods'] = $extractMethods;
+	$extractMethods = array();
+	$extensions = array();
+	$anyExtensionSupported = 0;
+	$anyArchiveExists = 0;
+	foreach	($this->_extractMethods as $method) {
+	    $archiveName = $archiveBaseName . '.' . $method->getSupportedExtension();
+	    $archiveExists = file_exists(dirname(__FILE__) . '/' . $archiveName);
+	    $isSupported = $method->isSupported();
+	    $extractMethods[] = array('isSupported' => $isSupported,
+				      'name' => $method->getName(),
+				      'command' => strtolower(get_class($method)),
+				      'archiveExists' => $archiveExists,
+				      'archiveName' => $archiveName);
+	    if (empty($extensions[$method->getSupportedExtension()])) {
+		$extensions[$method->getSupportedExtension()] = (int)$isSupported;
+	    }
+	    if ($isSupported) {
+		$anyExtensionSupported = 1;
+	    }
+	    if ($archiveExists) {
+		$anyArchiveExists = 1;
+	    }
+	}
+	$capabilities['extractMethods'] = $extractMethods;
 	$capabilities['extensions'] = $extensions;
 	$capabilities['anyExtensionSupported'] = $anyExtensionSupported;
 	$capabilities['anyArchiveExists'] = $anyArchiveExists;
 
-        $downloadMethods = array();
-        foreach	($this->_downloadMethods as $method) {
-            $downloadMethods[] = array('isSupported' => $method->isSupported(),
-            			     'name' => $method->getName(),
-            			     'command' => strtolower(get_class($method)));
-        }
-        $capabilities['downloadMethods'] = $downloadMethods;
+	$downloadMethods = array();
+	foreach	($this->_downloadMethods as $method) {
+	    $downloadMethods[] = array('isSupported' => $method->isSupported(),
+				       'name' => $method->getName(),
+				       'command' => strtolower(get_class($method)));
+	}
+	$capabilities['downloadMethods'] = $downloadMethods;
 
-        return $capabilities;
+	return $capabilities;
     }
 
     function findGallery2Folder() {
-        /* Search in the current folder for a gallery2 folder */
-        $basePath = dirname(__FILE__) . '/';
-        if (file_exists($basePath . 'gallery2') &&
-        	file_exists($basePath . 'gallery2/install/index.php')) {
-            return 'gallery2';
-        }
+	/* Search in the current folder for a gallery2 folder */
+	$basePath = dirname(__FILE__) . '/';
+	if (file_exists($basePath . 'gallery2') &&
+		file_exists($basePath . 'gallery2/install/index.php')) {
+	    return 'gallery2';
+	}
 
-    	if (!Platform::isPhpFunctionSupported('opendir') ||
-    	        !Platform::isPhpFunctionSupported('readdir')) {
-    	    return false;
-    	}
+	if (!Platform::isPhpFunctionSupported('opendir') ||
+		!Platform::isPhpFunctionSupported('readdir')) {
+	    return false;
+	}
 
-    	$handle = opendir($basePath);
-    	if (!$handle) {
-    	    return false;
-    	}
-    	while (($fileName = readdir($handle)) !== false) {
+	$handle = opendir($basePath);
+	if (!$handle) {
+	    return false;
+	}
+	while (($fileName = readdir($handle)) !== false) {
 	    if ($fileName == '.' || $fileName == '..') {
 		continue;
 	    }
 	    if (file_exists($basePath . $fileName . '/install/index.php')) {
-	    	return $fileName;
+		return $fileName;
 	    }
-    	}
-    	closedir($handle);
+	}
+	closedir($handle);
 
-    	return false;
+	return false;
     }
 
     function integrityCheck() {
-    	/* TODO, check for the existence of modules, lib, themes, main.php */
-        return true;
+	/* TODO, check for the existence of modules, lib, themes, main.php */
+	return true;
     }
 
     function getDownloadUrl($version, $extension, $downloader) {
-    	global $mirrors, $nightlySnapshotSite;
+	global $mirrors, $nightlySnapshotSite;
 
-    	$url = $this->_getDownloadFilename($version, $extension, $downloader);
-    	if ($version != 'nightly') {
+	$url = $this->_getDownloadFilename($version, $extension, $downloader);
+	if ($version != 'nightly') {
 	    /* Prepend the mirror string */
 	    $url = $mirrors[0] . $url;
-    	} else {
-    	    $url = $nightlySnapshotSite . $url;
-    	}
+	} else {
+	    $url = $nightlySnapshotSite . $url;
+	}
 
-    	return $url;
+	return $url;
     }
 
     /* Returns the */
     function _getDownloadFilename($version, $extension, $downloader) {
-    	global $downloadUrls;
+	global $downloadUrls;
 
-    	/* Default to the last known good version */
+	/* Default to the last known good version */
 	$filename = $downloadUrls[$version];
 
-    	/* Try to get the latest version string */
-    	$currentDownloadUrls = $this->getLatestVersions($downloader);
-    	if (!empty($currentDownloadUrls[$version])) {
-    	    $filename = $currentDownloadUrls[$version];
-    	}
+	/* Try to get the latest version string */
+	$currentDownloadUrls = $this->getLatestVersions($downloader);
+	if (!empty($currentDownloadUrls[$version])) {
+	    $filename = $currentDownloadUrls[$version];
+	}
 
-    	$filename .= '.' . $extension;
+	$filename .= '.' . $extension;
 
-    	return $filename;
+	return $filename;
     }
 
     function getLatestVersions($downloader) {
@@ -432,7 +429,7 @@ class PreInstaller {
 		    $versionStrings = implode('|', $availableVersions);
 		    if (preg_match('/^(' . $versionStrings .
 				')=((?:[A-Za-z0-9-_]+\.?)+)$/',
-		    		   $line, $match)) {
+				   $line, $match)) {
 
 			$currentVersions[$match[1]] = $match[2];
 		    }
@@ -479,7 +476,7 @@ class Platform {
 
     /* Return the path to a binary or false if it's not available */
     function getBinaryPath($binaryName) {
-    	if (!Platform::isPhpFunctionSupported('exec')) {
+	if (!Platform::isPhpFunctionSupported('exec')) {
 	    return false;
 	}
 
@@ -539,10 +536,10 @@ class Platform {
     }
 
     function extendTimeLimit() {
-    	if (function_exists('apache_reset_timeout')) {
-    	    @apache_reset_timeout();
-    	}
-    	@set_time_limit(600);
+	if (function_exists('apache_reset_timeout')) {
+	    @apache_reset_timeout();
+	}
+	@set_time_limit(600);
     }
 }
 
@@ -556,15 +553,15 @@ class DownloadMethod {
     }
 
     function getName() {
-    	return '';
+	return '';
     }
 }
 
 class WgetDownloader extends DownloadMethod {
     function download($url, $outputFile) {
-    	$status = 0;
-    	$output = array();
-    	$wget = Platform::getBinaryPath('wget');
+	$status = 0;
+	$output = array();
+	$wget = Platform::getBinaryPath('wget');
 	exec("$wget -O$outputFile $url ", $output, $status);
 	if ($status) {
 	    $msg = 'exec returned an error status ';
@@ -579,7 +576,7 @@ class WgetDownloader extends DownloadMethod {
     }
 
     function getName() {
-    	return 'Download with Wget';
+	return 'Download with Wget';
     }
 }
 
@@ -602,21 +599,21 @@ class FopenDownloader extends DownloadMethod {
 
 	$failed = $results = false;
 	while (!feof($fh) && !$failed) {
-           $buf = fread($fh, 4096);
-           if (!$buf) {
-               $results = 'Error during download';
-               $failed = true;
-               break;
-           }
-           if (fwrite($ofh, $buf) != strlen($buf)) {
-               $failed = true;
-               $results = 'Error during writing';
-               break;
-           }
-           if (time() - $start > 55) {
-           	Platform::extendTimeLimit();
-           	$start = time();
-           }
+	    $buf = fread($fh, 4096);
+	    if (!$buf) {
+		$results = 'Error during download';
+		$failed = true;
+		break;
+	    }
+	    if (fwrite($ofh, $buf) != strlen($buf)) {
+		$failed = true;
+		$results = 'Error during writing';
+		break;
+	    }
+	    if (time() - $start > 55) {
+		Platform::extendTimeLimit();
+		$start = time();
+	    }
 	}
 	fclose($ofh);
 	fclose($fh);
@@ -629,7 +626,7 @@ class FopenDownloader extends DownloadMethod {
 
     function isSupported() {
 	$actual = ini_get('allow_url_fopen');
-    	if (in_array($actual, array(1, 'On', 'on')) && Platform::isPhpFunctionSupported('fopen')) {
+	if (in_array($actual, array(1, 'On', 'on')) && Platform::isPhpFunctionSupported('fopen')) {
 	    return true;
 	}
 
@@ -637,13 +634,13 @@ class FopenDownloader extends DownloadMethod {
     }
 
     function getName() {
-    	return 'Download with PHP fopen()';
+	return 'Download with PHP fopen()';
     }
 }
 
 class FsockopenDownloader extends DownloadMethod {
     function download($url, $outputFile) {
-    	/* Code from WebHelper_simple.class */
+	/* Code from WebHelper_simple.class */
 
 	$components = parse_url($url);
 	$port = empty($components['port']) ? 80 : $components['port'];
@@ -702,9 +699,9 @@ class FsockopenDownloader extends DownloadMethod {
 		    break;
 		}
 		if (time() - $start > 55) {
-           	    Platform::extendTimeLimit();
-           	    $start = time();
-           	}
+		    Platform::extendTimeLimit();
+		    $start = time();
+		}
 	    }
 	    fclose($ofd);
 	    if (!$failed) {
@@ -715,7 +712,7 @@ class FsockopenDownloader extends DownloadMethod {
 	}
 	fclose($fd);
 
-        /* if the HTTP response code did not begin with a 2 this request was not successful */
+	/* if the HTTP response code did not begin with a 2 this request was not successful */
 	if (!preg_match("/^HTTP\/\d+\.\d+\s2\d{2}/", $response)) {
 	    return "Download failed with HTTP status: $response";
 	}
@@ -724,11 +721,11 @@ class FsockopenDownloader extends DownloadMethod {
     }
 
     function isSupported() {
-    	return Platform::isPhpFunctionSupported('fsockopen');
+	return Platform::isPhpFunctionSupported('fsockopen');
     }
 
     function getName() {
-    	return 'Download with PHP fsockopen()';
+	return 'Download with PHP fsockopen()';
     }
 }
 
@@ -768,14 +765,14 @@ class CurlDownloader extends DownloadMethod {
 	foreach (array('curl_init', 'curl_setopt', 'curl_exec', 'curl_close', 'curl_error')
 			as $functionName) {
 	    if (!Platform::isPhpFunctionSupported($functionName)) {
-	    	return false;
+		return false;
 	    }
 	}
 	return true;
     }
 
     function getName() {
-    	return 'Download with PHP CURL()';
+	return 'Download with PHP CURL()';
     }
 }
 
@@ -796,15 +793,15 @@ class ExtractMethod {
     }
 
     function getName() {
-    	return '';
+	return '';
     }
 }
 
 class UnzipExtractor extends ExtractMethod {
     function extract($fileName) {
-    	$output = array();
-    	$status = 0;
-    	$unzip = Platform::getBinaryPath('unzip');
+	$output = array();
+	$status = 0;
+	$unzip = Platform::getBinaryPath('unzip');
 	exec($unzip . ' ' . $fileName, $output, $status);
 	if ($status) {
 	    $msg = 'exec returned an error status ';
@@ -823,15 +820,15 @@ class UnzipExtractor extends ExtractMethod {
     }
 
     function getName() {
-    	return 'Extract .zip with unzip';
+	return 'Extract .zip with unzip';
     }
 }
 
 class TargzExtractor extends ExtractMethod {
     function extract($fileName) {
-    	$output = array();
-    	$status = 0;
-    	$tar = Platform::getBinaryPath('tar');
+	$output = array();
+	$status = 0;
+	$tar = Platform::getBinaryPath('tar');
 	exec($tar . ' -xzf' . $fileName, $output, $status);
 	if ($status) {
 	    $msg = 'exec returned an error status ';
@@ -850,7 +847,7 @@ class TargzExtractor extends ExtractMethod {
     }
 
     function getName() {
-    	return 'Extract .tar.gz with tar';
+	return 'Extract .tar.gz with tar';
     }
 }
 
@@ -864,57 +861,57 @@ class PhpTargzExtractor extends ExtractMethod {
     }
 
     function isSupported() {
-    	foreach (array('gzopen', 'gzclose', 'gzseek', 'gzread',
+	foreach (array('gzopen', 'gzclose', 'gzseek', 'gzread',
 		       'touch', 'gzeof') as $functionName) {
-    	    if (!Platform::isPhpFunctionSupported($functionName)) {
-	    	return false;
+	    if (!Platform::isPhpFunctionSupported($functionName)) {
+		return false;
 	    }
-    	}
+	}
 
 	return true;
     }
 
     function getName() {
-    	return 'Extract .tar.gz with PHP functions';
+	return 'Extract .tar.gz with PHP functions';
     }
 }
 
 class PhpUnzipExtractor extends ExtractMethod {
     function extract($fileName) {
-    	$baseFolder = dirname($fileName);
+	$baseFolder = dirname($fileName);
 	if (!($zip = zip_open($fileName))) {
 	    return "Could not open the zip archive $fileName";
 	}
 	$start = time();
 	while ($zip_entry = zip_read($zip)) {
-            if (zip_entry_open($zip, $zip_entry, 'r')) {
+	    if (zip_entry_open($zip, $zip_entry, 'r')) {
 		$buf = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
 		$dir_name = dirname(zip_entry_name($zip_entry));
 		if ($dir_name != ".") {
 		    $dir = $baseFolder . '/';
 		    foreach ( explode('/', $dir_name) as $folderName) {
-                 	$dir .= $folderName;
-                 	if (is_file($dir)) unlink($dir);
-                 	if (!is_dir($dir)) mkdir($dir);
-                 	$dir .=  '/';
-                    }
-                }
+			$dir .= $folderName;
+			if (is_file($dir)) unlink($dir);
+			if (!is_dir($dir)) mkdir($dir);
+			$dir .=  '/';
+		    }
+		}
 		$fp = fopen($baseFolder . '/' . zip_entry_name($zip_entry), 'w');
 		if (!$fp) {
 		    return 'Error during php unzip: trying to open a file for writing';
 		}
-           	if (fwrite($fp,$buf) != strlen($buf)) {
-           	    return 'Error during php unzip: could not write the whole buffer length';
-           	}
-           	zip_entry_close($zip_entry);
+		if (fwrite($fp,$buf) != strlen($buf)) {
+		    return 'Error during php unzip: could not write the whole buffer length';
+		}
+		zip_entry_close($zip_entry);
 
-           	if (time() - $start > 55) {
-           	    Platform::extendTimeLimit();
-           	    $start = time();
-           	}
+		if (time() - $start > 55) {
+		    Platform::extendTimeLimit();
+		    $start = time();
+		}
 	    } else {
 		return false;
-            }
+	    }
        }
        zip_close($zip);
 
@@ -930,14 +927,14 @@ class PhpUnzipExtractor extends ExtractMethod {
 			'zip_entry_filesize', 'zip_entry_close', 'zip_close', 'zip_entry_close')
 			as $functionName) {
 	    if (!Platform::isPhpFunctionSupported($functionName)) {
-	    	return false;
+		return false;
 	    }
 	}
 	return true;
     }
 
     function getName() {
-    	return 'Extract .zip with PHP functions';
+	return 'Extract .zip with PHP functions';
     }
 }
 
@@ -959,73 +956,73 @@ function render($renderType, $args=array()) {
 
      <div class="box important">
        <p>
-         Do not forget to <b>delete this <?php print $self; ?> file once you are done!</b> If other
-         users guess the password, they can seriously harm your installation with this script!
+	 Do not forget to <b>delete this <?php print $self; ?> file once you are done!</b> If other
+	 users guess the password, they can seriously harm your installation with this script!
        <p>
      </div>
 
      <div class="box">
      <h2>Instructions</h2>
      <span id="instructions-toggle" class="blockToggle"
-          onclick="BlockToggle('instructions', 'instructions-toggle', 'instructions')">
-          Show instructions
+	  onclick="BlockToggle('instructions', 'instructions-toggle', 'instructions')">
+	  Show instructions
      </span>
      <div id="instructions" style="display: none;">
        <p>
-         Gallery 2 is a web application with thousands of files and hundreds of folders.
-         Uploading these files and folders with an FTP program can take more than an hour and
-         is error-prone depending on the quality of your connection to your webhost and the
-         quality of the server itself.
+	 Gallery 2 is a web application with thousands of files and hundreds of folders.
+	 Uploading these files and folders with an FTP program can take more than an hour and
+	 is error-prone depending on the quality of your connection to your webhost and the
+	 quality of the server itself.
        </p>
        <p>
-         In short, <b>this pre-installer gets the Gallery 2 software on your server</b>. It is an
-         alternative to uploading all files via FTP or extracting the archive yourself if you
-         have ssh access. In detail, this pre-installer does for you the following:
+	 In short, <b>this pre-installer gets the Gallery 2 software on your server</b>. It is an
+	 alternative to uploading all files via FTP or extracting the archive yourself if you
+	 have ssh access. In detail, this pre-installer does for you the following:
        </p>
        <ol>
-         <li>
-           <b>Download/transfer</b> the archived gallery2.tar.gz or gallery2.zip from the official
-           download server directly to your webserver. No need to download / upload the file
-           yourself.
-         </li>
-         <li>
-           <b>Extract</b> the gallery2.tar.gz / gallery2.zip archive directly on your server. No
-           need to upload thousands of files.
-         </li>
-         <li>
-           <b>Install</b> Gallery 2 by following the link to the Gallery 2 installation wizard
-           which will guide you through the database creation and the other steps involved to get
-           Gallery 2 running on this server.
-         </li>
+	 <li>
+	   <b>Download/transfer</b> the archived gallery2.tar.gz or gallery2.zip from the official
+	   download server directly to your webserver. No need to download / upload the file
+	   yourself.
+	 </li>
+	 <li>
+	   <b>Extract</b> the gallery2.tar.gz / gallery2.zip archive directly on your server. No
+	   need to upload thousands of files.
+	 </li>
+	 <li>
+	   <b>Install</b> Gallery 2 by following the link to the Gallery 2 installation wizard
+	   which will guide you through the database creation and the other steps involved to get
+	   Gallery 2 running on this server.
+	 </li>
        </ol>
        <p>
-         Once Gallery 2 is extracted, you can also use these convenience functions:
+	 Once Gallery 2 is extracted, you can also use these convenience functions:
        </p>
        <ul>
-         <li>
-           <b>Change permissions</b>: Since the gallery2 files have been extracted by the webserver
-            and not by yourself, these files and folders are not owned by you. That means that you
-            are not allowed to rename the gallery2 folder or to do much else with it unless you use
-            this script to change the permissions.
-         </li>
-         <li>
-           <b>Rename</b> the Gallery 2 folder if you want it to be rather &quot;photos/&quot; or
-           &quot;gallery/&quot;, etc. than the default folder name which is &quot;gallery2/&quot;.
-         </li>
+	 <li>
+	   <b>Change permissions</b>: Since the gallery2 files have been extracted by the webserver
+	    and not by yourself, these files and folders are not owned by you. That means that you
+	    are not allowed to rename the gallery2 folder or to do much else with it unless you use
+	    this script to change the permissions.
+	 </li>
+	 <li>
+	   <b>Rename</b> the Gallery 2 folder if you want it to be rather &quot;photos/&quot; or
+	   &quot;gallery/&quot;, etc. than the default folder name which is &quot;gallery2/&quot;.
+	 </li>
        </ul>
        <p>
-         <b>Upgrade notes:</b> If you need to upgrade a Gallery 2 installation that was extracted
-         with this script (the gallery2 folder is owned by the webserver in this case) you need
-         just to make sure the gallery2 folder is named &quot;gallery2&quot; and that it has
-         permissions 755 or 777. Then download the latest release and extract it. It will just
-         extract the new files over the existing installation. Then run the Gallery 2 upgrader.
+	 <b>Upgrade notes:</b> If you need to upgrade a Gallery 2 installation that was extracted
+	 with this script (the gallery2 folder is owned by the webserver in this case) you need
+	 just to make sure the gallery2 folder is named &quot;gallery2&quot; and that it has
+	 permissions 755 or 777. Then download the latest release and extract it. It will just
+	 extract the new files over the existing installation. Then run the Gallery 2 upgrader.
        </p>
        <p>
-         <b>Deleting Gallery 2:</b> If you want to delete a Gallery 2 installation that was
-         extracted by this script (read: if you want to lose all your albums and remove Gallery 2
-         from your website), then use Bharat&quot;s cleanup script which can be found at:
-         <a href="http://codex.gallery2.org/index.php/Downloads:Cleanup_Script">Gallery Codex:
-         Downloads:Cleanup_Script</a>.
+	 <b>Deleting Gallery 2:</b> If you want to delete a Gallery 2 installation that was
+	 extracted by this script (read: if you want to lose all your albums and remove Gallery 2
+	 from your website), then use Bharat&quot;s cleanup script which can be found at:
+	 <a href="http://codex.gallery2.org/index.php/Downloads:Cleanup_Script">Gallery Codex:
+	 Downloads:Cleanup_Script</a>.
        </p>
      </div>
      </div>
@@ -1077,14 +1074,14 @@ function render($renderType, $args=array()) {
        <!-- Show available and unavailable options -->
        <?php if (empty($args['anyExtensionSupported'])): ?>
        <div class="error">
-           <h2>This platform has not the ability to extract any of our archive types!</h2>
+	   <h2>This platform has not the ability to extract any of our archive types!</h2>
        <span>
-          <?php $first = true; foreach ($args['extensions'] as $ext => $supported): ?>
-            <?php if (!$supported): ?><span class="disabled"><?php endif; ?>
-            <?php if (!$first) print ', '; else $first = false; ?>
-            <?php print $ext; ?>
-            <?php if (!$supported): ?></span><?php endif; ?>
-          <?php endforeach; ?>
+	  <?php $first = true; foreach ($args['extensions'] as $ext => $supported): ?>
+	    <?php if (!$supported): ?><span class="disabled"><?php endif; ?>
+	    <?php if (!$first) print ', '; else $first = false; ?>
+	    <?php print $ext; ?>
+	    <?php if (!$supported): ?></span><?php endif; ?>
+	  <?php endforeach; ?>
        </span>
        </div>
        <?php endif; ?>
@@ -1097,68 +1094,68 @@ function render($renderType, $args=array()) {
        <div class="box">
        <h2>[1] Download / Transfer Methods (download G2 from another server directly to this server)</h2>
        <span id="download-toggle" class="blockToggle"
-            onclick="BlockToggle('download', 'download-toggle', 'download methods')">
-            <?php print $label . 'download methods'; ?>
+	    onclick="BlockToggle('download', 'download-toggle', 'download methods')">
+	    <?php print $label . 'download methods'; ?>
        </span>
        <div id="download" <?php print $display; ?>>
-         <br/>
-         <?php if (!empty($args['downloadMethods']) && !empty($args['anyExtensionSupported'])): ?>
-         <form id="downloadForm" method="post">
-         <span class="subtitle">Select the Gallery 2 version:</span>
-         <table class="choice">
-           <tr><td><select name="version">
-             <option value="stable" selected="selected">Latest stable version (recommended)</option>
-             <?php if (!empty($args['showRcVersion'])): ?>
-             <option value="rc">Latest release candidate for the next stable version</option>
-             <?php endif; ?>
-             <option value="nightly">Latest nightly snapshot (bleeding edge)</option>
-           </select></td></tr>
-         </table>
-         <span class="subtitle">Select a download method:</span>
-         <table class="choice">
-         <?php $first = true;
-               foreach ($args['downloadMethods'] as $method):
-           $disabled = empty($method['isSupported']) ? 'disabled="true"' : '';
-           $notSupported = empty($method['isSupported']) ? 'not supported by this platform' : '&nbsp;';
-           $checked = '';
-           if ($first && !empty($method['isSupported'])) {
-           	$checked = 'checked'; $first = false;
-           }
-           printf('<tr><td><input type="radio" name="method" %s value="%s" %s/></td><td>%s</td><td>%s</td></tr>',
-           		$disabled, $method['command'], $checked, $method['name'], $notSupported);
-         endforeach; ?>
-         </table>
-         <span class="subtitle">Select an archive type:</span>
-         <table class="choice">
-         <?php $first = true; foreach ($args['extensions'] as $ext => $supported):
-           $disabled = empty($supported) ? 'disabled="true"' : '';
-           $message = empty($supported) ? 'not supported by this platform' : '&nbsp;';
-           $checked = '';
-           if ($first && $supported) {
-           	$checked = 'checked'; $first = false;
-           }
-           printf('<tr><td><input type="radio" name="extension" value="%s" %s %s/></td><td>%s</td><td>%s</td></tr>',
-            $ext, $disabled, $checked, $archiveBaseName . '.' . $ext, $message);
-         endforeach; ?>
-         </table>
-         <input type="hidden" name="command" value="download"/>
-         <input type="submit" value="Download"
-         	onclick="this.disabled=true;this.form.submit();"/>
-         </form>
-         <?php elseif (!empty($args['anyExtensionSupported'])): ?>
-         <div class="warning">
-           This platform does not support any of our download / transfer methods. You can upload
-           the gallery2.tar.gz / gallery2.zip archive via FTP and extract it then with this tool.
-         </div>
-         <?php elseif (!empty($args['downloadMethods'])): ?>
-         <div class="warning">
-           This platform cannot extract archives, therefore downloading is also disabled.
-         </div>
-         <?php else: ?>
-         <div class="warning">
-           This platform does not support any of our download / transfer methods.
-         </div>
-         <?php endif; ?>
+	 <br/>
+	 <?php if (!empty($args['downloadMethods']) && !empty($args['anyExtensionSupported'])): ?>
+	 <form id="downloadForm" method="post">
+	 <span class="subtitle">Select the Gallery 2 version:</span>
+	 <table class="choice">
+	   <tr><td><select name="version">
+	     <option value="stable" selected="selected">Latest stable version (recommended)</option>
+	     <?php if (!empty($args['showRcVersion'])): ?>
+	     <option value="rc">Latest release candidate for the next stable version</option>
+	     <?php endif; ?>
+	     <option value="nightly">Latest nightly snapshot (bleeding edge)</option>
+	   </select></td></tr>
+	 </table>
+	 <span class="subtitle">Select a download method:</span>
+	 <table class="choice">
+	 <?php $first = true;
+	       foreach ($args['downloadMethods'] as $method):
+	   $disabled = empty($method['isSupported']) ? 'disabled="true"' : '';
+	   $notSupported = empty($method['isSupported']) ? 'not supported by this platform' : '&nbsp;';
+	   $checked = '';
+	   if ($first && !empty($method['isSupported'])) {
+		$checked = 'checked'; $first = false;
+	   }
+	   printf('<tr><td><input type="radio" name="method" %s value="%s" %s/></td><td>%s</td><td>%s</td></tr>',
+			$disabled, $method['command'], $checked, $method['name'], $notSupported);
+	 endforeach; ?>
+	 </table>
+	 <span class="subtitle">Select an archive type:</span>
+	 <table class="choice">
+	 <?php $first = true; foreach ($args['extensions'] as $ext => $supported):
+	   $disabled = empty($supported) ? 'disabled="true"' : '';
+	   $message = empty($supported) ? 'not supported by this platform' : '&nbsp;';
+	   $checked = '';
+	   if ($first && $supported) {
+		$checked = 'checked'; $first = false;
+	   }
+	   printf('<tr><td><input type="radio" name="extension" value="%s" %s %s/></td><td>%s</td><td>%s</td></tr>',
+	    $ext, $disabled, $checked, $archiveBaseName . '.' . $ext, $message);
+	 endforeach; ?>
+	 </table>
+	 <input type="hidden" name="command" value="download"/>
+	 <input type="submit" value="Download"
+		onclick="this.disabled=true;this.form.submit();"/>
+	 </form>
+	 <?php elseif (!empty($args['anyExtensionSupported'])): ?>
+	 <div class="warning">
+	   This platform does not support any of our download / transfer methods. You can upload
+	   the gallery2.tar.gz / gallery2.zip archive via FTP and extract it then with this tool.
+	 </div>
+	 <?php elseif (!empty($args['downloadMethods'])): ?>
+	 <div class="warning">
+	   This platform cannot extract archives, therefore downloading is also disabled.
+	 </div>
+	 <?php else: ?>
+	 <div class="warning">
+	   This platform does not support any of our download / transfer methods.
+	 </div>
+	 <?php endif; ?>
        </div>
        </div>
 
@@ -1170,42 +1167,42 @@ function render($renderType, $args=array()) {
        <div class="box">
        <h2>[2] Extract Methods (extract a gallery2.zip / gallery2.tar.gz file in the current working directory)</h2>
        <span id="extract-toggle" class="blockToggle"
-            onclick="BlockToggle('extract', 'extract-toggle', 'extraction methods')">
-            <?php print $label .  'extraction methods'; ?>
+	    onclick="BlockToggle('extract', 'extract-toggle', 'extraction methods')">
+	    <?php print $label .  'extraction methods'; ?>
        </span>
        <div id="extract" <?php print $display; ?>>
        <?php if (!empty($args['anyExtensionSupported'])): ?>
        <form id="extractForm" method="post">
-         <table class="choice">
-         <?php $first = true; foreach ($args['extractMethods'] as $method):
-           $disabled = 'disabled="true"';
-           if (empty($method['isSupported'])) {
-               $message = 'not supported by this platform';
-           } else if (!$method['archiveExists']){
-               $message = '<span class="warning">first download the ' . $method['archiveName'] .
+	 <table class="choice">
+	 <?php $first = true; foreach ($args['extractMethods'] as $method):
+	   $disabled = 'disabled="true"';
+	   if (empty($method['isSupported'])) {
+	       $message = 'not supported by this platform';
+	   } else if (!$method['archiveExists']){
+	       $message = '<span class="warning">first download the ' . $method['archiveName'] .
 				' archive</span>';
 	   } else {
 	       $message = '<span class="success">ready for extraction!</span>';
 	       $disabled = '';
-           }
-           $checked = '';
-           if ($first && empty($disabled) && !empty($method['isSupported'])) {
-           	$checked = 'checked'; $first = false;
-           }
-           printf('<tr><td><input type="radio" name="method" %s value="%s" %s/></td><td>%s</td><td>%s</td></tr>',
-           $disabled, $method['command'], $checked, $method['name'], $message);
-         endforeach; ?>
-         </table>
-         <input type="hidden" name="command" value="extract"/>
-         <input type="submit" value="Extract"
-          	 onclick="this.disabled=true;this.form.submit();"/>
+	   }
+	   $checked = '';
+	   if ($first && empty($disabled) && !empty($method['isSupported'])) {
+		$checked = 'checked'; $first = false;
+	   }
+	   printf('<tr><td><input type="radio" name="method" %s value="%s" %s/></td><td>%s</td><td>%s</td></tr>',
+	   $disabled, $method['command'], $checked, $method['name'], $message);
+	 endforeach; ?>
+	 </table>
+	 <input type="hidden" name="command" value="extract"/>
+	 <input type="submit" value="Extract"
+		 onclick="this.disabled=true;this.form.submit();"/>
        </form>
        <?php else: ?>
-         <div class="warning">
-           This platform cannot extract archives. Ask your webhost to extract the archive for you
-           or if that is not an option you will have to extract the archive on your
-           computer and upload the thousands of files and folders via FTP.
-         </div>
+	 <div class="warning">
+	   This platform cannot extract archives. Ask your webhost to extract the archive for you
+	   or if that is not an option you will have to extract the archive on your
+	   computer and upload the thousands of files and folders via FTP.
+	 </div>
        <?php endif; ?>
        </div>
        </div>
@@ -1218,20 +1215,20 @@ function render($renderType, $args=array()) {
        <div class="box">
        <h2>[3] Install Gallery 2!</h2>
        <span id="install-toggle" class="blockToggle"
-            onclick="BlockToggle('install', 'install-toggle', 'link to install wizard')">
-            <?php print $label .  'link to install wizard'; ?>
+	    onclick="BlockToggle('install', 'install-toggle', 'link to install wizard')">
+	    <?php print $label .  'link to install wizard'; ?>
        </span>
        <div id="install" <?php print $display; ?>>
        <?php if (!empty($args['gallery2FolderName'])): ?>
-         <span>
-           Follow this link to start the <a href="<?php print $args['gallery2FolderName'] .
+	 <span>
+	   Follow this link to start the <a href="<?php print $args['gallery2FolderName'] .
 								'/install/index.php'; ?>">
-           Gallery 2 installation wizard</a>!
-         </span>
+	   Gallery 2 installation wizard</a>!
+	 </span>
        <?php else: ?>
-         <div class="warning">
-           Please first download and extract the Gallery 2 archive (steps 1 and 2).
-         </div>
+	 <div class="warning">
+	   Please first download and extract the Gallery 2 archive (steps 1 and 2).
+	 </div>
        <?php endif; ?>
        </div>
        </div>
@@ -1241,35 +1238,35 @@ function render($renderType, $args=array()) {
        <div class="box">
        <h2>Change the permissions of your gallery2 Folder</h2>
        <span id="chmod-toggle" class="blockToggle"
-            onclick="BlockToggle('chmod', 'chmod-toggle', 'change permissions form')">
-            <?php print $label .  'change permissions form'; ?>
+	    onclick="BlockToggle('chmod', 'chmod-toggle', 'change permissions form')">
+	    <?php print $label .  'change permissions form'; ?>
        </span>
        <div id="chmod" <?php print $display; ?>>
        <?php if (!empty($args['gallery2FolderName'])): ?>
-         <p>
-           777 makes the folder writeable for everybody. That is needed such that you can move
-           gallery2 or rename the directory with an FTP program. 555 makes it readable for
-           everybody, which is required to have an operational Gallery 2 installation.
-         </p><p>
-           For <b>security</b> purposes, it is recommended that you change the folder permissions
-           back to <b>555</b> once Gallery 2 is running. Only if you are running PHP-CGI, gallery2
-           might already owned by your user and no permission changes are required.
-         </p>
+	 <p>
+	   777 makes the folder writeable for everybody. That is needed such that you can move
+	   gallery2 or rename the directory with an FTP program. 555 makes it readable for
+	   everybody, which is required to have an operational Gallery 2 installation.
+	 </p><p>
+	   For <b>security</b> purposes, it is recommended that you change the folder permissions
+	   back to <b>555</b> once Gallery 2 is running. Only if you are running PHP-CGI, gallery2
+	   might already owned by your user and no permission changes are required.
+	 </p>
        <form id="chmodForm" method="post">
        Folder name: <input type="text" name="folderName" size="20" value="<?php print $folderName; ?>"/>
        Permissions:
        <select name="folderPermissions">
-         <?php foreach($folderPermissionList as $perm): ?>
-           <option value="<?php print $perm; ?>"><?php print $perm; ?></option>
-         <?php endforeach; ?>
+	 <?php foreach($folderPermissionList as $perm): ?>
+	   <option value="<?php print $perm; ?>"><?php print $perm; ?></option>
+	 <?php endforeach; ?>
        </select>
        <input type="hidden" name="command" value="chmod"/>
        <input type="submit" value="Change Permissions"
-       	      onclick="this.disabled=true;this.form.submit();"/>
+	      onclick="this.disabled=true;this.form.submit();"/>
        </form>
        <?php else: ?>
        <div class="warning">
-         There is no Gallery 2 folder in the current working directory.
+	 There is no Gallery 2 folder in the current working directory.
        </div>
        <?php endif; ?>
        </div>
@@ -1279,23 +1276,23 @@ function render($renderType, $args=array()) {
        <div class="box">
        <h2>Rename the Gallery 2 folder</h2>
        <span id="rename-toggle" class="blockToggle"
-            onclick="BlockToggle('rename', 'rename-toggle', 'rename folder form')">
-            <?php print $label .  'rename folder form'; ?>
+	    onclick="BlockToggle('rename', 'rename-toggle', 'rename folder form')">
+	    <?php print $label .  'rename folder form'; ?>
        </span>
        <div id="rename" <?php print $display; ?>>
        <?php if (!empty($args['gallery2FolderName'])): ?>
-         <p>
-           Quickly rename the gallery2 folder. You can do that with your FTP program as well.
-         </p>
+	 <p>
+	   Quickly rename the gallery2 folder. You can do that with your FTP program as well.
+	 </p>
        <form id="renameForm" method="post">
        Rename folder to: <input type="text" name="folderName" size="20" value="<?php print $folderName; ?>"/>
        <input type="hidden" name="command" value="rename"/>
        <input type="submit" value="Rename Folder"
-       	      onclick="this.disabled=true;this.form.submit();"/>
+	      onclick="this.disabled=true;this.form.submit();"/>
        </form>
        <?php else: ?>
        <div class="warning">
-         There is no Gallery 2 folder in the current working directory.
+	 There is no Gallery 2 folder in the current working directory.
        </div>
        <?php endif; ?>
        </div>
@@ -1308,8 +1305,8 @@ function render($renderType, $args=array()) {
        <?php print $args['failure']; ?>
        <?php if (!empty($args['fix'])): ?>
        <div class="suggested_fix">
-         <h2> Suggested fix: </h2>
-         <?php print $args['fix']; ?>
+	 <h2> Suggested fix: </h2>
+	 <?php print $args['fix']; ?>
        </div>
      </div>
      <?php endif; ?>
@@ -1326,8 +1323,8 @@ function render($renderType, $args=array()) {
 
      <div class="box important">
        <p>
-         Do not forget to <b>delete this <?php print $self; ?> file once you are done!</b> If other
-         users guess the password, they can seriously harm your installation with this script!
+	 Do not forget to <b>delete this <?php print $self; ?> file once you are done!</b> If other
+	 users guess the password, they can seriously harm your installation with this script!
        <p>
      </div>
   </body>
@@ -1339,28 +1336,28 @@ function printHtmlStyle() {
     ?>
     <style type="text/css">
 	html {
-  		font-family: "Lucida Grande", Verdana, Arial, sans-serif;
-  		font-size: 62.5%;
+		font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+		font-size: 62.5%;
 	}
 
 	body {
-  		font-size: 1.2em;
-  		margin: 16px 16px 0px 16px;
-  		background: white;
+		font-size: 1.2em;
+		margin: 16px 16px 0px 16px;
+		background: white;
 	}
 
 	h1, h2 {
-  		font-family: "Gill Sans", Verdana, Arial, sans-serif;
-  		color: #333;
-		  margin: 0;
-  		padding: 1.0em 0 0.15em 0;
+		font-family: "Gill Sans", Verdana, Arial, sans-serif;
+		color: #333;
+		margin: 0;
+		padding: 1.0em 0 0.15em 0;
 	}
 
 	h1 { font-size: 1.5em; border-bottom: 1px solid #ddd; }
 	h2 { font-size: 1.3em; padding: 2px;}
 
 	span.subtext {
-  		font-size: 0.9em;
+		font-size: 0.9em;
 	}
 
 	span.disabled, td.disabled {
@@ -1372,27 +1369,27 @@ function printHtmlStyle() {
 	}
 
 	div.error {
-  		border: solid red 1px;
-  		margin: 20px;
-  		padding: 10px;
+		border: solid red 1px;
+		margin: 20px;
+		padding: 10px;
 	}
 
 	div.suggested_fix {
-                background: #eee;
-  		margin: 20px;
-  		padding: 10px;
+		background: #eee;
+		margin: 20px;
+		padding: 10px;
 	}
 
 	div.success {
-  		border: solid green 1px;
-  		margin: 20px;
-  		padding: 10px;
+		border: solid green 1px;
+		margin: 20px;
+		padding: 10px;
 	}
 
 	div.warning {
-  		border: solid orange 1px;
-  		margin: 20px;
-  		padding: 10px;
+		border: solid orange 1px;
+		margin: 20px;
+		padding: 10px;
 	}
 
 	.blockToggle {
@@ -1404,41 +1401,41 @@ function printHtmlStyle() {
 	}
 
 	.blockToggle:hover {
-    		cursor: pointer;
+		cursor: pointer;
 	}
 
 	span.warning {
-  		color: orange;
+		color: orange;
 	}
 
 	span.success {
-  		color: green;
+		color: green;
 	}
 
 	div.box {
-  		border: solid #ddd 1px;
-  		margin: 15px;
-  		padding: 10px;
+		border: solid #ddd 1px;
+		margin: 15px;
+		padding: 10px;
 	}
 
-        div.important {
-                background: #fdc;
-        }
+	div.important {
+		background: #fdc;
+	}
 
 	div.status {
-  		border: solid #d8d 1px;
-  		margin: 20px;
-  		padding: 10px;
+		border: solid #d8d 1px;
+		margin: 20px;
+		padding: 10px;
 	}
 
 	div.status span.line_error {
-  		display: block;
-  		color: #C00;
+		display: block;
+		color: #C00;
 	}
 
 	div.status span.line_info {
-  		display: block;
-  		color: #0C0;
+		display: block;
+		color: #0C0;
 	}
 
 	table.choice {
@@ -1447,7 +1444,7 @@ function printHtmlStyle() {
 	}
 
 	pre {
-  		font-size: 1.2em;
+		font-size: 1.2em;
 	}
 	</style>
 <?php
@@ -1518,7 +1515,7 @@ function BlockToggle(objId, togId, text) {
     {
       if (($p_mode = PclTarHandleExtension($p_tarname)) == "")
       {
-        return 'Extracting tar/gz failed, cannot handle extension';
+	return 'Extracting tar/gz failed, cannot handle extension';
       }
     }
 
@@ -1577,7 +1574,7 @@ function BlockToggle(objId, togId, text) {
 	if(!$isWin)
 	{
 	    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../")))
-    	  $p_path = "./".$p_path;
+	  $p_path = "./".$p_path;
 	}
     // ----- Look for path to remove format (should end by /)
     if (($p_remove_path != "") && (substr($p_remove_path, -1) != '/'))
@@ -1589,22 +1586,22 @@ function BlockToggle(objId, togId, text) {
     // ----- Study the mode
     switch ($p_mode) {
       case "complete" :
-        // ----- Flag extract of all files
-        $v_extract_all = TRUE;
-        $v_listing = FALSE;
-      break;
+	  // ----- Flag extract of all files
+	  $v_extract_all = TRUE;
+	  $v_listing = FALSE;
+	  break;
       case "partial" :
-          // ----- Flag extract of specific files
-          $v_extract_all = FALSE;
-          $v_listing = FALSE;
-      break;
+	  // ----- Flag extract of specific files
+	  $v_extract_all = FALSE;
+	  $v_listing = FALSE;
+	  break;
       case "list" :
-          // ----- Flag list of all files
-          $v_extract_all = FALSE;
-          $v_listing = TRUE;
-      break;
+	  // ----- Flag list of all files
+	  $v_extract_all = FALSE;
+	  $v_listing = TRUE;
+	  break;
       default :
-        return false;
+	  return false;
     }
 
     // ----- Open the tar file
@@ -1632,9 +1629,9 @@ function BlockToggle(objId, togId, text) {
       clearstatcache();
 
 	if (time() - $start > 55) {
-           Platform::extendTimeLimit();
-           $start = time();
-        }
+	   Platform::extendTimeLimit();
+	   $start = time();
+	}
 
       // ----- Reset extract tag
       $v_extract_file = FALSE;
@@ -1642,256 +1639,256 @@ function BlockToggle(objId, togId, text) {
 
       // ----- Read the 512 bytes header
       if ($p_tar_mode == "tar")
-        $v_binary_data = fread($v_tar, 512);
+	$v_binary_data = fread($v_tar, 512);
       else
-        $v_binary_data = gzread($v_tar, 512);
+	$v_binary_data = gzread($v_tar, 512);
 
       // ----- Read the header properties
       $v_header = array();
       if (($v_result = PclTarHandleReadHeader($v_binary_data, $v_header)) != 1)
       {
-        // ----- Close the archive file
-        if ($p_tar_mode == "tar")
-          fclose($v_tar);
-        else
-          gzclose($v_tar);
+	// ----- Close the archive file
+	if ($p_tar_mode == "tar")
+	  fclose($v_tar);
+	else
+	  gzclose($v_tar);
 
-        // ----- Return
-        return $v_result;
+	// ----- Return
+	return $v_result;
       }
 
       // ----- Look for empty blocks to skip
       if ($v_header["filename"] == "")
       {
-        continue;
+	continue;
       }
 
       // ----- Look for partial extract
       if ((!$v_extract_all) && (is_array($p_file_list)))
       {
-        // ----- By default no unzip if the file is not found
-        $v_extract_file = FALSE;
+	// ----- By default no unzip if the file is not found
+	$v_extract_file = FALSE;
 
-        // ----- Look into the file list
-        for ($i=0; $i<sizeof($p_file_list); $i++)
-        {
-          // ----- Look if it is a directory
-          if (substr($p_file_list[$i], -1) == "/")
-          {
-            // ----- Look if the directory is in the filename path
-            if ((strlen($v_header["filename"]) > strlen($p_file_list[$i])) && (substr($v_header["filename"], 0, strlen($p_file_list[$i])) == $p_file_list[$i]))
-            {
-              // ----- The file is in the directory, so extract it
-              $v_extract_file = TRUE;
+	// ----- Look into the file list
+	for ($i=0; $i<sizeof($p_file_list); $i++)
+	{
+	  // ----- Look if it is a directory
+	  if (substr($p_file_list[$i], -1) == "/")
+	  {
+	    // ----- Look if the directory is in the filename path
+	    if ((strlen($v_header["filename"]) > strlen($p_file_list[$i])) && (substr($v_header["filename"], 0, strlen($p_file_list[$i])) == $p_file_list[$i]))
+	    {
+	      // ----- The file is in the directory, so extract it
+	      $v_extract_file = TRUE;
 
-              // ----- End of loop
-              break;
-            }
-          }
+	      // ----- End of loop
+	      break;
+	    }
+	  }
 
-          // ----- It is a file, so compare the file names
-          else if ($p_file_list[$i] == $v_header["filename"])
-          {
-            // ----- File found
-            $v_extract_file = TRUE;
+	  // ----- It is a file, so compare the file names
+	  else if ($p_file_list[$i] == $v_header["filename"])
+	  {
+	    // ----- File found
+	    $v_extract_file = TRUE;
 
-            // ----- End of loop
-            break;
-          }
-        }
+	    // ----- End of loop
+	    break;
+	  }
+	}
 
-        // ----- Trace
-        if (!$v_extract_file)
-        {
-        }
+	// ----- Trace
+	if (!$v_extract_file)
+	{
+	}
       }
       else
       {
-        // ----- All files need to be extracted
-        $v_extract_file = TRUE;
+	// ----- All files need to be extracted
+	$v_extract_file = TRUE;
       }
 
       // ----- Look if this file need to be extracted
       if (($v_extract_file) && (!$v_listing))
       {
-        // ----- Look for path to remove
-        if (($p_remove_path != "")
-            && (substr($v_header["filename"], 0, $p_remove_path_size) == $p_remove_path))
-        {
-          // ----- Remove the path
-          $v_header["filename"] = substr($v_header["filename"], $p_remove_path_size);
-        }
+	// ----- Look for path to remove
+	if (($p_remove_path != "")
+	    && (substr($v_header["filename"], 0, $p_remove_path_size) == $p_remove_path))
+	{
+	  // ----- Remove the path
+	  $v_header["filename"] = substr($v_header["filename"], $p_remove_path_size);
+	}
 
-        // ----- Add the path to the file
-        if (($p_path != "./") && ($p_path != "/"))
-        {
-          // ----- Look for the path end '/'
-          while (substr($p_path, -1) == "/")
-          {
-            $p_path = substr($p_path, 0, strlen($p_path)-1);
-          }
+	// ----- Add the path to the file
+	if (($p_path != "./") && ($p_path != "/"))
+	{
+	  // ----- Look for the path end '/'
+	  while (substr($p_path, -1) == "/")
+	  {
+	    $p_path = substr($p_path, 0, strlen($p_path)-1);
+	  }
 
-          // ----- Add the path
-          if (substr($v_header["filename"], 0, 1) == "/")
-              $v_header["filename"] = $p_path.$v_header["filename"];
-          else
-            $v_header["filename"] = $p_path."/".$v_header["filename"];
-        }
+	  // ----- Add the path
+	  if (substr($v_header["filename"], 0, 1) == "/")
+	      $v_header["filename"] = $p_path.$v_header["filename"];
+	  else
+	    $v_header["filename"] = $p_path."/".$v_header["filename"];
+	}
 
-        // ----- Check that the file does not exists
-        if (file_exists($v_header["filename"]))
-        {
-          // ----- Look if file is a directory
-          if (is_dir($v_header["filename"]))
-          {
-            // ----- Change the file status
-            $v_header["status"] = "already_a_directory";
+	// ----- Check that the file does not exists
+	if (file_exists($v_header["filename"]))
+	{
+	  // ----- Look if file is a directory
+	  if (is_dir($v_header["filename"]))
+	  {
+	    // ----- Change the file status
+	    $v_header["status"] = "already_a_directory";
 
-            // ----- Skip the extract
-            $v_extraction_stopped = 1;
-            $v_extract_file = 0;
-          }
-          // ----- Look if file is write protected
-          else if (!is_writeable($v_header["filename"]))
-          {
-            // ----- Change the file status
-            $v_header["status"] = "write_protected";
+	    // ----- Skip the extract
+	    $v_extraction_stopped = 1;
+	    $v_extract_file = 0;
+	  }
+	  // ----- Look if file is write protected
+	  else if (!is_writeable($v_header["filename"]))
+	  {
+	    // ----- Change the file status
+	    $v_header["status"] = "write_protected";
 
-            // ----- Skip the extract
-            $v_extraction_stopped = 1;
-            $v_extract_file = 0;
-          }
-          // ----- Look if the extracted file is older
-          else if (filemtime($v_header["filename"]) > $v_header["mtime"])
-          {
-            // ----- Change the file status
-            $v_header["status"] = "newer_exist";
+	    // ----- Skip the extract
+	    $v_extraction_stopped = 1;
+	    $v_extract_file = 0;
+	  }
+	  // ----- Look if the extracted file is older
+	  else if (filemtime($v_header["filename"]) > $v_header["mtime"])
+	  {
+	    // ----- Change the file status
+	    $v_header["status"] = "newer_exist";
 
-            // ----- Skip the extract
-            $v_extraction_stopped = 1;
-            $v_extract_file = 0;
-          }
-        }
+	    // ----- Skip the extract
+	    $v_extraction_stopped = 1;
+	    $v_extract_file = 0;
+	  }
+	}
 
-        // ----- Check the directory availability and create it if necessary
-        else
-        {
-          if ($v_header["typeflag"]=="5")
-            $v_dir_to_check = $v_header["filename"];
-          else if (!strstr($v_header["filename"], "/"))
-            $v_dir_to_check = "";
-          else
-            $v_dir_to_check = dirname($v_header["filename"]);
+	// ----- Check the directory availability and create it if necessary
+	else
+	{
+	  if ($v_header["typeflag"]=="5")
+	    $v_dir_to_check = $v_header["filename"];
+	  else if (!strstr($v_header["filename"], "/"))
+	    $v_dir_to_check = "";
+	  else
+	    $v_dir_to_check = dirname($v_header["filename"]);
 
-          if (($v_result = PclTarHandlerDirCheck($v_dir_to_check)) != 1)
-          {
-            // ----- Change the file status
-            $v_header["status"] = "path_creation_fail";
+	  if (($v_result = PclTarHandlerDirCheck($v_dir_to_check)) != 1)
+	  {
+	    // ----- Change the file status
+	    $v_header["status"] = "path_creation_fail";
 
-            // ----- Skip the extract
-            $v_extraction_stopped = 1;
-            $v_extract_file = 0;
-          }
-        }
+	    // ----- Skip the extract
+	    $v_extraction_stopped = 1;
+	    $v_extract_file = 0;
+	  }
+	}
 
-        // ----- Do the extraction
-        if (($v_extract_file) && ($v_header["typeflag"]!="5"))
-        {
-          // ----- Open the destination file in write mode
-          if (($v_dest_file = @fopen($v_header["filename"], "wb")) == 0)
-          {
-            // ----- Change the file status
-            $v_header["status"] = "write_error";
+	// ----- Do the extraction
+	if (($v_extract_file) && ($v_header["typeflag"]!="5"))
+	{
+	  // ----- Open the destination file in write mode
+	  if (($v_dest_file = @fopen($v_header["filename"], "wb")) == 0)
+	  {
+	    // ----- Change the file status
+	    $v_header["status"] = "write_error";
 
-            // ----- Jump to next file
-            if ($p_tar_mode == "tar")
-              fseek($v_tar, ftell($v_tar)+(ceil(($v_header['size']/512))*512));
-            else
-              gzseek($v_tar, gztell($v_tar)+(ceil(($v_header['size']/512))*512));
-          }
-          else
-          {
-            // ----- Read data
-            $n = floor($v_header["size"]/512);
-            for ($i=0; $i<$n; $i++)
-            {
-              if ($p_tar_mode == "tar")
-                $v_content = fread($v_tar, 512);
-              else
-                $v_content = gzread($v_tar, 512);
-              fwrite($v_dest_file, $v_content, 512);
-            }
-            if (($v_header["size"] % 512) != 0)
-            {
-              if ($p_tar_mode == "tar")
-                $v_content = fread($v_tar, 512);
-              else
-                $v_content = gzread($v_tar, 512);
-              fwrite($v_dest_file, $v_content, ($v_header["size"] % 512));
-            }
+	    // ----- Jump to next file
+	    if ($p_tar_mode == "tar")
+	      fseek($v_tar, ftell($v_tar)+(ceil(($v_header['size']/512))*512));
+	    else
+	      gzseek($v_tar, gztell($v_tar)+(ceil(($v_header['size']/512))*512));
+	  }
+	  else
+	  {
+	    // ----- Read data
+	    $n = floor($v_header["size"]/512);
+	    for ($i=0; $i<$n; $i++)
+	    {
+	      if ($p_tar_mode == "tar")
+		$v_content = fread($v_tar, 512);
+	      else
+		$v_content = gzread($v_tar, 512);
+	      fwrite($v_dest_file, $v_content, 512);
+	    }
+	    if (($v_header["size"] % 512) != 0)
+	    {
+	      if ($p_tar_mode == "tar")
+		$v_content = fread($v_tar, 512);
+	      else
+		$v_content = gzread($v_tar, 512);
+	      fwrite($v_dest_file, $v_content, ($v_header["size"] % 512));
+	    }
 
-            // ----- Close the destination file
-            fclose($v_dest_file);
+	    // ----- Close the destination file
+	    fclose($v_dest_file);
 
-            // ----- Change the file mode, mtime
-            @touch($v_header["filename"], $v_header["mtime"]);
-            //chmod($v_header[filename], DecOct($v_header[mode]));
-          }
+	    // ----- Change the file mode, mtime
+	    @touch($v_header["filename"], $v_header["mtime"]);
+	    //chmod($v_header[filename], DecOct($v_header[mode]));
+	  }
 
-          // ----- Check the file size
-          clearstatcache();
-          if (filesize($v_header["filename"]) != $v_header["size"])
-          {
-            // ----- Close the archive file
-            if ($p_tar_mode == "tar")
-              fclose($v_tar);
-            else
-              gzclose($v_tar);
+	  // ----- Check the file size
+	  clearstatcache();
+	  if (filesize($v_header["filename"]) != $v_header["size"])
+	  {
+	    // ----- Close the archive file
+	    if ($p_tar_mode == "tar")
+	      fclose($v_tar);
+	    else
+	      gzclose($v_tar);
 
-            // ----- Return
-            return false;
-          }
-        }
+	    // ----- Return
+	    return false;
+	  }
+	}
 
-        else
-        {
-          // ----- Jump to next file
-          if ($p_tar_mode == "tar")
-            fseek($v_tar, ftell($v_tar)+(ceil(($v_header["size"]/512))*512));
-          else
-            gzseek($v_tar, gztell($v_tar)+(ceil(($v_header["size"]/512))*512));
-        }
+	else
+	{
+	  // ----- Jump to next file
+	  if ($p_tar_mode == "tar")
+	    fseek($v_tar, ftell($v_tar)+(ceil(($v_header["size"]/512))*512));
+	  else
+	    gzseek($v_tar, gztell($v_tar)+(ceil(($v_header["size"]/512))*512));
+	}
       }
 
       // ----- Look for file that is not to be unzipped
       else
       {
-        // ----- Jump to next file
-        if ($p_tar_mode == "tar")
-          fseek($v_tar, ($p_tar_mode=="tar"?ftell($v_tar):gztell($v_tar))+(ceil(($v_header[size]/512))*512));
-        else
-          gzseek($v_tar, gztell($v_tar)+(ceil(($v_header[size]/512))*512));
+	// ----- Jump to next file
+	if ($p_tar_mode == "tar")
+	  fseek($v_tar, ($p_tar_mode=="tar"?ftell($v_tar):gztell($v_tar))+(ceil(($v_header[size]/512))*512));
+	else
+	  gzseek($v_tar, gztell($v_tar)+(ceil(($v_header[size]/512))*512));
       }
 
       if ($p_tar_mode == "tar")
-        $v_end_of_file = feof($v_tar);
+	$v_end_of_file = feof($v_tar);
       else
-        $v_end_of_file = gzeof($v_tar);
+	$v_end_of_file = gzeof($v_tar);
 
       // ----- File name and properties are logged if listing mode or file is extracted
       if ($v_listing || $v_extract_file || $v_extraction_stopped)
       {
-        // ----- Log extracted files
-        if (($v_file_dir = dirname($v_header["filename"])) == $v_header["filename"])
-          $v_file_dir = "";
-        if ((substr($v_header["filename"], 0, 1) == "/") && ($v_file_dir == ""))
-          $v_file_dir = "/";
+	// ----- Log extracted files
+	if (($v_file_dir = dirname($v_header["filename"])) == $v_header["filename"])
+	  $v_file_dir = "";
+	if ((substr($v_header["filename"], 0, 1) == "/") && ($v_file_dir == ""))
+	  $v_file_dir = "/";
 
-        // ----- Add the array describing the file into the list
-        $p_list_detail[$v_nb] = $v_header;
+	// ----- Add the array describing the file into the list
+	$p_list_detail[$v_nb] = $v_header;
 
-        // ----- Increment
-        $v_nb++;
+	// ----- Increment
+	$v_nb++;
       }
     }
 
@@ -1974,9 +1971,9 @@ function BlockToggle(objId, togId, text) {
       // ----- Look for last block (empty block)
       if (($v_checksum == 256) && ($v_header["checksum"] == 0))
       {
-        $v_header["status"] = "empty";
-        // ----- Return
-        return $v_result;
+	$v_header["status"] = "empty";
+	// ----- Return
+	return $v_result;
       }
 
       // ----- Return
@@ -2057,10 +2054,10 @@ function BlockToggle(objId, togId, text) {
       // ----- Look for parent directory
       if ($p_parent_dir != "")
       {
-        if (($v_result = PclTarHandlerDirCheck($p_parent_dir)) != 1)
-        {
-          return $v_result;
-        }
+	if (($v_result = PclTarHandlerDirCheck($p_parent_dir)) != 1)
+	{
+	  return $v_result;
+	}
       }
     }
 
@@ -2095,7 +2092,7 @@ function BlockToggle(objId, togId, text) {
     }
     else
     {
-           $v_tar_mode = "";
+      $v_tar_mode = "";
     }
 
     return $v_tar_mode;
