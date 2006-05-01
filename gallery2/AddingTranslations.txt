@@ -6,11 +6,11 @@ Steps to commit translation updates submitted on sourceforge.net
 3) perl lib/tools/po/update-all-translations.pl --permissions
 4) Use update-all-translations.pl with --po and --pattern flags to compile
    all the new translations.  Correct any reported errors.
-5) perl lib/tools/po/update-all-translations.pl --cvs-add
+5) perl lib/tools/po/update-all-translations.pl --svn-add
 6) Update modules/core/classes/GalleryTranslator.class if any languages are new.
 7) Run unit tests with filter: codeaudit
    Correct any reported errors.
-8) cvs -q ci
+8) svn ci
 9) Close tracker items on sourceforge.net:
    Set Assigned To, Status = Closed, Resolution = Accepted
 
