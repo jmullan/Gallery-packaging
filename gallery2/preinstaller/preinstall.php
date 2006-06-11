@@ -150,7 +150,7 @@ class PreInstaller {
 		/* ... archive extension */
 		if (empty($_POST['extension'])) $extension = '';
 		else $extension = trim($_POST['extension']);
-		if (!preg_match('/^([a-z]{2,4}+\.)?[a-z]{2,4}$/', $extension)) {
+		if (!preg_match('/^([a-z]{2,4}\.)?[a-z]{2,4}$/', $extension)) {
 		    render('results', array('failure' => 'Filetype for download not defined, please retry'));
 		    exit;
 		}
