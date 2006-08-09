@@ -28,7 +28,7 @@ $passPhrase = "";
  * @version $Revision$ $Date$
  * @package Preinstaller
  * @author: Andy Staudacher <ast@gmx.ch>
- * @versionId 2.1.1
+ * @versionId 2.1.2
  */
 error_reporting(E_ALL);
 set_time_limit(900);
@@ -43,9 +43,9 @@ $mirrors[] = 'http://switch.dl.sourceforge.net/sourceforge/gallery/'; // Europe 
 $mirrors[] = 'http://easynews.dl.sourceforge.net/sourceforge/gallery/'; // Americas (USA)
 /* Hardcoded defaults / fallbacks (we try to find out these URLs during runtime) */
 /*   Latest Release Candidate */
-$downloadUrls['rc'] = 'gallery-2.1.1a-full';
+$downloadUrls['rc'] = 'gallery-2.1.2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'gallery-2.1.1a-full';
+$downloadUrls['stable'] = 'gallery-2.1.2-full';
 /*   Latest Nightly Snapshot */
 $downloadUrls['nightly']= 'gallery-2.2-svn-nightly';
 $nightlySnapshotSite = 'http://galleryupdates.jpmullan.com/G2/';

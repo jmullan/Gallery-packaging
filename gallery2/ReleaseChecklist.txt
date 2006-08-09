@@ -30,7 +30,7 @@ Checklist
 - Update preinstaller/preinstall.php
   - Update @versionId to match current version
   - Update release numbers in various urls
-- Update the BRANCH and PATCH_FOR vars in build.php
+- Update the TAG and PATCH_FOR vars in build.php
 - build.php scrub
 - build.php release
   * mv tmp/update-...-.zip to dist
