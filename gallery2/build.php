@@ -290,46 +290,71 @@ function buildPatch($patchFromTag) {
 	. '/gallery2 https://svn.sourceforge.net/svnroot/gallery/tags/' . $TAG . '/gallery2';
     req_system("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
 
-    $skipNext = false;
+    $manifest = array();
     foreach ($patchLines = file("$patchTmp.raw") as $i => $line) {
 	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i + 1], 0, 7) == '=======') {
 	    $changedFile = rtrim(substr($line, 7));
 	    $isManifest = (substr($changedFile, -8) == 'MANIFEST');
-	    $skipFile = (substr($changedFile, -10) == 'Test.class'
-		    || !strncmp($changedFile, 'lib/tools/', 10)
-		    || $changedFile == 'docs/LOCALIZING');
-	    /* We ditched docs/LOCALIZING in 2.0.2 -- don't want it in the patch */
-	    $skipNext = true;
+	    $skipDiff = (!strncmp($changedFile, 'lib/tools/', 10)
+		    || preg_match('{(?:Test.class|po/.*\.po|locale/.*\.mo)$}', $changedFile));
 
-	    if (!$skipFile) {
-		preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
-		$patchToken = empty($matches) ? 'core' : $matches[1];
+	    preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
+	    $patchToken = empty($matches) ? 'core' : $matches[1];
+	    if (!$skipDiff) {
 		if (!isset($patchFD[$patchToken])) {
 		    $patchFD[$patchToken] = fopen("$patchDir/patch-$patchToken.txt", 'w');
 		    $finalPackage["patch-$patchToken.txt"] = 1;
 		}
 		$fd = $patchFD[$patchToken];
+	    }
 
-		req_system('mkdir -p ' . ($dir = "$patchDir/$patchToken/" . dirname($changedFile)));
-		if ($isManifest) {
-		    /* Filter out test files so we don't pollute non-dev dists with dev data */
-		    $lines = preg_grep('{^(modules/\w+/test/|lib/tools)}',
-				       file("$SRCDIR/gallery2/$changedFile"), PREG_GREP_INVERT);
-		    $new = fopen("$patchDir/$patchToken/$changedFile", 'wb');
-		    fwrite($new, implode('', $lines));
-		    fclose($new);
-		} else {
-		    req_system("cp $SRCDIR/gallery2/$changedFile $dir");
-		}
+	    req_system('mkdir -p ' . ($dir = "$patchDir/$patchToken/" . dirname($changedFile)));
+	    if ($isManifest) {
+		/* Filter out test files so we don't pollute non-dev dists with dev data */
+		$lines = preg_grep('{^(modules/\w+/test/|lib/tools)}',
+				   file("$SRCDIR/gallery2/$changedFile"), PREG_GREP_INVERT);
+		$new = fopen("$patchDir/$patchToken/$changedFile", 'wb');
+		fwrite($new, implode('', $lines));
+		fclose($new);
+	    } else {
+		req_system("cp $SRCDIR/gallery2/$changedFile $dir");
 	    }
 	}
-	if ($skipFile || $skipNext
-		|| ($isManifest && preg_match('{^\+(?:lib/tools/|.*Test.class\s)}', $line))) {
-	    $skipNext = false;
+	if ($skipDiff) {
 	    continue;
 	}
 	if ($isManifest) {
-	    $line = preg_replace('{^-(.*Test.class\s)}', ' $1', $line);
+	    $manifest[] = $line;
+	    if (($line{0} == '-' || $line{0} == '+') && count($manifest) > 5) {
+		if (preg_match('{^[-+](?:lib/tools/|.*Test.class\s)}', $line)) {
+		    $gotLineToRemove = true;
+		} else {
+		    $lastStart = 0;
+		}
+	    }
+	    $end = ($i + 1 == count($patchLines) || !strncmp($patchLines[$i + 1], 'Index: ', 7));
+	    if ($end || !strncmp($patchLines[$i + 1], '@@', 2)) {
+		if (!empty($gotLineToRemove)) {
+		    /* End of one @@ diff section that contains lines we want to omit */
+		    if ($lastStart) {
+			/* Section was clean, remove it */
+			array_splice($manifest, $lastStart);
+		    } else {
+			/* Uh oh, section also had a diff we want to keep.. manual fix needed */
+			$manifest[] = "^FIXME^\n";
+			print "\nWARNING: Unable to automatically process $changedFile diffs\n\n";
+		    }
+		}
+		$lastStart = count($manifest);
+		$gotLineToRemove = false;
+	    }
+	    if ($end) {
+		if (count($manifest) > 5) {
+		    fwrite($fd, implode('', $manifest));
+		}
+		$manifest = array();
+	    }
+	    continue;
 	}
 	fwrite($fd, $line);
     }
