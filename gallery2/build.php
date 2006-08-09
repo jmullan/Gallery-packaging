@@ -4,8 +4,8 @@ error_reporting(E_ALL);
 /**
  * $TAG and $PATCH_FOR are not used for the nightlies
  */
-$TAG = 'RELEASE_2_1_1';
-$PATCH_FOR = array('RELEASE_2_1');
+$TAG = 'RELEASE_2_1_2';
+$PATCH_FOR = array('RELEASE_2_1', 'RELEASE_2_1_1');
 $SVNURL = 'https://svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -186,7 +186,7 @@ function buildPackage($version, $tag, $packages, $developer) {
 	req_system("rm -rf $TMPDIR/gallery2");
     }
     req_mkdir("$TMPDIR/gallery2");
-    
+
     $cmd = "(cd $SRCDIR && tar cf - --files-from=$TMPDIR/files.txt) | "
 	    . "(cd $TMPDIR && tar xf -)";
     req_system($cmd, "Temporary copy via tar failed.");
@@ -259,7 +259,6 @@ function buildManifest() {
 
 function buildPatch($patchFromTag) {
     global $TMPDIR, $SRCDIR, $BASEDIR, $TAG, $QUIET;
-    $CVS_DIFF = 'cvs -f -q diff -Nur';
     if (!$QUIET) {
 	print "Build patch for $patchFromTag...\n";
     }
@@ -273,10 +272,9 @@ function buildPatch($patchFromTag) {
     $readmeText = ob_get_contents();
     ob_end_clean();
 
-    $patchVersion = strtr(str_replace('RELEASE_', '', $patchFromTag), '_', '.');
-    $patchDir = "$TMPDIR/$patchVersion";
+    $patchDir = "$TMPDIR/$fromVersionTag";
     @req_mkdir($patchDir);
-    $patchTmp = "$patchDir/patch-$patchVersion.txt";
+    $patchTmp = "$patchDir/patch-$fromVersionTag.txt";
 
     $readme = fopen("$patchDir/README.txt", "wb");
     fwrite($readme, $readmeText);
@@ -286,101 +284,64 @@ function buildPatch($patchFromTag) {
     /*
      * We want to drop all XxxTest.class related lines from the diff because the user may not have
      * unit tests so we can't patch them.  This means that we also need to drop those lines from
-     * the MANIFEST diffs.  CVS will let us elide those lines, but only if we diff the MANIFEST
-     * files individually.  So the plan is to run one diff to get all the files that changed and
-     * split them into MANIFEST files vs. everything else (excluding test files) and then diff
-     * them in two batches.
+     * the MANIFEST diffs.  Generate the diff and then postprocess for these changes.
      */
-    req_chdir("$SRCDIR/gallery2");
-    req_system("$CVS_DIFF $patchFromTag > $patchTmp.raw", "Making raw patch failed.");
+    $SVN_DIFF = 'svn diff https://svn.sourceforge.net/svnroot/gallery/tags/' . $patchFromTag
+	. '/gallery2 https://svn.sourceforge.net/svnroot/gallery/tags/' . $TAG . '/gallery2';
+    req_system("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
 
-    $manifestFiles = array();
-    $regularFiles = array();
+    $skipNext = false;
     foreach ($patchLines = file("$patchTmp.raw") as $i => $line) {
-	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i+1], 0, 7) == '=======') {
+	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i + 1], 0, 7) == '=======') {
 	    $changedFile = rtrim(substr($line, 7));
-	    if (preg_match('/MANIFEST/', $changedFile)) {
-		$manifestFiles[$changedFile] = 1;
-	    } else if ($changedFile != 'docs/LOCALIZING' &&
-		       !preg_match('/Test.class$/', $changedFile) &&
-		       !preg_match('|^lib/tools/|', $changedFile)) {
-		/* We ditched docs/LOCALIZING in 2.0.2 -- don't want it in the patch */
-		/* Leave XxxTest.class files out of the patch */
-		$regularFiles[$changedFile] = 1;
+	    $isManifest = (substr($changedFile, -8) == 'MANIFEST');
+	    $skipFile = (substr($changedFile, -10) == 'Test.class'
+		    || !strncmp($changedFile, 'lib/tools/', 10)
+		    || $changedFile == 'docs/LOCALIZING');
+	    /* We ditched docs/LOCALIZING in 2.0.2 -- don't want it in the patch */
+	    $skipNext = true;
+
+	    if (!$skipFile) {
+		preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
+		$patchToken = empty($matches) ? 'core' : $matches[1];
+		if (!isset($patchFD[$patchToken])) {
+		    $patchFD[$patchToken] = fopen("$patchDir/patch-$patchToken.txt", 'w');
+		    $finalPackage["patch-$patchToken.txt"] = 1;
+		}
+		$fd = $patchFD[$patchToken];
+
+		req_system('mkdir -p ' . ($dir = "$patchDir/$patchToken/" . dirname($changedFile)));
+		if ($isManifest) {
+		    /* Filter out test files so we don't pollute non-dev dists with dev data */
+		    $lines = preg_grep('{^(modules/\w+/test/|lib/tools)}',
+				       file("$SRCDIR/gallery2/$changedFile"), PREG_GREP_INVERT);
+		    $new = fopen("$patchDir/$patchToken/$changedFile", 'wb');
+		    fwrite($new, implode('', $lines));
+		    fclose($new);
+		} else {
+		    req_system("cp $SRCDIR/gallery2/$changedFile $dir");
+		}
 	    }
 	}
-    }
-
-    @unlink($patchTmp);
-    req_system(sprintf("$CVS_DIFF $patchFromTag %s >> $patchTmp",
-		       join(' ', array_keys($regularFiles))),
-	       "Generating $patchTmp failed.");
-    req_system(sprintf("$CVS_DIFF $patchFromTag --ignore-matching-lines='.*Test.class' " .
-		       "--ignore-matching-lines='lib/tools.*' %s >> $patchTmp",
-		       join(' ', array_keys($manifestFiles))),
-	       "Generating $patchTmp failed.");
-    
-    /*
-     * Now $patchTmp contains only files that we care about, and no extraneous MANIFEST
-     * entries.
-     * NOTE: docs/LOCALIZING is an exceptional case: we didn't ship the changed file but
-     *       we marked it as removed in the manifest in the 2.0.2 patch.  Preserve that
-     *       behavior going forward.
-     */
-    req_chdir($BASEDIR);
-    foreach ($patchLines = file($patchTmp) as $i => $line) {
-	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i+1], 0, 7) == '=======') {
-	    $changedFile = rtrim(substr($line, 7));
-	    $changedFiles[] = $changedFile;
-	    preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
-	    $patchToken = empty($matches) ? 'core' : $matches[1];
-	    if (!isset($patchFD[$patchToken])) {
-		$patchFD[$patchToken] = fopen("$patchDir/patch-$patchToken.txt", 'w');
-		$finalPackage["patch-$patchToken.txt"] = 1;
-	    }
-	    $fd = $patchFD[$patchToken];
+	if ($skipFile || $skipNext
+		|| ($isManifest && preg_match('{^\+(?:lib/tools/|.*Test.class\s)}', $line))) {
+	    $skipNext = false;
+	    continue;
+	}
+	if ($isManifest) {
+	    $line = preg_replace('{^-(.*Test.class\s)}', ' $1', $line);
 	}
 	fwrite($fd, $line);
     }
-    fwrite($fd, $line);
 
-    foreach ($patchFD as $fd) {
+    foreach ($patchFD as $plugin => $fd) {
 	fclose($fd);
-    }
 
-    $needToPackage = array();
-    foreach ($changedFiles as $changedFile) {
-	preg_match('{^(modules|themes)/([^/]*)(.*?)$}', $changedFile, $matches);
-	if (empty($matches)) {
-	    $patchToken = 'core';
-	    $relativePath = $changedFile;
-	} else {
-	    $patchToken = $matches[2];
-	    $relativePath = $matches[1] . "/" . $matches[2] . $matches[3];
-	}
-	$needToPackage[$patchToken] = 1;
-
-	req_system("mkdir -p $patchDir/$patchToken/" . dirname($relativePath));
-	if (basename($relativePath) == 'MANIFEST') {
-	    /* Filter out test files so that we don't pollute non-dev dists with dev data */
-	    $lines = file("$SRCDIR/gallery2/$changedFile");
-	    $lines = preg_grep('|^modules/\w+/test/|', $lines, PREG_GREP_INVERT);
-	    $lines = preg_grep('|^lib/tools|', $lines, PREG_GREP_INVERT);
-	    $new = fopen("$patchDir/$patchToken/$relativePath", 'wb');
-	    fwrite($new, join("", $lines));
-	    fclose($new);
-	} else {
-	    req_system("cp $SRCDIR/gallery2/$changedFile $patchDir/$patchToken/" .
-		   dirname($relativePath));
-	}
-    }
-
-    foreach (array_keys($needToPackage) as $plugin) {
 	req_chdir("$patchDir/$plugin");
-	req_system("zip -q -r ../changed-files-$plugin.zip *",
-		   "Making zip for $plugin failed.");
+	req_system("zip -q -r ../changed-files-$plugin.zip *", "Making zip for $plugin failed.");
 	$finalPackage["changed-files-$plugin.zip"] = 1;
     }
+    @unlink($patchTmp);
 
     /*
      * Due to some weirdness in the way that we deal with modules/exif/lib/JPEG/JPEG.inc
@@ -392,10 +353,9 @@ function buildPatch($patchFromTag) {
     unset($finalPackage["changed-files-exif.zip"]);
     unset($finalPackage["patch-exif.txt"]);
 
-    req_chdir("$patchDir");
-
+    req_chdir($patchDir);
     req_system(sprintf("zip -q -r ../update-$fromVersionTag-to-$toVersionTag.zip %s",
-		       join(' ', array_keys($finalPackage))));
+		       implode(' ', array_keys($finalPackage))));
 
     #system("/bin/rm -rf $patchDir");
     if (!$QUIET) {
@@ -405,8 +365,7 @@ function buildPatch($patchFromTag) {
 
 function extractVersionTag($input) {
     $input = preg_replace('/RELEASE_(.*)/', '$1', $input);
-    $input = preg_replace('/_/', '.', $input);
-    return $input;
+    return str_replace('_', '.', $input);
 }
 
 function buildPreinstaller() {
@@ -425,14 +384,15 @@ function usage() {
     return "usage: build.php <cmd>\n" .
 	"command is one of nightly, quietnightly, release, preinstaller, patches, export, scrub, clean\n";
 }
+
 /**
  * Moved into a function so that we could force a scrub and clean before the nightly.
  */
 function scrub() {
     global $SRCDIR;
     req_system("rm -rf $SRCDIR");
-    /* Fall through to the 'clean' target */
 }
+
 /**
  * Moved into a function so that we could force a scrub and clean before the nightly.
  */
@@ -440,6 +400,7 @@ function clean() {
     global $TMPDIR, $DISTDIR;
     req_system("rm -rf $TMPDIR $DISTDIR");
 }
+
 /**
  * This function creates directories as needed and verifies that they have
  * the appropriate permissions.
@@ -463,7 +424,7 @@ if ($argc < 2) {
     die(usage());
 }
 
-switch($argv[1]) {
+switch ($argv[1]) {
 case 'preinstaller':
     verify_dirs();
     buildPreinstaller();
