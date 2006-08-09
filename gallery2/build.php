@@ -292,7 +292,9 @@ function buildPatch($patchFromTag) {
 
     $manifest = array();
     foreach ($patchLines = file("$patchTmp.raw") as $i => $line) {
-	if (substr($line, 0, 7) == 'Index: ' && substr($patchLines[$i + 1], 0, 7) == '=======') {
+	if (!strncmp($line, 'Property changes on:', 20)) {
+	    $skipDiff = true;
+	} else if (!strncmp($line, 'Index: ', 7) && !strncmp($patchLines[$i + 1], '=======', 7)) {
 	    $changedFile = rtrim(substr($line, 7));
 	    $isManifest = (substr($changedFile, -8) == 'MANIFEST');
 	    $skipDiff = (!strncmp($changedFile, 'lib/tools/', 10)
@@ -326,7 +328,9 @@ function buildPatch($patchFromTag) {
 	if ($isManifest) {
 	    $manifest[] = $line;
 	    if (($line{0} == '-' || $line{0} == '+') && count($manifest) > 5) {
-		if (preg_match('{^[-+](?:lib/tools/|.*Test.class\s)}', $line)) {
+		if (preg_match(
+			    '{^[-+](?:lib/tools/|.*Test.class\s|.*po/.*\.po\s|.*locale/.*\.mo\s)}',
+			    $line)) {
 		    $gotLineToRemove = true;
 		} else {
 		    $lastStart = 0;
@@ -367,16 +371,6 @@ function buildPatch($patchFromTag) {
 	$finalPackage["changed-files-$plugin.zip"] = 1;
     }
     @unlink($patchTmp);
-
-    /*
-     * Due to some weirdness in the way that we deal with modules/exif/lib/JPEG/JPEG.inc
-     * caused (I think) by the fact that it gained a -kb sticky bit, we generate a
-     * MANIFEST-only patch for the exif module that leaves the expected size of this file
-     * in the MANIFEST out of sync with the actual file size unless we replace it.  The
-     * easiest thing to do is to just drop those changes from releases that don't need it.
-     */
-    unset($finalPackage["changed-files-exif.zip"]);
-    unset($finalPackage["patch-exif.txt"]);
 
     req_chdir($patchDir);
     req_system(sprintf("zip -q -r ../update-$fromVersionTag-to-$toVersionTag.zip %s",
