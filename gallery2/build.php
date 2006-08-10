@@ -12,66 +12,111 @@ $SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
 $SKIP_CHECKOUT = false;
+
 /**
  * Quiet makes all optional output quiet, but warnings are allowed to
  * make output.  That way cron jobs will only send an email if something
  * goes awry.
  */
 $QUIET = false;
+
+/**
+ * Needed for the nightly.  Programmers should call getRevision() before
+ * reading this variable.
+ */
+$REVISION = 0;
+
 /**
  * This wrapper for chdir removes the need to manually check the result
  * of chdir every time.  When debugging the nightly build process,
  * failing immediately saved a lot of confusion.
  */
 function req_chdir($dir) {
-    chdir($dir) || die("Could not change to $dir\n");
+    if (!chdir($dir)) {
+	my_die("Could not change to $dir\n");
+    }
 }
+
 /**
  * Wrapping mkdir for the same reason -- fail early.
  */
 function req_mkdir($dir) {
-    mkdir($dir) || die("Could not make dir: $dir\n");
+    if (!mkdir($dir)) {
+	my_die("Could not make dir: $dir\n");
+    }
 }
+
 /**
  * By default this is chatty to let you know exactly what is happening.
  * Again, we fail hard and early if anything goes wrong.
  */
-function req_system($cmd, $comment="") {
-    global $QUIET;
-    if (!$QUIET) {
-	print "Executing: $cmd\n";
-    }
+function req_exec($cmd, $comment="") {
+    quiet_print("Executing: $cmd");
     $result = 0;
-    system($cmd, $result);
+    $output = array();
+    exec($cmd, $output, $result);
     if ($result) {
-	die("Command failed:\n$cmd\n$comment\n");
+	my_die("Command failed:\n$cmd\n" . join("\n", $output) . "\n$comment\n");
     }
-    if (!$QUIET) {
-	print "Done.\n";
+    quiet_print("Done:      $cmd");
+    return join("\n", $output);
+}
+
+/**
+ * Non-error printing is all piped through this function.
+ */
+function quiet_print($string) {
+    global $QUIET;
+    if (empty($QUIET)) {
+	print $string . "\n";
     }
 }
+
+/**
+ * A wrapper for die()/exit() that helps to return an actual error code on error.
+ */
+function my_die($error = '', $returnCode = 1) {
+    $returnCode = (int) $returnCode;
+    if (!empty($error)) {
+	print "$error\n";
+    } else {
+	print "An error occurred.\n";
+    }
+    die($returnCode);
+}
+/**
+ * Check out code from svn unless $SKIP_CHECKOUT has been set to true.
+ */
 function checkOut($useTag=true) {
     global $SRCDIR, $BASEDIR, $SVNURL, $TAG, $SKIP_CHECKOUT, $QUIET;
-
-    print 'Checking out code...';
-
+    quiet_print("Checking out code...");
     req_chdir($SRCDIR);
     if ($SKIP_CHECKOUT) {
-	if (!$QUIET) {
-	    print "Skipping checkout...\n";
-	}
+	quiet_print("Skipping checkout...");
     } else {
 	$cmd = 'svn checkout '
 		. ($QUIET ? '-q ' : '')
 		. $SVNURL
 		. ($useTag ? "tags/$TAG" : 'trunk')
 		. '/gallery2';
-	req_system($cmd, "Checkout failed.");
+	req_exec($cmd, "Checkout failed.");
     }
     req_chdir($BASEDIR);
-    if (!$QUIET) {
-	print "done.\n";
+    quiet_print('Done.');
+}
+/**
+ * Gets a revision number from the already checked out code and sets the global variable.
+ */
+function getRevision() {
+    global $REVISION, $SRCDIR, $BASEDIR;
+    req_chdir($SRCDIR . '/gallery2');
+    $cmd = "svn info | awk '$1 == \"Revision:\" {print $2}'";
+    $revision = req_exec($cmd, "Getting revision failed");
+    if (!is_numeric($revision) || 1 > $revision) {
+	my_die("The revision number $revision does not appear to be valid.\n");
     }
+    $REVISION = (int) trim($revision);
+    req_chdir($BASEDIR);    
 }
 
 function getPackages() {
@@ -117,14 +162,13 @@ function getPackages() {
 }
 
 function buildPluginPackage($type, $id, $version) {
-    global $BASEDIR, $SRCDIR, $TMPDIR, $DISTDIR, $QUIET;
-    if (!$QUIET) {
-	print "Build plugin $id ($version)...\n";
-    }
+    global $BASEDIR, $SRCDIR, $TMPDIR, $DISTDIR;
+    quiet_print("Build plugin $id ($version)...");
     req_chdir("$SRCDIR/gallery2");
 
     $relative = "${type}s/$id";
-    $files = explode("\n", `find $relative -name .svn -prune -o -type f -print`);
+    $fileList = req_exec("find $relative -name .svn -prune -o -type f -print");
+    $files = explode("\n", $fileList);
 
     /* Dump the list to a tmp file */
     $fd = fopen("$TMPDIR/files.txt", 'w+');
@@ -133,33 +177,30 @@ function buildPluginPackage($type, $id, $version) {
 
     /* Tar and zip it */
     $cmd = "tar czf $DISTDIR/g2-$type-$id-$version.tar.gz --files-from=$TMPDIR/files.txt";
-    req_system($cmd, "Tar Failed");
+    req_exec($cmd, "Tar Failed");
     escapePatterns("$TMPDIR/files.txt", "$TMPDIR/escapedFiles.txt");
     $cmd = "zip -9 -q -r $DISTDIR/g2-$type-$id-$version.zip ${type}s/$id -i@$TMPDIR/escapedFiles.txt";
-    req_system($cmd, "Zip failed.");
+    req_exec($cmd, "Zip failed.");
 
     unlink("$TMPDIR/files.txt");
     unlink("$TMPDIR/escapedFiles.txt");
     req_chdir($BASEDIR);
-    if (!$QUIET) {
-	print "done\n";
-    }
+    quiet_print('Done.');
 }
 
 function buildPackage($version, $tag, $packages, $developer) {
-    global $BASEDIR, $SRCDIR, $TMPDIR, $DISTDIR, $QUIET;
-    if (!$QUIET) {
-	print "Build $tag of $version...\n";
-    }
+    global $BASEDIR, $SRCDIR, $TMPDIR, $DISTDIR;
+    quiet_print("Build $tag of $version...");
 
     /* Get all files */
     req_chdir($SRCDIR);
-    $originalFiles = $files = explode("\n", `find gallery2 -name .svn -prune -o -type f -print`);
+    $fileList = req_exec("find gallery2 -name .svn -prune -o -type f -print");
+    $originalFiles = $files = explode("\n", $fileList);
 
     /* Pull all non developer files, if necessary */
     if (!$developer) {
 	$files = preg_grep('|gallery2/modules/\w+/test/|', $files, PREG_GREP_INVERT);
-	$files = preg_grep('|gallery2/lib/tools/|', $files, PREG_GREP_INVERT);
+	$files = preg_grep('|gallery2/lib/tools/(?!po/)|', $files, PREG_GREP_INVERT);
     }
 
     /* Pull all modules that shouldn't be in this distro */
@@ -183,45 +224,52 @@ function buildPackage($version, $tag, $packages, $developer) {
 
     /* Copy our chosen files to our tmp dir */
     if (file_exists("$TMPDIR/gallery2")) {
-	req_system("rm -rf $TMPDIR/gallery2");
+	req_exec("rm -rf $TMPDIR/gallery2");
     }
     req_mkdir("$TMPDIR/gallery2");
 
-    $cmd = "(cd $SRCDIR && tar cf - --files-from=$TMPDIR/files.txt) | "
-	    . "(cd $TMPDIR && tar xf -)";
-    req_system($cmd, "Temporary copy via tar failed.");
+    req_chdir($SRCDIR);
+    req_exec("tar cf - --files-from=$TMPDIR/files.txt  | (cd $TMPDIR && tar xf -)", "Temporary copy via tar failed.");
 
     /* Update manifests to reflect files we've removed */
     req_chdir($TMPDIR);
     filterManifests($originalFiles, $files);
 
     /* Tar and zip it */
-    $cmd = "tar czf $DISTDIR/gallery-$version-$tag.tar.gz --files-from=$TMPDIR/files.txt";
-    req_system($cmd, "Tar failed.");
+    if (!empty($version) && !empty($tag)) {
+	$basename = "gallery-$version-$tag";
+    } elseif (!empty($version)) {
+	$basename = "gallery-$version";
+    } elseif (!empty($tag)) {
+	$basename = "gallery-$tag";
+    } else {
+	$basename = "gallery";
+    }
+    
+    $cmd = "tar czf $DISTDIR/$basename.tar.gz --files-from=$TMPDIR/files.txt";
+    req_exec($cmd, "Tar failed.");
 
     escapePatterns("$TMPDIR/files.txt", "$TMPDIR/escapedFiles.txt");
-    $cmd = "zip -q -r $DISTDIR/gallery-$version-$tag.zip gallery2 -i@$TMPDIR/escapedFiles.txt";
-    req_system($cmd, "Zip failed");
+    $cmd = "zip -9 -q -r $DISTDIR/$basename.zip gallery2 -i@$TMPDIR/escapedFiles.txt";
+    req_exec($cmd, "Zip failed");
 
     unlink("$TMPDIR/files.txt");
     unlink("$TMPDIR/escapedFiles.txt");
     req_chdir($BASEDIR);
-    if (!$QUIET) {
-	print "done\n";
-    }
+    quiet_print('Done.');
 }
 
 function filterManifests($originalFiles, $files) {
     foreach (preg_grep('|/MANIFEST$|', $files) as $manifest) {
 	if (!($fd = fopen("$manifest.new", "w"))) {
-	    die("Error opening $manifest.new for write");
+	    my_die("Error opening $manifest.new for write");
 	}
 	foreach (file($manifest) as $line) {
 	    if (!preg_match("{^(#|R\t)}", $line)) {
 		$split = explode("\t", $line);
 		$file = 'gallery2/' . $split[0];
 		if (!in_array($file, $originalFiles)) {
-		    die("Unexpected file <$file>");
+		    my_die("Unexpected file <$file>");
 		}
 		if (!in_array($file, $files)) {
 		    continue;
@@ -250,18 +298,16 @@ function buildManifest() {
     global $SRCDIR, $BASEDIR, $QUIET;
     req_chdir("$SRCDIR/gallery2");
     if (!$QUIET) {
-	req_system("perl lib/tools/bin/makeManifest.pl", "Build Manifest Failed.");
+	req_exec("perl lib/tools/bin/makeManifest.pl", "Build Manifest Failed.");
     } else {
-	req_system("perl lib/tools/bin/makeManifest.pl -q", "Build Quiet Manifest Failed.");
+	req_exec("perl lib/tools/bin/makeManifest.pl -q", "Build Quiet Manifest Failed.");
     }
     req_chdir($BASEDIR);
 }
 
 function buildPatch($patchFromTag) {
-    global $TMPDIR, $SRCDIR, $BASEDIR, $TAG, $QUIET;
-    if (!$QUIET) {
-	print "Build patch for $patchFromTag...\n";
-    }
+    global $TMPDIR, $SRCDIR, $BASEDIR, $TAG;
+    quiet_print("Build patch for $patchFromTag...");
     $finalPackage = array();
 
     $fromVersionTag = extractVersionTag($patchFromTag);
@@ -286,9 +332,9 @@ function buildPatch($patchFromTag) {
      * unit tests so we can't patch them.  This means that we also need to drop those lines from
      * the MANIFEST diffs.  Generate the diff and then postprocess for these changes.
      */
-    $SVN_DIFF = 'svn diff https://svn.sourceforge.net/svnroot/gallery/tags/' . $patchFromTag
-	. '/gallery2 https://svn.sourceforge.net/svnroot/gallery/tags/' . $TAG . '/gallery2';
-    req_system("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
+    $SVN_DIFF = 'svn diff ' . $SVNURL . 'tags/' . $patchFromTag
+	. '/gallery2 ' . $SVNURL . 'tags/' . $TAG . '/gallery2';
+    req_exec("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
 
     $manifest = array();
     foreach ($patchLines = file("$patchTmp.raw") as $i => $line) {
@@ -299,7 +345,6 @@ function buildPatch($patchFromTag) {
 	    $isManifest = (substr($changedFile, -8) == 'MANIFEST');
 	    $skipDiff = (!strncmp($changedFile, 'lib/tools/', 10)
 		    || preg_match('{(?:Test.class|po/.*\.po|locale/.*\.mo)$}', $changedFile));
-
 	    preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
 	    $patchToken = empty($matches) ? 'core' : $matches[1];
 	    if (!$skipDiff) {
@@ -309,8 +354,7 @@ function buildPatch($patchFromTag) {
 		}
 		$fd = $patchFD[$patchToken];
 	    }
-
-	    req_system('mkdir -p ' . ($dir = "$patchDir/$patchToken/" . dirname($changedFile)));
+	    req_exec('mkdir -p ' . ($dir = "$patchDir/$patchToken/" . dirname($changedFile)));
 	    if ($isManifest) {
 		/* Filter out test files so we don't pollute non-dev dists with dev data */
 		$lines = preg_grep('{^(modules/\w+/test/|lib/tools)}',
@@ -319,7 +363,7 @@ function buildPatch($patchFromTag) {
 		fwrite($new, implode('', $lines));
 		fclose($new);
 	    } else {
-		req_system("cp $SRCDIR/gallery2/$changedFile $dir");
+		req_exec("cp $SRCDIR/gallery2/$changedFile $dir");
 	    }
 	}
 	if ($skipDiff) {
@@ -365,21 +409,18 @@ function buildPatch($patchFromTag) {
 
     foreach ($patchFD as $plugin => $fd) {
 	fclose($fd);
-
 	req_chdir("$patchDir/$plugin");
-	req_system("zip -q -r ../changed-files-$plugin.zip *", "Making zip for $plugin failed.");
+	req_exec("zip -q -r ../changed-files-$plugin.zip *", "Making zip for $plugin failed.");
 	$finalPackage["changed-files-$plugin.zip"] = 1;
     }
     @unlink($patchTmp);
 
     req_chdir($patchDir);
-    req_system(sprintf("zip -q -r ../update-$fromVersionTag-to-$toVersionTag.zip %s",
+    req_exec(sprintf("zip -9 -q -r ../update-$fromVersionTag-to-$toVersionTag.zip %s",
 		       implode(' ', array_keys($finalPackage))));
 
     #system("/bin/rm -rf $patchDir");
-    if (!$QUIET) {
-	print "done\n";
-    }
+    quiet_print('Done.');
 }
 
 function extractVersionTag($input) {
@@ -389,13 +430,11 @@ function extractVersionTag($input) {
 
 function buildPreinstaller() {
     global $DISTDIR;
-
-    $results = preg_grep('/^ \* @versionId (.*)/', file("preinstaller/preinstall.php"));
-    $results = array_values($results);
-    $result = $results[0];
-    preg_match('/versionId ([0-9\.]+)/', $result, $matches);
-    $VERSION = $matches[1];
-    req_system("zip -j -q $DISTDIR/preinstaller-$VERSION.zip " .
+    global $QUIET;
+    req_exec("svn "
+	     . ($QUIET ? " -q" : " ")
+	     . " update preinstaller");
+    req_exec("zip -9 -j -q $DISTDIR/preinstaller.zip " .
 	   "preinstaller/LICENSE preinstaller/README.txt preinstaller/preinstall.php");
 }
 
@@ -409,7 +448,8 @@ function usage() {
  */
 function scrub() {
     global $SRCDIR;
-    req_system("rm -rf $SRCDIR");
+    quiet_print('Scrubbing.');
+    req_exec("rm -rf $SRCDIR");
 }
 
 /**
@@ -417,7 +457,8 @@ function scrub() {
  */
 function clean() {
     global $TMPDIR, $DISTDIR;
-    req_system("rm -rf $TMPDIR $DISTDIR");
+    quiet_print('Cleaning.');
+    req_exec("rm -rf $TMPDIR $DISTDIR");
 }
 
 /**
@@ -431,18 +472,20 @@ function verify_dirs() {
 	    req_mkdir($dir);
 	}
 	if (!is_readable($dir)) {
-	    die("Cannot read $dir\n");
+	    my_die("Cannot read $dir\n");
 	}
 	if (!is_dir($dir)) {
-	    die("$dir is not a directory.");
+	    my_die("$dir is not a directory.");
 	}
     }
 }
 
 if ($argc < 2) {
-    die(usage());
+    print usage();
+    exit(0); /* not really an error condition */
+} else {
+    quiet_print('Doing ' . $argv[1]);
 }
-
 switch ($argv[1]) {
 case 'preinstaller':
     verify_dirs();
@@ -456,9 +499,10 @@ case 'nightly':
     scrub();
     verify_dirs();
     checkOut(false);
+    getRevision();
     buildManifest();
     $packages = getPackages();
-    buildPackage($packages['version'], 'nightly', $packages['all'], true);
+    buildPackage('nightly', '', $packages['all'], false);
     buildPreinstaller();
     break;
 
@@ -507,7 +551,7 @@ case 'export':
     req_chdir($DISTDIR);
     $cmd = 'ncftpput -u anonymous -p gallery@ upload.sourceforge.net /incoming '
 	    . join(' ', $files);
-    req_system($cmd, "Export failed.");
+    req_exec($cmd, "Export failed.");
     req_chdir($BASEDIR);
     break;
 
@@ -519,7 +563,8 @@ case 'clean':
     break;
 
 default:
-    die(usage());
+    print usage();
+    exit;
 }
 
 ?>
