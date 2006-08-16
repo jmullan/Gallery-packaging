@@ -63,10 +63,10 @@ $availableExtensions = array('zip', 'tar.gz');
 /* Available versions of G2 */
 $availableVersions = array('stable', 'rc', 'nightly');
 
-
 /*****************************************************************
  * M A I N
  *****************************************************************/
+compatiblityFunctions();
 $preInstaller = new PreInstaller();
 $preInstaller->main();
 
@@ -938,7 +938,6 @@ class PhpUnzipExtractor extends ExtractMethod {
     }
 }
 
-
 function render($renderType, $args=array()) {
     global $archiveBaseName, $folderPermissionList;
     $self = basename(__FILE__);
@@ -1449,6 +1448,24 @@ function printHtmlStyle() {
 	</style>
 <?php
 }
+
+/**
+ * If necessary, define some functions for backwards compatibility.
+ */
+function compatiblityFunctions() {
+    /* On MS Windows, function is_executable() was introduced in PHP 5.0.0. */
+    if (!function_exists('is_executable')) {
+	function is_executable($file) {
+	    $stats = stat($file);
+	    /*
+	     * If stat doesn't work for some reason, assume it's executable.
+	     * 0000100 is the is_executable bit. Windows returns true for .exe files. 
+	     */
+	    return empty($stats['mode']) || $stats['mode'] & 0000100;
+	}
+    }
+}
+
 
 function printJs() {
 ?>
