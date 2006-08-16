@@ -47,7 +47,7 @@ $downloadUrls['rc'] = 'gallery-2.1.2-full';
 /*   Latest stable release */
 $downloadUrls['stable'] = 'gallery-2.1.2-full';
 /*   Latest Nightly Snapshot */
-$downloadUrls['nightly']= 'gallery-2.2-svn-nightly';
+$downloadUrls['nightly']= 'gallery-nightly';
 $nightlySnapshotSite = 'http://galleryupdates.jpmullan.com/G2/';
 
 /* The page on GMC that lists the latest versions */
