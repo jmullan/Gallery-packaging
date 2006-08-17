@@ -2,7 +2,7 @@
 <?php
 $SOURCE_DIR = dirname(__FILE__) . '/src/gallery2';
 $PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/dist/';
-$VERSION = '2.1.1';
+$VERSION = '2.1.2';
 $RELEASE = "gallery-$VERSION";
 $EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download';
 

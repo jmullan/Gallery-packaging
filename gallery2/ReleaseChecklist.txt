@@ -35,18 +35,6 @@ Checklist
 - build.php release
   * mv tmp/update-...-.zip to dist
 - build.php preinstaller
-- run "find-already-uploaded-packages.php --delete" to remove any packages that already
-  exist in sf.net.  Make sure those packages didn't miss a version bump, and
-  if they didn't change since the last release delete them from dist/
-
-  <================ PROBLEM
-  Running this means that "build.php export" won't try to upload stuff that is already
-  out in the repository, but it means that update-codex-download-page.php is going to
-  fail because it won't be able to get file sizes for anything that gets deleted.
-  Possible solution: Tweak "build.php export" to not upload anything that's already
-  out there.
-  <===============
-
 - build.php export
 - Release the package on sf.net
   - Create a new release in the 'gallery2' release (if necessary) and upload the

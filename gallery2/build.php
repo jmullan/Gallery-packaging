@@ -116,7 +116,7 @@ function getRevision() {
 	my_die("The revision number $revision does not appear to be valid.\n");
     }
     $REVISION = (int) trim($revision);
-    req_chdir($BASEDIR);    
+    req_chdir($BASEDIR);
 }
 
 function getPackages() {
@@ -245,7 +245,7 @@ function buildPackage($version, $tag, $packages, $developer) {
     } else {
 	$basename = "gallery";
     }
-    
+
     $cmd = "tar czf $DISTDIR/$basename.tar.gz --files-from=$TMPDIR/files.txt";
     req_exec($cmd, "Tar failed.");
 
@@ -428,13 +428,13 @@ function extractVersionTag($input) {
     return str_replace('_', '.', $input);
 }
 
-function buildPreinstaller() {
+function buildPreinstaller($version) {
     global $DISTDIR;
     global $QUIET;
     req_exec("svn "
 	     . ($QUIET ? " -q" : " ")
 	     . " update preinstaller");
-    req_exec("zip -9 -j -q $DISTDIR/preinstaller.zip " .
+    req_exec("zip -9 -j -q $DISTDIR/preinstaller-$version.zip " .
 	   "preinstaller/LICENSE preinstaller/README.txt preinstaller/preinstall.php");
 }
 
@@ -480,6 +480,34 @@ function verify_dirs() {
     }
 }
 
+function alreadyPublished($file) {
+    global $DISTDIR;
+    global $TMPDIR;
+    static $data;
+
+    if (!isset($data)) {
+	$downloads_html = $TMPDIR . '/downloads.html';
+	if (!file_exists($downloads_html)) {
+	    req_exec("wget -q -O $downloads_html http://prdownloads.sf.net/gallery");
+	}
+
+	$lines = file($downloads_html);
+	$conflicts = 0;
+	foreach ($lines as $line) {
+	    if (preg_match('|HREF="/gallery/(.*?)"|', $line, $matches)) {
+		$tmp = $matches[1];
+		if ($tmp == '..') {
+		    continue;
+		}
+		$data[$tmp] = 1;
+	    }
+	}
+    }
+
+    return !empty($data[$file]);
+}
+
+
 if ($argc < 2) {
     print usage();
     exit(0); /* not really an error condition */
@@ -489,8 +517,10 @@ if ($argc < 2) {
 switch ($argv[1]) {
 case 'preinstaller':
     verify_dirs();
-    buildPreinstaller();
+    $packages = getPackages();
+    buildPreinstaller($packages['version']);
     break;
+
 case 'quietnightly':
     /* We just set the quiet flag and fall through to the nightly case */
     $QUIET = true;
@@ -503,7 +533,7 @@ case 'nightly':
     buildManifest();
     $packages = getPackages();
     buildPackage('nightly', '', $packages['all'], false);
-    buildPreinstaller();
+    buildPreinstaller($packages['version']);
     break;
 
 case 'release':
@@ -545,7 +575,10 @@ case 'patches':
 case 'export':
     verify_dirs();
     foreach (glob("$DISTDIR/*.{tar.gz,zip}", GLOB_BRACE) as $file) {
-	$files[] = basename($file);
+	$file = basename($file);
+	if (!alreadyPublished($file)) {
+	    $files[] = $file;
+	}
     }
 
     req_chdir($DISTDIR);
