@@ -306,7 +306,7 @@ function buildManifest() {
 }
 
 function buildPatch($patchFromTag) {
-    global $TMPDIR, $SRCDIR, $BASEDIR, $TAG;
+    global $TMPDIR, $SRCDIR, $BASEDIR, $SVNURL, $TAG;
     quiet_print("Build patch for $patchFromTag...");
     $finalPackage = array();
 
