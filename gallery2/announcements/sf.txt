@@ -1,28 +1,14 @@
-Gallery 2 Release Candidate 2 (kthxbye) Released!
+Gallery 2.1.2 Security Fix Release
 
-This is the second release candidate of Gallery 2.  If all goes well,
-the next release will be the final version.  The purpose of this
-release candidate is to let the product cool for a couple of weeks so
-that we can identify any fix any last minute issues that you may
-discover.  You should download and use it as if it were the final release.
+Gallery 2.1.2 is now available for download. This release adds no new features. It fixes a minor information leakage in Gallery 2.1 and 2.1.1a and a major session ID disclosure in all versions prior to Gallery 2.1. Note that these flaws only affect installations where Gallery's storage folder is accessible directly from the web, which we strongly discourage during the installation process.
 
-We have made small improvements since the RC-1 release.  As with RC-1,
-we have 4 different packages for you to choose from.  You can read all
-about it on our Gallery 2 Download Page.
-
-As always before you ask for help, please, please read the README --
-we've made an effort to answer all of your questions there. Especially
-read the known issues section. If you're upgrading, be sure to scan
-the super easy updating instructions first. Then head on over to the
-G2 Forums and let us know what you think!
+As always before you ask for help, please, please read the README -- we've made an effort to answer all of your questions there. Especially read the known issues section. If you're upgrading, be sure to scan the super easy updating instructions first. Then head on over to the G2 Forums and let us know what you think!
 
 Thanks for your continued support!
 
 Links:
-  README:       http://tinyurl.com/cnklu
-  What's new:   http://tinyurl.com/cnklu#whats_new
-  Download:     http://codex.gallery2.org/index.php/Gallery2:Download
-  Help!         http://tinyurl.com/5gnbs
-  Known Issues: http://tinyurl.com/cnklu#known_issues
-  Upgrading:    http://tinyurl.com/cnklu#updating
-  G2 Forums:    http://tinyurl.com/3rgzx
+  README:     http://gallery.menalto.com/files/README-2.1.2.html
+  Download:   http://codex.gallery2.org/index.php/Gallery2:Download
+  Upgrading:  http://codex.gallery2.org/index.php/Gallery2:Upgrading_to_2.1.x
+  G2 Forums:  http://gallery.menalto.com/forums
+
