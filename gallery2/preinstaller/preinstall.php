@@ -38,17 +38,13 @@ set_time_limit(900);
  *****************************************************************/
 /* Download Location */
 $downloadUrls = array();
-$mirrors = array(); /* TODO: add a mirror choice, right now it uses the first one in the list */
-$mirrors[] = 'http://switch.dl.sourceforge.net/sourceforge/gallery/'; // Europe (CH)
-$mirrors[] = 'http://easynews.dl.sourceforge.net/sourceforge/gallery/'; // Americas (USA)
 /* Hardcoded defaults / fallbacks (we try to find out these URLs during runtime) */
 /*   Latest Release Candidate */
-$downloadUrls['rc'] = 'gallery-2.1.2-full';
+$downloadUrls['rc'] = 'http://switch.dl.sourceforge.net/sourceforge/gallery/gallery-2.1.2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'gallery-2.1.2-full';
+$downloadUrls['stable'] = 'http://switch.dl.sourceforge.net/sourceforge/gallery/gallery-2.1.2-full';
 /*   Latest Nightly Snapshot */
-$downloadUrls['nightly']= 'gallery-nightly';
-$nightlySnapshotSite = 'http://galleryupdates.jpmullan.com/G2/';
+$downloadUrls['nightly']= 'http://www.rabinovich.org/G2/gallery-nightly';
 
 /* The page on GMC that lists the latest versions */
 /* FOR GR, we request pages from sf.net which then redirects to GMC, e.g. to /release, /beta, .. */
@@ -376,35 +372,20 @@ class PreInstaller {
     }
 
     function getDownloadUrl($version, $extension, $downloader) {
-	global $mirrors, $nightlySnapshotSite;
-
-	$url = $this->_getDownloadFilename($version, $extension, $downloader);
-	if ($version != 'nightly') {
-	    /* Prepend the mirror string */
-	    $url = $mirrors[0] . $url;
-	} else {
-	    $url = $nightlySnapshotSite . $url;
-	}
-
-	return $url;
-    }
-
-    /* Returns the */
-    function _getDownloadFilename($version, $extension, $downloader) {
 	global $downloadUrls;
 
 	/* Default to the last known good version */
-	$filename = $downloadUrls[$version];
+	$url = $downloadUrls[$version];
 
 	/* Try to get the latest version string */
 	$currentDownloadUrls = $this->getLatestVersions($downloader);
 	if (!empty($currentDownloadUrls[$version])) {
-	    $filename = $currentDownloadUrls[$version];
+	    $url = $currentDownloadUrls[$version];
 	}
 
-	$filename .= '.' . $extension;
-
-	return $filename;
+	$url .= '.' . $extension;
+     
+	return $url;
     }
 
     function getLatestVersions($downloader) {
@@ -428,9 +409,8 @@ class PreInstaller {
 		    /* Each line is of the format key=value */
 		    $versionStrings = implode('|', $availableVersions);
 		    if (preg_match('/^(' . $versionStrings .
-				')=((?:[A-Za-z0-9-_]+\.?)+)$/',
+				')=((?:http|ftp):\/(?:\/(?:[A-Za-z0-9-_]+\.?)+)+)\s*/',
 				   $line, $match)) {
-
 			$currentVersions[$match[1]] = $match[2];
 		    }
 		}
@@ -452,7 +432,7 @@ class PreInstaller {
 
     function afterDownloadHandling($downloader, $version, $extension) {
 	if ($version == 'nightly') return;
-	$filename = $this->_getDownloadFilename($version, $extension, $downloader);
+	$filename = basename($this->getDownloadUrl($version, $extension, $downloader));
 	@$download->download('http://prdownloads.sourceforge.net/gallery/' . $filename,
 			     dirname(__FILE__) . '/tmp' . rand() . '.txt');
     }
