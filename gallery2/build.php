@@ -261,6 +261,9 @@ function buildPackage($version, $tag, $packages, $developer) {
 
 function filterManifests($originalFiles, $files) {
     foreach (preg_grep('|/MANIFEST$|', $files) as $manifest) {
+        if (preg_match('|test/data/MANIFEST|', $manifest)) {
+	    continue;
+	}
 	if (!($fd = fopen("$manifest.new", "w"))) {
 	    my_die("Error opening $manifest.new for write");
 	}
