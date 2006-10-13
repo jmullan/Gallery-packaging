@@ -5,12 +5,12 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
 1. In your development gallery, edit the Version.php file and set the Gallery
    version appropriately.  It should either be something like:
 
-	1.3.4
+	1.6.1
 	
    or for a release candidate:
 	
-	1.3.4-RC1
-	1.3.4-RC2
+	1.6.1-RC1
+	1.6.1-RC2
 
 2. Update the ChangeLog and put in a divider of some kind (look for 
    others farther down for examples).  
@@ -30,22 +30,18 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
    or:
 	RELEASE_1_4_1_RC4
 
-   Don't tag any files that should not be in the release.  For 
-   instance, nothing in the locale directory except en_US should be 
-   included in a standard release.  So untag everything in locale except en_US.
-   Similarly, tools should not be tagged.
+   Create the tag in cvs and copy all files for the release into the tag.
+   We used to not tag language files and the tools directory, but the makefile
+   takes care of removing all but en_US and the tools directory is now included
+   with each release.
 
-   Since some files should not be tagged, create the tag as a working copy,
-   rather than directly in the repository, remove stuff, then commit:
-
-ie	svn mkdir https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_5_3
-	svn checkout https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_5_3
-	svn copy https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_1_5_3/gallery RELEASE_1_5_3
-	svn copy https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_1_5_3/docs RELEASE_1_5_3
-	svn copy https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_1_5_3/java RELEASE_1_5_3
-	svn delete RELEASE_1_5_3/gallery/tools RELEASE_1_5_3/gallery/locale/*
-	svn copy https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_1_5_3/gallery/locale/en_US RELEASE_1_5_3/gallery/locale
-	svn commit
+ie	svn mkdir https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1
+	svn copy  https://svn.sourceforge.net/svnroot/gallery/trunk/gallery 
+		https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/gallery
+	svn copy  https://svn.sourceforge.net/svnroot/gallery/trunk/docs
+		https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/docs
+	svn copy https://svn.sourceforge.net/svnroot/gallery/trunk/java
+		https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/java
 
 
 7. Edit Makefile to point to the BRANCH you have just created.
