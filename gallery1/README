@@ -68,21 +68,19 @@ ie	svn mkdir https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1
    up by the existing file releases.
 
    After releasing an official version (not a release candidate, etc) you
-   should make sure to hide releases until only the last two releases are
-   visible.  So if you just published 1.3.4, make sure that only 1.3.4 and
-   1.3.3 are visible.
+   should make sure to hide older releases. 
 
-11. Make announcements here:
-	http://gallery.sourceforge.net->News
-	update http://gallery.sourceforge.net->Downloads->Core Gallery
-	http://mods.postnuke.com
-		(http://mods.postnuke.com/modules.php?op=modload&name=News&file=article&sid=1422)
-	http://www.phpnuke.com
-		(http://www.phpnuke.org/modules.php?name=News&file=article&sid=5188)
-	http://www.freshmeat.net
-	http://www.nukedgallery.net
+11. Make announcements. Each of these locations needs a news posting or an update,
+   so visit each one and update it following the example of the previous release
+   of Gallery 1:
 
-    Old posts in (parens) are ones you can copy.
+	http://gallery.menalto.com/ -> new front page story
+	http://gallery.menalto.com/downloadblock
+	http://gallery.menalto.com/downloads
+	http://codex.gallery2.org/ -> news block on top right of main page
+	http://www.freshmeat.net/the_gallery/
+	http://sourceforge.net/news/?group_id=7130
+	gallery-announce mailing list
 
 12.  Rejoice!
 
