@@ -40,9 +40,9 @@ set_time_limit(900);
 $downloadUrls = array();
 /* Hardcoded defaults / fallbacks (we try to find out these URLs during runtime) */
 /*   Latest Release Candidate */
-$downloadUrls['rc'] = 'http://switch.dl.sourceforge.net/sourceforge/gallery/gallery-2.1.2-full';
+$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.1.2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'http://switch.dl.sourceforge.net/sourceforge/gallery/gallery-2.1.2-full';
+$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.1.2-full';
 /*   Latest Nightly Snapshot */
 $downloadUrls['nightly']= 'http://www.rabinovich.org/G2/gallery-nightly';
 
@@ -168,7 +168,6 @@ class PreInstaller {
 			    if (file_exists($archiveName)) {
 				@chmod($archiveName, 0777);
 				render('results', array('success' => 'File successfully downloaded'));
-				$this->afterDownloadHandling($downloader, $version, $extension);
 			    } else {
 				render('results', array('failure' => "Download failed, local file $archiveName does not exist"));
 			    }
@@ -429,13 +428,6 @@ class PreInstaller {
 	 $currentDownloadUrls = $this->getLatestVersions($downloader);
 	 return isset($currentDownloadUrls['rc']);
     }
-
-    function afterDownloadHandling($downloader, $version, $extension) {
-	if ($version == 'nightly') return;
-	$filename = basename($this->getDownloadUrl($version, $extension, $downloader));
-	@$download->download('http://prdownloads.sourceforge.net/gallery/' . $filename,
-			     dirname(__FILE__) . '/tmp' . rand() . '.txt');
-    }
 }
 
 class Platform {
@@ -567,6 +559,8 @@ class FopenDownloader extends DownloadMethod {
 	}
 	$start =time();
 
+	Platform::extendTimeLimit();
+
 	$fh = fopen($url, 'rb');
 	if (empty($fh)) {
 	    return 'Unable to open url';
@@ -619,8 +613,12 @@ class FopenDownloader extends DownloadMethod {
 }
 
 class FsockopenDownloader extends DownloadMethod {
-    function download($url, $outputFile) {
+    function download($url, $outputFile, $maxRedirects=10) {
 	/* Code from WebHelper_simple.class */
+
+	if ($maxRedirects < 0) {
+	    return "Error too many redirects. Last URL: $url";
+	}
 
 	$components = parse_url($url);
 	$port = empty($components['port']) ? 80 : $components['port'];
@@ -659,11 +657,19 @@ class FsockopenDownloader extends DownloadMethod {
 	$headers = array();
 	$response = trim(fgets($fd, 4096));
 
-	/* Jump over the headers */
+	/* Jump over the headers but follow redirects */
 	while (!feof($fd)) {
 	    $line = trim(fgets($fd, 4096));
 	    if (empty($line)) {
 		break;
+	    }
+
+	    /* Normalize the line endings */
+	    $line = str_replace("\r", '', $line);
+	    list ($key, $value) = explode(':', $line, 2);
+	    if (trim($key) == 'Location') {
+		fclose($fd);
+		return $this->download(trim($value), $outputFile, --$maxRedirects);
 	    }
 	}
 
@@ -724,6 +730,9 @@ class CurlDownloader extends DownloadMethod {
 	curl_setopt($ch, CURLOPT_FAILONERROR, true);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 20 * 60);
+	curl_setopt($ch, CURLINFO_MAXREDIRS, 10);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+
 	curl_exec($ch);
 
 	$errorString = curl_error($ch);
