@@ -23,10 +23,10 @@ Checklist
     (verify on Unix and Windows)
 - make sure all image files are binary
 - create a branch (if necessary)   <---------- DON'T FORGET TO DO THIS FOR EACH .0 RELEASE!
-  - svn mkdir https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
-  - svn copy https://svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
+  - svn mkdir https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
+  - svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
 - tag the release
-  - svn copy https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1 https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_1
+  - svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_1
 - Update preinstaller/preinstall.php
   - Update @versionId to match current version
   - Update release numbers in various urls

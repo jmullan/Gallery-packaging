@@ -35,13 +35,13 @@ STEPS TO ROLLING OUT A NEW GALLERY 1.X PACKAGE
    takes care of removing all but en_US and the tools directory is now included
    with each release.
 
-ie	svn mkdir https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1
-	svn copy  https://svn.sourceforge.net/svnroot/gallery/trunk/gallery 
-		https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/gallery
-	svn copy  https://svn.sourceforge.net/svnroot/gallery/trunk/docs
-		https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/docs
-	svn copy https://svn.sourceforge.net/svnroot/gallery/trunk/java
-		https://svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/java
+ie	svn mkdir https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1
+	svn copy  https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery 
+		https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/gallery
+	svn copy  https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/docs
+		https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/docs
+	svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/java
+		https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_1_6_1/java
 
 
 7. Edit Makefile to point to the BRANCH you have just created.

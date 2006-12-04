@@ -5,7 +5,7 @@ my $cwd = &Cwd::cwd();
 
 my $src_dir = $cwd . '/src/';
 my $target_dir = $cwd . '/dist/';
-my $svn_url = 'https://svn.sourceforge.net/svnroot/gallery/';
+my $svn_url = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 my $module = 'integration';
 my @args;
 
