@@ -6,7 +6,7 @@ error_reporting(E_ALL);
  */
 $TAG = 'RELEASE_2_1_2';
 $PATCH_FOR = array('RELEASE_2_1', 'RELEASE_2_1_1');
-$SVNURL = 'https://svn.sourceforge.net/svnroot/gallery/';
+$SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
