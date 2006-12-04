@@ -3,7 +3,7 @@
 # branches/{branchname} or tags/{tagname} or trunk
 BRANCH = trunk
 TARDIR = tardir
-SVNURL = https://svn.sourceforge.net/svnroot/gallery/${BRANCH}
+SVNURL = https://gallery.svn.sourceforge.net/svnroot/gallery/${BRANCH}
 VERSION_PHP = ${TARDIR}/gallery/Version.php
 VERSION_CODE = php -r 'include("${VERSION_PHP}"); print $$gallery->version;'
 TARBALL = gallery-$(shell ${VERSION_CODE}).tar.gz
