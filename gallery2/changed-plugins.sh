@@ -9,8 +9,8 @@ CURRENT=trunk
 for pluginFile in `ls modules/*/module.inc themes/*/theme.inc`; do
   plugin=`echo $pluginFile | awk -F/ '{ print $2 }'`
   if [ $plugin = core ]; then continue; fi
-  lastVersion=`wget -q -O - https://gallery.svn.sourceforge.net/svnroot/gallery/tags/${LAST_TAG}/gallery2/${pluginFile} | awk -F"'" '/setVersion/ { print $2; exit }'`
-  currentVersion=`wget -q -O - https://gallery.svn.sourceforge.net/svnroot/gallery/${CURRENT}/gallery2/${pluginFile} | awk -F"'" '/setVersion/ { print $2; exit }'`
+  lastVersion=`svn cat https://gallery.svn.sourceforge.net/svnroot/gallery/tags/${LAST_TAG}/gallery2/${pluginFile} 2>&1 | awk -F"'" '/setVersion/ { print $2; exit }'`
+  currentVersion=`svn cat https://gallery.svn.sourceforge.net/svnroot/gallery/${CURRENT}/gallery2/${pluginFile} 2>&1 | awk -F"'" '/setVersion/ { print $2; exit }'`
   if [ "$currentVersion" != "$lastVersion" ]; then
     printf '%-15s %7s -> %7s'"\n" $plugin "$lastVersion" "$currentVersion"
   else
