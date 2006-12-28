@@ -52,5 +52,6 @@ Checklist
 - For RC releases, post forum topic for reporting/tracking issues
 - Update http://gallery.menalto.com/downloadblock
 - Update http://gallery.menalto.com/downloads
+- Update "News" block of codex Main_Page
 - Post announcements/*
 - check http://gallery.menalto.com/sfvote/stats and send emails for completed items
