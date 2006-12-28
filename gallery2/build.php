@@ -1,11 +1,9 @@
 #!/usr/bin/php -f
 <?php
 error_reporting(E_ALL);
-/**
- * $TAG and $PATCH_FOR are not used for the nightlies
- */
-$TAG = 'RELEASE_2_1_2';
-$PATCH_FOR = array('RELEASE_2_1', 'RELEASE_2_1_1');
+/* $TAG and $PATCH_FOR are not used for the nightlies */
+$TAG = 'tags/RELEASE_2_2';
+$PATCH_FOR = array(); //array('RELEASE_2_1', 'RELEASE_2_1_1');
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -84,26 +82,24 @@ function my_die($error = '', $returnCode = 1) {
     }
     die($returnCode);
 }
+
 /**
  * Check out code from svn unless $SKIP_CHECKOUT has been set to true.
  */
-function checkOut($useTag=true) {
-    global $SRCDIR, $BASEDIR, $SVNURL, $TAG, $SKIP_CHECKOUT, $QUIET;
+function checkOut($tag) {
+    global $SRCDIR, $BASEDIR, $SVNURL, $SKIP_CHECKOUT, $QUIET;
     quiet_print("Checking out code...");
     req_chdir($SRCDIR);
     if ($SKIP_CHECKOUT) {
 	quiet_print("Skipping checkout...");
     } else {
-	$cmd = 'svn checkout '
-		. ($QUIET ? '-q ' : '')
-		. $SVNURL
-		. ($useTag ? "tags/$TAG" : 'trunk')
-		. '/gallery2';
+	$cmd = 'svn checkout ' . ($QUIET ? '-q ' : '') . $SVNURL . $tag . '/gallery2';
 	req_exec($cmd, "Checkout failed.");
     }
     req_chdir($BASEDIR);
     quiet_print('Done.');
 }
+
 /**
  * Gets a revision number from the already checked out code and sets the global variable.
  */
@@ -336,7 +332,7 @@ function buildPatch($patchFromTag) {
      * the MANIFEST diffs.  Generate the diff and then postprocess for these changes.
      */
     $SVN_DIFF = 'svn diff ' . $SVNURL . 'tags/' . $patchFromTag
-	. '/gallery2 ' . $SVNURL . 'tags/' . $TAG . '/gallery2';
+	. '/gallery2 ' . $SVNURL . $TAG . '/gallery2';
     req_exec("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
 
     $manifest = array();
@@ -427,7 +423,7 @@ function buildPatch($patchFromTag) {
 }
 
 function extractVersionTag($input) {
-    $input = preg_replace('/RELEASE_(.*)/', '$1', $input);
+    $input = preg_replace('/^.*RELEASE_(.*)/', '$1', $input);
     return str_replace('_', '.', $input);
 }
 
@@ -531,7 +527,7 @@ case 'nightly':
     clean();
     scrub();
     verify_dirs();
-    checkOut(false);
+    checkOut('trunk');
     getRevision();
     buildManifest();
     $packages = getPackages();
@@ -547,7 +543,7 @@ case 'release':
      * MANIFESTs here will obscure that.
      */
     verify_dirs();
-    checkOut();
+    checkOut($TAG);
     $packages = getPackages();
     buildPackage($packages['version'], 'minimal', $packages['core'], false);
     buildPackage($packages['version'], 'typical', $packages['recommended'], false);
