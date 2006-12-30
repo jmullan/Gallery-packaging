@@ -2,7 +2,7 @@
 <?php
 error_reporting(E_ALL);
 /* $TAG and $PATCH_FOR are not used for the nightlies */
-$TAG = 'tags/RELEASE_2_2';
+$TAG = 'RELEASE_2_2_RC_1';
 $PATCH_FOR = array(); //array('RELEASE_2_1', 'RELEASE_2_1_1');
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
@@ -305,7 +305,7 @@ function buildManifest() {
 }
 
 function buildPatch($patchFromTag) {
-    global $TMPDIR, $SRCDIR, $BASEDIR, $SVNURL, $TAG;
+    global $TMPDIR, $SRCDIR, $DISTDIR, $BASEDIR, $SVNURL, $TAG;
     quiet_print("Build patch for $patchFromTag...");
     $finalPackage = array();
 
@@ -415,8 +415,8 @@ function buildPatch($patchFromTag) {
     @unlink($patchTmp);
 
     req_chdir($patchDir);
-    req_exec(sprintf("zip -9 -q -r ../update-$fromVersionTag-to-$toVersionTag.zip %s",
-		       implode(' ', array_keys($finalPackage))));
+    req_exec(sprintf("zip -9 -q -r %s/update-$fromVersionTag-to-$toVersionTag.zip %s",
+		     $DISTDIR, implode(' ', array_keys($finalPackage))));
 
     #system("/bin/rm -rf $patchDir");
     quiet_print('Done.');
