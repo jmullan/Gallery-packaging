@@ -1,53 +1,71 @@
-Preliminary release checklist
+Release checklist
 
-Checklist
-- before RC-1 of any release:
-  - check for available updates of adodb, smarty, etc
-  - bump version in GalleryTemplate.class to trigger clear of smarty cache for upgraders
-  - bump version number in header images for installer/upgrader
-- commit language updates from translations tracker
-- add/update Gallery2:module:* codex pages
-- make sure all unit tests pass
-- review and update the README.html.
-  - Make sure that its title, codename/introduction and logo buttons are correct
-- bump version for every plugin that has changed since last release but hasn't changed version
-  (update values in changed-plugins.sh and run it)
-- bump modules/core/module.inc CoreModule::setGalleryVersion
-- bump core/module.inc CoreModule::setVersion (update modules/core/CoreModulesExtras::upgrade, too)
-- Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo and version text
-- update all translations
-- update all MANIFEST files
+When approaching RC-1 of a Gallery 2.x.0 release:
+  - Check for available updates of adodb, smarty, etc.
+  - Bump version in GalleryTemplate.class to trigger clear of smarty cache for upgraders,
+    if this wasn't already done when adding a new smarty version
+  - Bump version number in header images for installer/upgrader
+  - Select a release codename, create logo button image
+  - Review and update README.html; make sure that its title, codename/introduction
+    and logo buttons are correct
+  - Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo
+    and version text for gallery2-version logoButton
+
+Release prep for RCs and final of Gallery 2.x.0 release:
+  - Commit language updates from translations tracker
+  - perl lib/tools/po/update-all-translations.pl to ensure all language files are up to date
+  - Add/update Gallery2:Modules:* and Gallery2:Themes:* codex pages
+  - Bump version for every plugin that has changed since last release but hasn't changed version
+    + update values in changed-plugins.sh and run it
+    + for final release (not RC) bump version for new plugins to 1.0.0
+  - Bump GalleryVersion and core version in modules/core/module.inc
+    + core version: bump 3rd number for RCs, set to 1.x.0 for final
+    + update modules/core/CoreModuleExtras::upgrade and ::_prepareConfigUpgrade too
+
+Release prep for Gallery 2.x.y patch release:
+  - Make fixes/changes, ensure they are merged between trunk and release branch
+  - Bump version for every plugin that has changed since last release but hasn't changed version
+    + update values in changed-plugins.sh and run it
+  - Bump GalleryVersion and core version in modules/core/module.inc in release branch
+    + core version: bump 4th number (eg. 1.1.0 -> 1.1.0.1)
+    + update modules/core/CoreModuleExtras::upgrade and ::_prepareConfigUpgrade too
+
+
+Release steps:
+- Update all MANIFEST files
+- Make sure all unit tests pass
 - Sync a different workspace and verify:
-  - upgrading works
-  - installer system check doesn't report any missing/modified files
-    (verify on Unix and Windows)
-- make sure all image files are binary
-- create a branch (if necessary)   <---------- DON'T FORGET TO DO THIS FOR EACH .0 RELEASE!
-  - svn mkdir https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
-  - svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
-- tag the release
-  - svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_1
+  + upgrading works
+  + installer system check doesn't report any missing/modified files (verify on Unix and Windows)
+- Tag the release
+  + Example for 2.x.0 RC/final release:
+    svn mkdir https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_RC_2
+    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_RC_2
+  + Example for 2.x.y patch release:
+    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_2
+- For a 2.x.0 FINAL release, create a release branch:
+  + svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1 https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
 - Update preinstaller/preinstall.php
-  - Update @versionId to match current version
-  - Update release numbers in various urls
+  + update @versionId to match current version
+  + update release numbers in various urls
 - Update the TAG and PATCH_FOR vars in build.php
+  + PATCH_FOR = array() for 2.x.0 RCs and final, set previous tags for patch release
 - build.php scrub
 - build.php release
-  * mv tmp/update-...-.zip to dist
 - build.php preinstaller
 - build.php export
 - Release the package on sf.net
-  - Create a new release in the 'gallery2' release (if necessary) and upload the
+  + create a new release in the 'gallery2' release (if necessary) and upload the
     distributions via the web interface
-  - Create a new release in the 'gallery2 plugins' release (if necessary) and add
+  + create a new release in the 'gallery2 plugins' release (if necessary) and add
     all the modules and themes to the release via the web interface
-  - use releaseforge.sf.net to set the file types and architecture
-  - hide the N-2 releases
+  + use releaseforge.sf.net to set the file types and architecture
+  + hide the N-2 releases
 - Update Gallery2:Download on the codex
-  - Edit RELEASE in update-codex-download-page.php
-  - Run update-codex-download-page.php
-  - Cut and paste its output on to Gallery2:Download
-  - Click "show changes" and verify what you see
+  + Edit RELEASE in update-codex-download-page.php
+  + Run update-codex-download-page.php
+  + Cut and paste its output on to Gallery2:Download
+  + Click "show changes" and verify what you see
 - Update Gallery2:Upgrading_to_2.1.x if necessary
 - For RC releases, post forum topic for reporting/tracking issues
 - Update http://gallery.menalto.com/downloadblock
@@ -55,3 +73,4 @@ Checklist
 - Update "News" block of codex Main_Page
 - Post announcements/*
 - check http://gallery.menalto.com/sfvote/stats and send emails for completed items
+
