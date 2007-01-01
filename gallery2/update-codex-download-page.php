@@ -1,8 +1,8 @@
 #!/usr/bin/php -f
 <?php
 $SOURCE_DIR = dirname(__FILE__) . '/src/gallery2';
-$PACKAGE_DIR = '/usr/home/bharat/public_html/packaging/gallery2/dist/';
-$VERSION = '2.1.2';
+$PACKAGE_DIR = dirname(__FILE__) .'/dist/';
+$VERSION = '2.2-rc-1';
 $RELEASE = "gallery-$VERSION";
 $EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download';
 
@@ -42,15 +42,9 @@ if ($argc > 1 && in_array('-d', $argv)) {
     $DOWNLOAD_FILES_IF_REQUIRED = true;
 }
 
-class GalleryStatusStub {
-    function isError() {
-	return false;
-    }
-}
-
 class GalleryTranslatorStub {
     function translateDomain($domain, $data) {
-	return array(new GalleryStatusStub(), $data['text']);
+	return array(null, is_array($data) ? $data['text'] : $data);
     }
 }
 
@@ -64,7 +58,7 @@ class GalleryStub {
     }
 
     function getConfig($key) {
-	switch($key) {
+	switch ($key) {
 	case 'plugins.dirname':
 	    return 'plugins';
 	default:
