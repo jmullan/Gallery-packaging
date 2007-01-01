@@ -4,7 +4,7 @@ $passPhrase = "";
 
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2006 Bharat Mediratta
+ * Copyright (C) 2000-2007 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ $passPhrase = "";
  * @version $Revision$ $Date$
  * @package Preinstaller
  * @author: Andy Staudacher <ast@gmx.ch>
- * @versionId 2.1.2
+ * @versionId 2.2
  */
 error_reporting(E_ALL);
 set_time_limit(900);
@@ -40,7 +40,7 @@ set_time_limit(900);
 $downloadUrls = array();
 /* Hardcoded defaults / fallbacks (we try to find out these URLs during runtime) */
 /*   Latest Release Candidate */
-$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.1.2-full';
+$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-rc-1-full';
 /*   Latest stable release */
 $downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.1.2-full';
 /*   Latest Nightly Snapshot */
