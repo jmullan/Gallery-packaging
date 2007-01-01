@@ -71,7 +71,8 @@ Release steps:
 - Update http://gallery.menalto.com/downloadblock
 - Update http://gallery.menalto.com/downloads
 - Update "News" block of codex Main_Page
-- Post announcements/*
+- Post announcements/* (Update article pushed off of front page on GMC to
+  comments = read only)
 - Check http://gallery.menalto.com/sfvote/stats and send emails for completed items
 - After RC releases, email gallery-translations@lists.sourceforge.net to encourage
   translators to submit updates before the final release
