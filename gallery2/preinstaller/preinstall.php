@@ -761,7 +761,7 @@ class CurlDownloader extends DownloadMethod {
     }
 
     function getName() {
-	return 'Download with PHP CURL()';
+	return 'Download with PHP cURL()';
     }
 }
 
