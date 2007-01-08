@@ -56,23 +56,36 @@ Release steps:
 - build.php release
 - build.php preinstaller
 - build.php export
+- Update upgrade/patch documentation if necessary (Gallery2:Upgrading_to_2.1.x)
+- Prepare release announcement
+  + Create story; unpublished, promote to front page, short url = gallery_{version}_released
+  + For RC releases, add forum topic for reporting/tracking issues:
+    Tech Zone / Gallery 2.x forum, title = Gallery 2.x-RC-y Feedback, unpublished, sticky,
+    short url = forum/gallery_2.x_RCy_feedback
 - Release the package on sf.net
-  + create a new release in the 'gallery2' release (if necessary) and upload the
-    distributions via the web interface
-  + create a new release in the 'gallery2 plugins' release (if necessary) and add
-    all the modules and themes to the release via the web interface
-  + use releaseforge.sf.net to set the file types and architecture
-  + hide the N-2 releases
+  Use releaseforge.sf.net for the following:
+  (some steps ok with sf.net web interface; definitely want releaseforge for filetype/arch step)
+  + create a new release in the 'gallery2' package and add the distributions
+  + create a new release in the 'gallery2 plugins' package (if necessary) and add all the
+    modules and themes to the release
+  + set the file types and architecture (arch = Any, file type = .gz or .zip)
+  + hide older releases (if necessary)
+    = for RC-2 or higher, hide previous RC
+    = for final release, hide previous RC and N-2 release (ie, G2.2 hides G2.0)
+    = for patch release, hide release it patches
+  + send notification of new release to those watching
 - Update Gallery2:Download on the codex
   + Edit RELEASE in update-codex-download-page.php
   + Run update-codex-download-page.php
   + Cut and paste its output on to Gallery2:Download
   + Click "show changes" and verify what you see
-- Update Gallery2:Upgrading_to_2.1.x if necessary
-- For RC releases, post forum topic for reporting/tracking issues
+  + Save changes; for RC release then reapply the previous revision so that Gallery2:Download
+    has the current stable release and the RC page can be accessed via oldid query parameter
 - Update http://gallery.menalto.com/downloadblock
+  + Always keep current stable release listed first (RC is listed below this)
 - Update http://gallery.menalto.com/downloads
 - Update "News" block of codex Main_Page
+- Publish release announcement (and forum topic for RC feedback)
 - Post announcements/* (Update article pushed off of front page on GMC to
   comments = read only)
 - Check http://gallery.menalto.com/sfvote/stats and send emails for completed items
