@@ -48,8 +48,6 @@ Release steps:
 - Update preinstaller/preinstall.php
   + update @versionId to match current version
   + update release numbers in various urls
-  + update http://gallery.menalto.com/admin/gmc_versioncheck and add / remove rc=...
-    line when entering / leaving RC stage
 - Update the TAG and PATCH_FOR vars in build.php
   + PATCH_FOR = array() for 2.x.0 RCs and final, set previous tags for patch release
 - build.php scrub
@@ -85,6 +83,8 @@ Release steps:
   + Always keep current stable release listed first (RC is listed below this)
 - Update http://gallery.menalto.com/downloads
 - Update "News" block of codex Main_Page
+- Update http://gallery.menalto.com/admin/gmc_versioncheck and add/remove rc=... line
+  when entering/leaving RC stage
 - Publish release announcement (and forum topic for RC feedback)
 - Post announcements/* (Update article pushed off of front page on GMC to
   comments = read only)
