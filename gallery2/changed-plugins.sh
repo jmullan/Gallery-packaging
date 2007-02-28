@@ -18,13 +18,17 @@ for pluginFile in `ls modules/*/module.inc themes/*/theme.inc`; do
     svn diff --old=https://gallery.svn.sourceforge.net/svnroot/gallery/tags/${LAST_TAG}/gallery2 \
 	     --new=https://gallery.svn.sourceforge.net/svnroot/gallery/${CURRENT}/gallery2 \
 	     `dirname $pluginFile` 2>/dev/null \
-	| awk '/^Index: (po|locale)\// { S=2 } /^Index: / { exit 1 } END { exit S }'
+	| awk '$1=="Index:" {if($2=="MANIFEST"){next} if($2~/^(po|locale)\//){S=2;next} S=1;exit} \
+	       END { exit S }'
     S=$?
     if [ $S -eq 0 ]; then
 	echo "$plugin unchanged"
     else
-	if [ $S -eq 2 ]; then LANG=' (Language changes only)'; else LANG=; fi
-	echo "$plugin $currentVersion needs version bump$LANG"
+	if [ $S -eq 2 ]; then
+	    echo "$plugin $currentVersion has language changes";
+	else
+	    echo "$plugin $currentVersion needs version BUMP";
+	fi
     fi
   fi
 done
