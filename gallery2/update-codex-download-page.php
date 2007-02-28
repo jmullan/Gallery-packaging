@@ -2,15 +2,15 @@
 <?php
 $SOURCE_DIR = dirname(__FILE__) . '/src/gallery2';
 $PACKAGE_DIR = dirname(__FILE__) .'/dist/';
-$VERSION = '2.2-rc-1';
+$VERSION = '2.2-rc-2';
 $RELEASE = "gallery-$VERSION";
-$EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download';
+$EXPORT_PAGE = 'http://codex.gallery2.org/Special:Export/Gallery2:Download';
 
 /*
  * If we're pulling from a historical version, like when we let 2.0.x releases leapfrog
  * 2.1.x releases, then you can use an older version of the page here.
  */
-// $EXPORT_PAGE = 'http://codex.gallery2.org/index.php/Special:Export/Gallery2:Download?oldid=7470';
+// $EXPORT_PAGE = 'http://codex.gallery2.org/Special:Export/Gallery2:Download?oldid=7470';
 
 /*
  * Usage:
