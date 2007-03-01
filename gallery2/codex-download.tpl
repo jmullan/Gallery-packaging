@@ -30,7 +30,7 @@
 |-
 <?php $first = 1; ?>
 <?php foreach ($themes as $theme): ?>
-| <?php print $theme['name'] ?>
+| [[Gallery2:Themes:<?php print $theme['id'] ?>|<?php print $theme['name'] ?>]]
 
 | <?php print $theme['description'] ?>
 
