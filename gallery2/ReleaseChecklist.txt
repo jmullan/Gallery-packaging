@@ -60,18 +60,22 @@ Release steps:
   + For RC releases, add forum topic for reporting/tracking issues:
     Tech Zone / Gallery 2.x forum, title = Gallery 2.x-RC-y Feedback, unpublished, sticky,
     short url = forum/gallery_2.x_RCy_feedback
-- Release the package on sf.net
-  Use releaseforge.sf.net for the following:
-  (some steps ok with sf.net web interface; definitely want releaseforge for filetype/arch step)
-  + create a new release in the 'gallery2' package and add the distributions
-  + create a new release in the 'gallery2 plugins' package (if necessary) and add all the
-    modules and themes to the release
-  + set the file types and architecture (arch = Any, file type = .gz or .zip)
-  + hide older releases (if necessary)
+- Create releases and add files using sf.net web interface
+  + Create a new release in 'gallery2' package
+    = For Release notes and Change log put this URL with the approprate release tag:
+      http://svn.sourceforge.net/viewvc/*checkout*/gallery/tags/{release tag}/gallery2/README.html#whats_new
+    = Add all gallery-* packages and the preinstaller to this release
+  + For an RC-1 create a new release in 'gallery2 plugins' package,
+    named using just the version number, don't add RC-1 (example: 2.2)
+    = Leave Release notes and Change log blank
+  + Add all g2-* plugin packages to the gallery2 plugins release
+- Use releaseforge.sf.net for the following:
+  + Check "Email Release Notification"
+  + Set the file types and architecture (arch = Any, file type = .gz or .zip)
+  + Hide older releases (if necessary)
     = for RC-2 or higher, hide previous RC
     = for final release, hide previous RC and N-2 release (ie, G2.2 hides G2.0)
     = for patch release, hide release it patches
-  + send notification of new release to those watching
 - Update Gallery2:Download on the codex
   + Edit RELEASE in update-codex-download-page.php
   + Run update-codex-download-page.php
