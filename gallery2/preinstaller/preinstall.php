@@ -730,7 +730,7 @@ class CurlDownloader extends DownloadMethod {
 	curl_setopt($ch, CURLOPT_FAILONERROR, true);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 20 * 60);
-	curl_setopt($ch, CURLINFO_MAXREDIRS, 10);
+	curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
 	curl_exec($ch);
