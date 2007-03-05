@@ -13,14 +13,14 @@ When approaching RC-1 of a Gallery 2.x.0 release:
 
 Release prep for RCs and final of Gallery 2.x.0 release:
   - Commit language updates from translations tracker
-  - perl lib/tools/po/update-all-translations.pl to ensure all language files are up to date
-  - Add/update Gallery2:Modules:* and Gallery2:Themes:* codex pages
   - Bump version for every plugin that has changed since last release but hasn't changed version
     + update values in changed-plugins.sh and run it
     + for final release (not RC) bump version for new plugins to 1.0.0
   - Bump GalleryVersion and core version in modules/core/module.inc
     + core version: bump 3rd number for RCs, set to 1.x.0 for final
     + update modules/core/CoreModuleExtras::upgrade and ::_prepareConfigUpgrade too
+  - perl lib/tools/po/update-all-translations.pl to ensure all language files are up to date
+  - Add/update Gallery2:Modules:* and Gallery2:Themes:* codex pages
 
 Release prep for Gallery 2.x.y patch release:
   - Make fixes/changes, ensure they are merged between trunk and release branch
