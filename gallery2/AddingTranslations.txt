@@ -4,13 +4,16 @@ Steps to commit translation updates submitted on sourceforge.net
 2) Check each file to see what paths are in the archive, then extract all.
    Check for any out-of-place files, skip any given *.mo files.
 3) perl lib/tools/po/update-all-translations.pl --permissions
+   (or check permissions manually for a small update.. ls -l */po/xx.po */*/po/xx.po)
 4) Use update-all-translations.pl with --po and --pattern flags to compile
    all the new translations.  Correct any reported errors.
 5) perl lib/tools/po/update-all-translations.pl --svn-add
 6) Update modules/core/classes/GalleryTranslator.class if any languages are new.
-7) Run unit tests with filter: codeaudit
+7) Run unit tests with filter: codeaudittest|ionaudit
    Correct any reported errors.
-8) svn ci
-9) Close tracker items on sourceforge.net:
-   Set Assigned To, Status = Closed, Resolution = Accepted
+8) Update translators list as needed:
+   http://codex.gallery2.org/Gallery2:Localization#List_of_Translations
+9) svn ci
+10) Close tracker items on sourceforge.net:
+    Set Assigned To, Status = Closed, Resolution = Accepted
 
