@@ -90,6 +90,9 @@ Release steps:
 - Update http://gallery.menalto.com/admin/gmc_versioncheck and add/remove rc=... line
   when entering/leaving RC stage
 - Publish release announcement (and forum topic for RC feedback)
+- Update version/date/URL in pad/gallery.xml in GMC SVN
+  For final 2.x.0 release, update language list in gallery.xml and also
+  on sf.net (admin/public info/trove) for set of languages more than 50% translated
 - Post announcements/* (Update article pushed off of front page on GMC to
   comments = read only)
 - Check http://gallery.menalto.com/sfvote/stats and send emails for completed items
