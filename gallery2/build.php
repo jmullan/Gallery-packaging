@@ -2,7 +2,7 @@
 <?php
 error_reporting(E_ALL);
 /* $TAG and $PATCH_FOR are not used for the nightlies */
-$TAG = 'tags/RELEASE_2_2_RC_2';
+$TAG = 'tags/RELEASE_2_2';
 $PATCH_FOR = array(); //array('RELEASE_2_1', 'RELEASE_2_1_1');
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
@@ -133,11 +133,11 @@ function getPackages() {
 	}
 
 	$packages['all']['modules'][$id] = true;
-	$packages['recommended']['modules'][$id] =
+	$packages['typical']['modules'][$id] =
 	    in_array($id, array('imagemagick', 'netpbm', 'gd', 'ffmpeg', 'rating',
-				'archiveupload', 'comment', 'exif', 'icons', 'migrate',
+				'archiveupload', 'comment', 'exif', 'icons', 'keyalbum',
 				'rearrange', 'rewrite', 'search', 'shutterfly', 'slideshow'));
-	$packages['core']['modules'][$id] =
+	$packages['minimal']['modules'][$id] =
 	    in_array($id, array('imagemagick', 'netpbm', 'gd'));
     }
 
@@ -150,8 +150,8 @@ function getPackages() {
 	$packages['themes'][$id]['version'] = $matches[1];
 
 	$packages['all']['themes'][$id] = true;
-	$packages['recommended']['themes'][$id] = true;
-	$packages['core']['themes'][$id] = in_array($id, array('matrix', 'siriux'));
+	$packages['typical']['themes'][$id] = !in_array($id, array('tile'));
+	$packages['minimal']['themes'][$id] = in_array($id, array('matrix', 'siriux'));
     }
 
     return $packages;
@@ -545,8 +545,8 @@ case 'release':
     verify_dirs();
     checkOut($TAG);
     $packages = getPackages();
-    buildPackage($packages['version'], 'minimal', $packages['core'], false);
-    buildPackage($packages['version'], 'typical', $packages['recommended'], false);
+    buildPackage($packages['version'], 'minimal', $packages['minimal'], false);
+    buildPackage($packages['version'], 'typical', $packages['typical'], false);
     buildPackage($packages['version'], 'full', $packages['all'], false);
     buildPackage($packages['version'], 'developer', $packages['all'], true);
 
