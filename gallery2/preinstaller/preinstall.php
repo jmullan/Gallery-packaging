@@ -40,9 +40,9 @@ set_time_limit(900);
 $downloadUrls = array();
 /* Hardcoded defaults / fallbacks (we try to find out these URLs during runtime) */
 /*   Latest Release Candidate */
-$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-rc-2-full';
+//$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-rc-2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.1.2-full';
+$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-full';
 /*   Latest Nightly Snapshot */
 $downloadUrls['nightly']= 'http://www.rabinovich.org/G2/gallery-nightly';
 
@@ -57,7 +57,8 @@ $folderPermissionList = array('777', '755', '555');
 /* Archive extensions available for download */
 $availableExtensions = array('zip', 'tar.gz');
 /* Available versions of G2 */
-$availableVersions = array('stable', 'rc', 'nightly');
+//$availableVersions = array('stable', 'rc', 'nightly');
+$availableVersions = array('stable', 'nightly');
 
 /*****************************************************************
  * M A I N
