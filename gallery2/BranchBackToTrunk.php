@@ -8,7 +8,6 @@ $STARTREV=15949;
 $BASEURL='https://gallery.svn.sourceforge.net/svnroot/gallery';
 
 $data = $files = array();
-$lastRev = $STARTREV;
 $proc = proc_open("svn log -vr $STARTREV:HEAD $BASEURL/branches/$BRANCH/gallery2",
 		  array(1 => array('pipe', 'w')), $pipe);
 if ($proc) {
@@ -27,11 +26,6 @@ if ($proc) {
 	else if (preg_match('/^Merge.*from trunk/i', $line)) {
 	    // Skip revisions merging changes from trunk
 	    $files = array();
-	    if (!preg_match('/^r(\d+)/', $buf, $match)) die();
-	    if (($mergeRev = $match[1] - 1) > $lastRev) {
-		echo "\nsvn merge -r $lastRev:$mergeRev $BASEURL/branches/$BRANCH/gallery2 .\n";
-	    }
-	    $lastRev = $match[1];
 	}
 	else if (!preg_match('/^(Changed paths:)?$/', $line)) {
 	    $buf .= $line;
@@ -40,7 +34,7 @@ if ($proc) {
     fclose($pipe[1]);
     proc_close($proc);
 }
-echo "\nsvn merge -r $lastRev:HEAD $BASEURL/branches/$BRANCH/gallery2 .\n";
+echo "\nsvn merge $BASEURL/trunk/gallery2 $BASEURL/branches/$BRANCH/gallery2 .\n";
 
 foreach ($data as $file => $log) {
     $out[$log][] = $file;
