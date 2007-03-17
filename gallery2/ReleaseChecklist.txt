@@ -12,6 +12,8 @@ When approaching RC-1 of a Gallery 2.x.0 release:
     and version text for gallery2-version logoButton
 
 Release prep for RCs and final of Gallery 2.x.0 release:
+  - Review and update README.html; make sure that its title, codename/introduction
+    and logo buttons are correct
   - Commit language updates from translations tracker
   - Bump version for every plugin that has changed since last release but hasn't changed version
     + update values in changed-plugins.sh and run it
@@ -60,6 +62,7 @@ Release steps:
   + For RC releases, add forum topic for reporting/tracking issues:
     Tech Zone / Gallery 2.x forum, title = Gallery 2.x-RC-y Feedback, unpublished, sticky,
     short url = forum/gallery_2.x_RCy_feedback
+  + For final release, make a "press release" version of this announcement
 - Create releases and add files using sf.net web interface
   + Create a new release in 'gallery2' package
     = For Release notes and Change log put this URL with the approprate release tag:
@@ -83,6 +86,9 @@ Release steps:
   + Click "show changes" and verify what you see
   + Save changes; for RC release then reapply the previous revision so that Gallery2:Download
     has the current stable release and the RC page can be accessed via oldid query parameter
+- Update Downloads on the codex
+  + Set version, size and URL for big button, set version in block of links
+  + Add/remove link for "Latest release candidate" when entering/leaving RC stage
 - Update http://gallery.menalto.com/downloadblock
   + Always keep current stable release listed first (RC is listed below this)
 - Update http://gallery.menalto.com/downloads
@@ -90,9 +96,11 @@ Release steps:
 - Update http://gallery.menalto.com/admin/gmc_versioncheck and add/remove rc=... line
   when entering/leaving RC stage
 - Publish release announcement (and forum topic for RC feedback)
+  Publish press release too for final release
 - Update version/date/URL in pad/gallery.xml in GMC SVN
   For final 2.x.0 release, update language list in gallery.xml and also
   on sf.net (admin/public info/trove) for set of languages more than 50% translated
+- Send annoucement to gallery-announce@lists.sourceforge.net
 - Post announcements/* (Update article pushed off of front page on GMC to
   comments = read only)
 - Check http://gallery.menalto.com/sfvote/stats and send emails for completed items
