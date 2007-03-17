@@ -106,4 +106,9 @@ Release steps:
 - Check http://gallery.menalto.com/sfvote/stats and send emails for completed items
 - After RC releases, email gallery-translations@lists.sourceforge.net to encourage
   translators to submit updates before the final release
+- After final releases, update the DP "released" repository to the latest branch
+  (you'll have to get Bharat to do this for now)
+  - parity$ cd ~bharat/public_html/plugin_release/gallery2-released
+    parity$ svn switch https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_2/gallery2
+  - the next auto push will update the repository
 
