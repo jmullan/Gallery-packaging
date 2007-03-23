@@ -2,8 +2,8 @@
 <?php
 error_reporting(E_ALL);
 /* $TAG and $PATCH_FOR are not used for the nightlies */
-$TAG = 'tags/RELEASE_2_2';
-$PATCH_FOR = array(); //array('RELEASE_2_1', 'RELEASE_2_1_1');
+$TAG = 'tags/RELEASE_2_2_1';
+$PATCH_FOR = array('RELEASE_2_2');
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -423,7 +423,7 @@ function buildPatch($patchFromTag) {
 }
 
 function extractVersionTag($input) {
-    $input = preg_replace('/^.*RELEASE_(.*)/', '$1', $input);
+    $input = preg_replace('/^.*(?:RELEASE|BRANCH)_(.*)/', '$1', $input);
     return str_replace('_', '.', $input);
 }
 
@@ -564,6 +564,9 @@ case 'release':
 
 case 'patches':
     verify_dirs();
+    if ($argv[1] == 'patches') {
+	checkOut($TAG);
+    }
     if (!empty($PATCH_FOR)) {
 	foreach ($PATCH_FOR as $patchFromTag) {
 	    buildPatch($patchFromTag);
