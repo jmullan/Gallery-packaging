@@ -4,7 +4,7 @@
 # (branches/BRANCH_2_X for patch release, trunk for major release unless
 #  a branch for it has already been created)
 LAST_TAG=RELEASE_2_2
-CURRENT=trunk
+CURRENT=branches/BRANCH_2_2
 
 for pluginFile in `ls modules/*/module.inc themes/*/theme.inc`; do
   plugin=`echo $pluginFile | awk -F/ '{ print $2 }'`

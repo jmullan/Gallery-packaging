@@ -25,10 +25,10 @@ $passPhrase = "";
  *    - download the gallery2.zip / tar.gz from a known server directly to the
  *      server where the script is running.
  *    - extract the gallery2.zip / tar.gz archive directly on the server
- * @version $Revision$ $Date$
  * @package Preinstaller
  * @author: Andy Staudacher <ast@gmx.ch>
- * @versionId 2.2
+ * @version $Revision$
+ * @versionId 2.2.1
  */
 error_reporting(E_ALL);
 set_time_limit(900);
@@ -42,7 +42,7 @@ $downloadUrls = array();
 /*   Latest Release Candidate */
 //$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-rc-2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-full';
+$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2.1-full';
 /*   Latest Nightly Snapshot */
 $downloadUrls['nightly']= 'http://www.rabinovich.org/G2/gallery-nightly';
 
