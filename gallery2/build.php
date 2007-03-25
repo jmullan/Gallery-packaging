@@ -493,7 +493,7 @@ function alreadyPublished($file) {
 	$lines = file($downloads_html);
 	$conflicts = 0;
 	foreach ($lines as $line) {
-	    if (preg_match('|HREF="/gallery/(.*?)"|', $line, $matches)) {
+	    if (preg_match('|href="[^"]*/gallery/(.*?)[?"]|', $line, $matches)) {
 		$tmp = $matches[1];
 		if ($tmp == '..') {
 		    continue;
