@@ -67,7 +67,7 @@ Release steps:
   + Create a new release in 'gallery2' package
     = For Release notes and Change log put this URL with the approprate release tag:
       http://svn.sourceforge.net/viewvc/*checkout*/gallery/tags/{release tag}/gallery2/README.html#whats_new
-    = Add all gallery-* packages and the preinstaller to this release
+    = Add all gallery-* packages, the preinstaller and any update-2.*-to-2.* files to this release
   + For an RC-1 create a new release in 'gallery2 plugins' package,
     named using just the version number, don't add RC-1 (example: 2.2)
     = Leave Release notes and Change log blank
