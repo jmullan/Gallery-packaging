@@ -96,19 +96,26 @@ Release steps:
 - Update http://gallery.menalto.com/admin/gmc_versioncheck and add/remove rc=... line
   when entering/leaving RC stage
 - Publish release announcement (and forum topic for RC feedback)
+- Update whatever article is pushed off of the front page on GMC to have
+  comments set to be read only
   Publish press release too for final release
 - Update version/date/URL in pad/gallery.xml in GMC SVN
   For final 2.x.0 release, update language list in gallery.xml and also
   on sf.net (admin/public info/trove) for set of languages more than 50% translated
-- Send annoucement to gallery-announce@lists.sourceforge.net
-- Post announcements/* (Update article pushed off of front page on GMC to
-  comments = read only)
+- Publish other announcements
+  + Send announcement email to gallery-announce@lists.sourceforge.net
+  + sf.net news: http://sourceforge.net/news/submit.php?group_id=7130
+    (include standard boilerplate for sf.net news from previous announcements)
+  + freshmeat: http://freshmeat.net/add-release/13678/
+    create a new release of the 2.0 branch. Make sure to update all
+    download/changelog urls!
+    (you'll need an account on freshmeat and admin privileges)
 - Check http://gallery.menalto.com/sfvote/stats and send emails for completed items
 - After RC releases, email gallery-translations@lists.sourceforge.net to encourage
   translators to submit updates before the final release
 - After final releases, update the DP "released" repository to the latest branch
   (you'll have to get Bharat to do this for now)
-  - parity$ cd ~bharat/public_html/plugin_release/gallery2-released
+  + parity$ cd ~bharat/public_html/plugin_release/gallery2-released
     parity$ svn switch https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_2/gallery2
-  - the next auto push will update the repository
+  + the next auto push will update the repository
 
