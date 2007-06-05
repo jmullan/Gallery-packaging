@@ -10,6 +10,8 @@ When approaching RC-1 of a Gallery 2.x.0 release:
     and logo buttons are correct
   - Make sure modules/core/classes/GalleryTemplateAdapter.class has has correct logo
     and version text for gallery2-version logoButton
+  - Make sure core will support upgrades from patch releases of all previous versions
+    + Do last item in patch release section below, if not done already
 
 Release prep for RCs and final of Gallery 2.x.0 release:
   - Review and update README.html; make sure that its title, codename/introduction
@@ -31,6 +33,11 @@ Release prep for Gallery 2.x.y patch release:
   - Bump GalleryVersion and core version in modules/core/module.inc in release branch
     + core version: bump 4th number (eg. 1.1.0 -> 1.1.0.1)
     + update modules/core/CoreModuleExtras::upgrade and ::_prepareConfigUpgrade too
+  - For 2.x.1 release (first patch for this 2.x), in both upgrade and _prepareConfigUpgrade:
+    + Update regexp for "Enable upgrade from any patch release" line.
+      Change the [0-N] part so N = x-1 for upcoming G2.x release.
+      Example: if upcoming release is 2.3 then regexp should have 1\.[0-2]\.0
+    + Add ".x" case to enable upgrades from patch releases (eg. case '1.2.0.x':)
 
 
 Release steps:
