@@ -2,8 +2,8 @@
 <?php
 error_reporting(E_ALL);
 /* $TAG and $PATCH_FOR are not used for the nightlies */
-$TAG = 'tags/RELEASE_2_2_1';
-$PATCH_FOR = array('RELEASE_2_2');
+$TAG = 'tags/RELEASE_2_2_2';
+$PATCH_FOR = array('RELEASE_2_2', 'RELEASE_2_2_1');
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -327,12 +327,11 @@ function buildPatch($patchFromTag) {
     $finalPackage['README.txt'] = 1;
 
     /*
-     * We want to drop all XxxTest.class related lines from the diff because the user may not have
-     * unit tests so we can't patch them.  This means that we also need to drop those lines from
-     * the MANIFEST diffs.  Generate the diff and then postprocess for these changes.
+     * We want to drop all unit test and translation related lines from the diff because the user
+     * may not have those files so we can't patch them.  This means that we also need to drop those
+     * lines from the MANIFEST diffs.  Generate the diff and then postprocess for these changes.
      */
-    $SVN_DIFF = 'svn diff ' . $SVNURL . 'tags/' . $patchFromTag
-	. '/gallery2 ' . $SVNURL . $TAG . '/gallery2';
+    $SVN_DIFF = "svn diff ${SVNURL}tags/$patchFromTag/gallery2 $SVNURL$TAG/gallery2";
     req_exec("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
 
     $manifest = array();
@@ -342,8 +341,8 @@ function buildPatch($patchFromTag) {
 	} else if (!strncmp($line, 'Index: ', 7) && !strncmp($patchLines[$i + 1], '=======', 7)) {
 	    $changedFile = rtrim(substr($line, 7));
 	    $isManifest = (substr($changedFile, -8) == 'MANIFEST');
-	    $skipDiff = (!strncmp($changedFile, 'lib/tools/', 10)
-		    || preg_match('{(?:Test.class|po/.*\.po|locale/.*\.mo)$}', $changedFile));
+	    $skipDiff = preg_match('{^lib/tools/|/test/phpunit/|/po/|locale/.*\.mo$}',
+				   $changedFile);
 	    preg_match('{^(?:modules|themes)/(.*?)/}', $changedFile, $matches);
 	    $patchToken = empty($matches) ? 'core' : $matches[1];
 	    if (!$skipDiff) {
@@ -371,9 +370,8 @@ function buildPatch($patchFromTag) {
 	if ($isManifest) {
 	    $manifest[] = $line;
 	    if (($line{0} == '-' || $line{0} == '+') && count($manifest) > 5) {
-		if (preg_match(
-			    '{^[-+](?:lib/tools/|.*Test.class\s|.*po/.*\.po\s|.*locale/.*\.mo\s)}',
-			    $line)) {
+		if (preg_match('{^[-+](?:lib/tools/|.*/test/phpunit/|.*/po/|.*locale/.*\.mo\s)}',
+			       $line)) {
 		    $gotLineToRemove = true;
 		} else {
 		    $lastStart = 0;
@@ -389,7 +387,8 @@ function buildPatch($patchFromTag) {
 		    } else {
 			/* Uh oh, section also had a diff we want to keep.. manual fix needed */
 			$manifest[] = "^FIXME^\n";
-			print "\nWARNING: Unable to automatically process $changedFile diffs\n\n";
+			print "\nWARNING: Unable to automatically process $changedFile diffs\n";
+			print "Need to manually edit FIXME sections\n\n";
 		    }
 		}
 		$lastStart = count($manifest);
@@ -580,7 +579,7 @@ case 'export':
 	$file = basename($file);
 	if (!alreadyPublished($file)) {
 	    $files[] = $file;
-	}
+	} else print "Skipping $file\n";
     }
 
     req_chdir($DISTDIR);
