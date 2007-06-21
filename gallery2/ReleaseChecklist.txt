@@ -118,6 +118,7 @@ Release steps:
     create a new release of the 2.0 branch. Make sure to update all
     download/changelog urls!
     (you'll need an account on freshmeat and admin privileges)
+  + change the topic on #gallery
 - Check http://gallery.menalto.com/sfvote/stats and send emails for completed items
 - After RC releases, email gallery-translations@lists.sourceforge.net to encourage
   translators to submit updates before the final release
