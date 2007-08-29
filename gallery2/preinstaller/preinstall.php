@@ -28,7 +28,7 @@ $passPhrase = "";
  * @package Preinstaller
  * @author: Andy Staudacher <ast@gmx.ch>
  * @version $Revision$
- * @versionId 2.2.2
+ * @versionId 2.2.3
  */
 error_reporting(E_ALL);
 set_time_limit(900);
@@ -42,7 +42,7 @@ $downloadUrls = array();
 /*   Latest Release Candidate */
 //$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-rc-2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2.2-full';
+$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2.3-full';
 /*   Latest Nightly Snapshot */
 $downloadUrls['nightly']= 'http://www.rabinovich.org/G2/gallery-nightly';
 

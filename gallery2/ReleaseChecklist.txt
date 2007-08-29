@@ -52,12 +52,12 @@ Release steps:
   + installer system check doesn't report any missing/modified files (verify on Unix and Windows)
 - Tag the release
   + Example for 2.x.0 RC/final release:
-    svn mkdir https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_RC_2
-    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_RC_2
+    svn mkdir https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2_RC_1
+    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2_RC_1
   + Example for 2.x.y patch release:
-    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1_2
+    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_2 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2_1
 - For a 2.x.0 FINAL release, create a release branch:
-  + svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_1 https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_1
+  + svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2 https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_2
 - Update preinstaller/preinstall.php
   + update @versionId to match current version
   + update release numbers in various urls
