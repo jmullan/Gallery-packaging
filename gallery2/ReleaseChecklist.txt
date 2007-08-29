@@ -2,6 +2,8 @@ Release checklist
 
 When approaching RC-1 of a Gallery 2.x.0 release:
   - Check for available updates of adodb, smarty, etc.
+  - Make sure the latest stable releases of Gallery Remote and applets are in place
+    for the remote, uploadapplet and slideshowapplet modules
   - Bump version in GalleryTemplate.class to trigger clear of smarty cache for upgraders,
     if this wasn't already done when adding a new smarty version
   - Bump version number in header images for installer/upgrader
@@ -28,6 +30,7 @@ Release prep for RCs and final of Gallery 2.x.0 release:
 
 Release prep for Gallery 2.x.y patch release:
   - Make fixes/changes, ensure they are merged between trunk and release branch
+    (merge changes to -experimental branch too, if necessary)
   - Bump version for every plugin that has changed since last release but hasn't changed version
     + update values in changed-plugins.sh and run it
   - Bump GalleryVersion and core version in modules/core/module.inc in release branch
@@ -64,7 +67,7 @@ Release steps:
 - build.php release
 - build.php preinstaller
 - build.php export
-- Update upgrade/patch documentation if necessary (Gallery2:Upgrading_to_2.1.x)
+- Update upgrade/patch documentation if necessary (Gallery2:Upgrading_to_2.2.x)
 - Prepare release announcement
   + Create story; unpublished, promote to front page, short url = gallery_{version}_released
   + For RC releases, add forum topic for reporting/tracking issues:
@@ -72,7 +75,7 @@ Release steps:
     short url = forum/gallery_2.x_RCy_feedback
   + For final release, make a "press release" version of this announcement
 - Create releases and add files using sf.net web interface
-  + Create a new release in 'gallery2' package
+  + Create a new release in 'gallery2' package named with just the version number (example: 2.2.1)
     = For Release notes and Change log put this URL with the approprate release tag:
       http://svn.sourceforge.net/viewvc/*checkout*/gallery/tags/{release tag}/gallery2/README.html#whats_new
     = Add all gallery-* packages, the preinstaller and any update-2.*-to-2.* files to this release
@@ -94,15 +97,14 @@ Release steps:
   + Click "show changes" and verify what you see
   + Save changes; for RC release then reapply the previous revision so that Gallery2:Download
     has the current stable release and the RC page can be accessed via oldid query parameter
-- Update Downloads on the codex
+- Update Downloads page on the codex
   + Set version, size and URL for big button, set version in block of links
   + Add/remove link for "Latest release candidate" when entering/leaving RC stage
 - Update http://gallery.menalto.com/downloadblock
   + Always keep current stable release listed first (RC is listed below this)
-- Update http://gallery.menalto.com/downloads
 - Update "News" block of codex Main_Page
-- Update http://gallery.menalto.com/admin/gmc_versioncheck and add/remove rc=... line
-  when entering/leaving RC stage
+- Update http://gallery.menalto.com/admin/gmc_versioncheck; set stable version or
+  add/remove rc=... line when entering/leaving RC stage
 - Publish release announcement (and forum topic for RC feedback)
 - Update whatever article is pushed off of the front page on GMC to have
   comments set to be read only
