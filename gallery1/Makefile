@@ -10,9 +10,11 @@ TARBALL = gallery-$(shell ${VERSION_CODE}).tar.gz
 ZIPBALL = gallery-$(shell ${VERSION_CODE}).zip
 
 package: ${TARDIR} ${TARDIR}/gallery
-	(cd $(TARDIR)/gallery && php -f tools/build_manifest.php) && \
-	(cd ${TARDIR} && tar czf ${TARBALL} gallery) && \
-	(cd ${TARDIR} && zip -r ${ZIPBALL} gallery)
+	(cd $(TARDIR) && mv gallery gallery-$(shell ${VERSION_CODE})) && \
+	(cd $(TARDIR) && ln -s gallery-$(shell ${VERSION_CODE}) gallery) && \
+	(cd $(TARDIR)/gallery-$(shell ${VERSION_CODE}) && php -f tools/build_manifest_1_4.php) && \
+	(cd ${TARDIR} && tar czf ${TARBALL} gallery-$(shell ${VERSION_CODE})) && \
+	(cd ${TARDIR} && zip -r ${ZIPBALL} gallery-$(shell ${VERSION_CODE}))
 
 # Export the gallery module, generate the docs and copy them into the exported gallery
 #
