@@ -293,14 +293,6 @@ function escapePatterns($infile, $outfile) {
     fclose($fd);
 }
 
-function buildManifest() {
-    global $SRCDIR, $BASEDIR;
-    req_chdir("$SRCDIR/gallery2");
-    require $SRCDIR . '/gallery2/lib/tools/bin/makeManifest.php';
-    makeManifest();
-    req_chdir($BASEDIR);
-}
-
 function buildPatch($patchFromTag) {
     global $TMPDIR, $SRCDIR, $DISTDIR, $BASEDIR, $SVNURL, $TAG;
     quiet_print("Build patch for $patchFromTag...");
@@ -527,7 +519,8 @@ case 'nightly':
     verify_dirs();
     checkOut('trunk');
     getRevision();
-    buildManifest();
+    require $SRCDIR . '/gallery2/lib/tools/bin/makeManifest.php';
+    makeManifest();
     $packages = getPackages();
     buildPackage('nightly', '', $packages['all'], false);
     buildPreinstaller($packages['version']);
