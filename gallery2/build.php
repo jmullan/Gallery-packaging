@@ -9,7 +9,7 @@ $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
-$SKIP_CHECKOUT = false;
+$SKIP_CHECKOUT = true;
 
 /**
  * Quiet makes all optional output quiet, but warnings are allowed to
@@ -294,13 +294,10 @@ function escapePatterns($infile, $outfile) {
 }
 
 function buildManifest() {
-    global $SRCDIR, $BASEDIR, $QUIET;
+    global $SRCDIR, $BASEDIR;
     req_chdir("$SRCDIR/gallery2");
-    if (!$QUIET) {
-	req_exec("perl lib/tools/bin/makeManifest.pl", "Build Manifest Failed.");
-    } else {
-	req_exec("perl lib/tools/bin/makeManifest.pl -q", "Build Quiet Manifest Failed.");
-    }
+    require $SRCDIR . '/gallery2/lib/tools/bin/makeManifest.php';
+    makeManifest();
     req_chdir($BASEDIR);
 }
 
@@ -445,9 +442,11 @@ function usage() {
  * Moved into a function so that we could force a scrub and clean before the nightly.
  */
 function scrub() {
-    global $SRCDIR;
-    quiet_print('Scrubbing.');
-    req_exec("rm -rf $SRCDIR");
+    global $SRCDIR, $SKIP_CHECKOUT;
+    if (!$SKIP_CHECKOUT) {
+	quiet_print('Scrubbing.');
+        req_exec("rm -rf $SRCDIR");
+    }
 }
 
 /**
