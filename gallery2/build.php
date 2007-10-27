@@ -9,7 +9,7 @@ $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
 $TMPDIR = $BASEDIR . '/tmp';
 $DISTDIR = $BASEDIR . '/dist';
-$SKIP_CHECKOUT = true;
+$SKIP_CHECKOUT = false;
 
 /**
  * Quiet makes all optional output quiet, but warnings are allowed to
