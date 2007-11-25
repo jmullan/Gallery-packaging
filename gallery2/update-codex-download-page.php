@@ -73,7 +73,7 @@ require_once($SOURCE_DIR . '/modules/core/classes/GalleryModule.class');
 require_once($SOURCE_DIR . '/modules/core/classes/GalleryTheme.class');
 
 $PACKAGE_TYPES = array('Typical', 'Full', 'Minimal', 'Developer');
-$DOWNLOAD_PREFIX = 'http://prdownloads.sourceforge.net/gallery/';
+$DOWNLOAD_PREFIX = 'http://downloads.sourceforge.net/gallery/';
 
 function updateDownloadPage() {
     global $EXPORT_PAGE;
