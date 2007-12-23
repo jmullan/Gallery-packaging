@@ -65,6 +65,9 @@ Release steps:
   + PATCH_FOR = array() for 2.x.0 RCs and final, set previous tags for patch release
 - build.php scrub
 - build.php release
+  + It may complain about MANIFEST files needing some FIXME work.  This is from generating
+    patch-xxx.txt files.  You can ignore that for now because even though we're building
+    those patch files, we're not actually including them in the update zip files.
 - build.php preinstaller
 - build.php export
 - Update upgrade/patch documentation if necessary (Gallery2:Upgrading_to_2.2.x)

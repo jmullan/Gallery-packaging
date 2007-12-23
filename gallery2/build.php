@@ -2,8 +2,8 @@
 <?php
 error_reporting(E_ALL);
 /* $TAG and $PATCH_FOR are not used for the nightlies */
-$TAG = 'tags/RELEASE_2_2_3';
-$PATCH_FOR = array('RELEASE_2_2', 'RELEASE_2_2_1', 'RELEASE_2_2_2');
+$TAG = 'tags/RELEASE_2_2_4';
+$PATCH_FOR = array('RELEASE_2_2', 'RELEASE_2_2_1', 'RELEASE_2_2_2', 'RELEASE_2_2_3');
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -307,7 +307,9 @@ function buildPatch($patchFromTag) {
     ob_end_clean();
 
     $patchDir = "$TMPDIR/$fromVersionTag";
-    @req_mkdir($patchDir);
+    if (!file_exists($patchDir)) {
+	@req_mkdir($patchDir);
+    }
     $patchTmp = "$patchDir/patch-$fromVersionTag.txt";
 
     $readme = fopen("$patchDir/README.txt", "wb");
@@ -320,8 +322,12 @@ function buildPatch($patchFromTag) {
      * may not have those files so we can't patch them.  This means that we also need to drop those
      * lines from the MANIFEST diffs.  Generate the diff and then postprocess for these changes.
      */
-    $SVN_DIFF = "svn diff ${SVNURL}tags/$patchFromTag/gallery2 $SVNURL$TAG/gallery2";
-    req_exec("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
+    if (file_exists("$patchTmp.raw")) {
+	quiet_print("Skipping svn diff because $patchTmp already exists");
+    } else {
+	$SVN_DIFF = "svn diff ${SVNURL}tags/$patchFromTag/gallery2 $SVNURL$TAG/gallery2";
+	req_exec("$SVN_DIFF > $patchTmp.raw", 'Making raw patch failed.');
+    }
 
     $manifest = array();
     foreach ($patchLines = file("$patchTmp.raw") as $i => $line) {
@@ -337,7 +343,35 @@ function buildPatch($patchFromTag) {
 	    if (!$skipDiff) {
 		if (!isset($patchFD[$patchToken])) {
 		    $patchFD[$patchToken] = fopen("$patchDir/patch-$patchToken.txt", 'w');
+
+		    /*
+		     * Leave the patch files out of the final zip file for now, since they have
+		     * some known issues.  The biggest problem with them right now is that we
+		     * can't filter the MANIFEST diff properly without doing it manually which is
+		     * an ever-increasingly expensive operation as we do more patches.
+		     *
+		     * For reference, the problem with filtering MANIFEST diffs is that they will
+		     * have hunks that contain test and .po/.mo files.  You can't just remove
+		     * those lines from the hunk because the hunk may contain legitimate changes
+		     * that bracket the ones you're removing so they have to be there for context,
+		     * or the patch will fail.  One approach is to convert the remove lines (the
+		     * ones that start with '-') to context lines by changing the '-' to a ' '.
+		     * Then delete the matching '+' lines.  This leaves the line counts in the
+		     * hunk alone, except in the case where there's a + without a -.  In those
+		     * cases we can manually intervene (but that's the rare case).
+		     *
+		     * The problem with this approach is that if you have a run of - and + lines
+		     * that contains both lines you don't want to change and lines that you do
+		     * want to change, you'll wind up in a situation where the + line that you
+		     * keep is in the wrong position.  See http://tools.gallery2.org/pastebin/1810
+		     * for an example of this.
+		     *
+		     * This is fixable, but it's not fixed yet.  So for now, let's leave patches
+		     * out of the equation.  Uncomment the line below when this is fixed.
+		     */
+		    /*
 		    $finalPackage["patch-$patchToken.txt"] = 1;
+		    */
 		}
 		$fd = $patchFD[$patchToken];
 	    }
