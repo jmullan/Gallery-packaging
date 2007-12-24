@@ -80,7 +80,7 @@ Release steps:
 - Create releases and add files using sf.net web interface
   + Create a new release in 'gallery2' package named with just the version number (example: 2.2.1)
     = For Release notes and Change log put this URL with the approprate release tag:
-      http://svn.sourceforge.net/viewvc/*checkout*/gallery/tags/{release tag}/gallery2/README.html#whats_new
+      http://gallery.svn.sourceforge.net/viewvc/*checkout*/gallery/tags/{release tag}/gallery2/README.html#whats_new
     = Add all gallery-* packages, the preinstaller and any update-2.*-to-2.* files to this release
   + For an RC-1 create a new release in 'gallery2 plugins' package,
     named using just the version number, don't add RC-1 (example: 2.2)
@@ -130,6 +130,6 @@ Release steps:
 - After final releases, update the DP "released" repository to the latest branch
   (you'll have to get Bharat to do this for now)
   + parity$ cd ~bharat/public_html/plugin_release/gallery2-released
-    parity$ svn switch https://svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_2/gallery2
+    parity$ svn switch https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_2/gallery2
   + the next auto push will update the repository
 
