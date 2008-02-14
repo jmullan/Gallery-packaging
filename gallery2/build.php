@@ -2,8 +2,10 @@
 <?php
 error_reporting(E_ALL);
 /* $TAG and $PATCH_FOR are not used for the nightlies */
-$TAG = 'tags/RELEASE_2_2_4';
-$PATCH_FOR = array('RELEASE_2_2', 'RELEASE_2_2_1', 'RELEASE_2_2_2', 'RELEASE_2_2_3');
+//$TAG = 'tags/RELEASE_2_2_4';
+//$PATCH_FOR = array('RELEASE_2_2', 'RELEASE_2_2_1', 'RELEASE_2_2_2', 'RELEASE_2_2_3');
+$TAG = 'trunk';
+$PATCH_FOR = array();
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
 $SRCDIR = $BASEDIR . '/src';
@@ -133,10 +135,12 @@ function getPackages() {
 	}
 
 	$packages['all']['modules'][$id] = true;
-	$packages['typical']['modules'][$id] =
-	    in_array($id, array('imagemagick', 'netpbm', 'gd', 'ffmpeg', 'rating',
+	$packages['all-en']['modules'][$id] = true;
+	$typicalModules = in_array($id, array('imagemagick', 'netpbm', 'gd', 'ffmpeg', 'rating',
 				'archiveupload', 'comment', 'exif', 'icons', 'keyalbum',
 				'rearrange', 'rewrite', 'search', 'shutterfly', 'slideshow'));
+	$packages['typical']['modules'][$id] = $typicalModules;
+	$packages['typical-en']['modules'][$id] = $typicalModules;
 	$packages['minimal']['modules'][$id] =
 	    in_array($id, array('imagemagick', 'netpbm', 'gd'));
     }
@@ -150,7 +154,9 @@ function getPackages() {
 	$packages['themes'][$id]['version'] = $matches[1];
 
 	$packages['all']['themes'][$id] = true;
+	$packages['all-en']['themes'][$id] = true;
 	$packages['typical']['themes'][$id] = !in_array($id, array('tile'));
+	$packages['typical-en']['themes'][$id] = !in_array($id, array('tile'));
 	$packages['minimal']['themes'][$id] = in_array($id, array('matrix', 'siriux'));
     }
 
@@ -199,20 +205,23 @@ function buildPackage($version, $tag, $packages, $developer) {
 	$files = preg_grep('|gallery2/lib/tools/(?!po/)|', $files, PREG_GREP_INVERT);
     }
 
-    /* Pull all modules that shouldn't be in this distro */
-    foreach ($packages['modules'] as $id => $include) {
-	if (!$include) {
-	    $files = preg_grep("|gallery2/modules/$id/|", $files, PREG_GREP_INVERT);
+    /* The core package is always included */
+    $packageCopy = $packages;
+    $packageCopy['modules']['core'] = true;
+
+    /* Pull all modules and themes that shouldn't be in this distro */
+    foreach (array('modules', 'themes') as $pluginType ) {
+	foreach ($packageCopy[$pluginType] as $id => $include) {
+	    if (!$include) {
+		$files = preg_grep("|gallery2/$pluginType/$id/|", $files, PREG_GREP_INVERT);
+	    } else if (in_array($tag, array('minimal', 'typical-en', 'full-en'))) {
+		$files =
+		    preg_grep("|gallery2/$pluginType/$id/po/\w+\.mo|", $files, PREG_GREP_INVERT);
+		$files =
+		    preg_grep("|gallery2/$pluginType/$id/po/\w+\.po|", $files, PREG_GREP_INVERT);
+	    }
 	}
     }
-
-    /* Pull all themes that shouldn't be in this distro */
-    foreach ($packages['themes'] as $id => $include) {
-	if (!$include) {
-	    $files = preg_grep("|gallery2/themes/$id/|", $files, PREG_GREP_INVERT);
-	}
-    }
-
     /* Dump the list to a tmp file */
     $fd = fopen("$TMPDIR/files.txt", 'w+');
     fwrite($fd, join("\n", $files));
@@ -572,7 +581,9 @@ case 'release':
     $packages = getPackages();
     buildPackage($packages['version'], 'minimal', $packages['minimal'], false);
     buildPackage($packages['version'], 'typical', $packages['typical'], false);
+    buildPackage($packages['version'], 'typical-en', $packages['typical-en'], false);
     buildPackage($packages['version'], 'full', $packages['all'], false);
+    buildPackage($packages['version'], 'full-en', $packages['all-en'], false);
     buildPackage($packages['version'], 'developer', $packages['all'], true);
 
     foreach ($packages['themes'] as $id => $info) {
