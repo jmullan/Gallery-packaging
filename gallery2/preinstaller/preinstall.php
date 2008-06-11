@@ -4,7 +4,7 @@ $passPhrase = "";
 
 /*
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2007 Bharat Mediratta
+ * Copyright (C) 2000-2008 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ $passPhrase = "";
  * @package Preinstaller
  * @author: Andy Staudacher <ast@gmx.ch>
  * @version $Revision$
- * @versionId 2.2.4
+ * @versionId 2.2.5
  */
 error_reporting(E_ALL);
 set_time_limit(900);
@@ -42,7 +42,7 @@ $downloadUrls = array();
 /*   Latest Release Candidate */
 //$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2-rc-2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2.4-full';
+$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2.5-full';
 /*   Latest Nightly Snapshot */
 $downloadUrls['nightly']= 'http://www.rabinovich.org/G2/gallery-nightly';
 
@@ -384,7 +384,7 @@ class PreInstaller {
 	}
 
 	$url .= '.' . $extension;
-     
+
 	return $url;
     }
 
@@ -1449,7 +1449,7 @@ function compatiblityFunctions() {
 	    $stats = stat($file);
 	    /*
 	     * If stat doesn't work for some reason, assume it's executable.
-	     * 0000100 is the is_executable bit. Windows returns true for .exe files. 
+	     * 0000100 is the is_executable bit. Windows returns true for .exe files.
 	     */
 	    return empty($stats['mode']) || $stats['mode'] & 0000100;
 	}
