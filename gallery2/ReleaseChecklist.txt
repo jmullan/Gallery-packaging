@@ -16,6 +16,8 @@ When approaching RC-1 of a Gallery 2.x.0 release:
     + Do last item in patch release section below, if not done already
 
 Release prep for RCs and final of Gallery 2.x.0 release:
+  - Send notice to gallery-redistributors (4-7 days in advance). If possible, give redistributors
+    access to release packages in advance.
   - Review and update README.html; make sure that its title, codename/introduction
     and logo buttons are correct
   - Commit language updates from translations tracker
@@ -29,6 +31,8 @@ Release prep for RCs and final of Gallery 2.x.0 release:
   - Add/update Gallery2:Modules:* and Gallery2:Themes:* codex pages
 
 Release prep for Gallery 2.x.y patch release:
+  - Send notice to gallery-redistributors (4-7 days in advance). If possible, give redistributors
+    access to release packages in advance.
   - Make fixes/changes, ensure they are merged between trunk and release branch
     (merge changes to -experimental branch too, if necessary)
   - Bump version for every plugin that has changed since last release but hasn't changed version
@@ -69,7 +73,7 @@ Release steps:
     patch-xxx.txt files.  You can ignore that for now because even though we're building
     those patch files, we're not actually including them in the update zip files.
 - build.php preinstaller
-- build.php export
+- build.php export (or use rsync as mentined below)
 - Update upgrade/patch documentation if necessary (Gallery2:Upgrading_to_2.2.x)
 - Prepare release announcement
   + Create story; unpublished, promote to front page, short url = gallery_{version}_released
