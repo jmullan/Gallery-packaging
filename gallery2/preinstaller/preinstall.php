@@ -40,7 +40,7 @@ set_time_limit(900);
 $downloadUrls = array();
 /* Hardcoded defaults / fallbacks (we try to find out these URLs during runtime) */
 /*   Latest Release Candidate */
-$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.3-rc-1-full';
+$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.3-rc-2-full';
 /*   Latest stable release */
 $downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2.6-full';
 /*   Latest Nightly Snapshot */
