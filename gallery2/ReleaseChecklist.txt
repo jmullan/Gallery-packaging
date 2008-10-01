@@ -73,7 +73,7 @@ Release steps:
     patch-xxx.txt files.  You can ignore that for now because even though we're building
     those patch files, we're not actually including them in the update zip files.
 - build.php preinstaller
-- build.php export (or use rsync as mentined below)
+- build.php export (or use rsync as mentioned below)
 - Update upgrade/patch documentation if necessary (Gallery2:Upgrading_to_2.2.x)
 - Prepare release announcement
   + Create story; unpublished, promote to front page, short url = gallery_{version}_released
