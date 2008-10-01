@@ -57,7 +57,7 @@ Release steps:
 - Tag the release
   + Example for 2.x.0 RC/final release:
     svn mkdir https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2_RC_1
-    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2_RC_1
+    svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/trunk/gallery2 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2_RC_1/gallery2
   + Example for 2.x.y patch release:
     svn copy https://gallery.svn.sourceforge.net/svnroot/gallery/branches/BRANCH_2_2 https://gallery.svn.sourceforge.net/svnroot/gallery/tags/RELEASE_2_2_1
 - For a 2.x.0 FINAL release, create a release branch:
