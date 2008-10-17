@@ -28,7 +28,7 @@ $passPhrase = "";
  * @package Preinstaller
  * @author: Andy Staudacher <ast@gmx.ch>
  * @version $Revision$
- * @versionId 2.2.6
+ * @versionId 2.3
  */
 error_reporting(E_ALL);
 set_time_limit(900);
@@ -40,9 +40,9 @@ set_time_limit(900);
 $downloadUrls = array();
 /* Hardcoded defaults / fallbacks (we try to find out these URLs during runtime) */
 /*   Latest Release Candidate */
-$downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.3-rc-2-full';
+// $downloadUrls['rc'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.3-rc-2-full';
 /*   Latest stable release */
-$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.2.6-full';
+$downloadUrls['stable'] = 'http://prdownloads.sourceforge.net/gallery/gallery-2.3-full';
 /*   Latest Nightly Snapshot */
 $downloadUrls['nightly']= 'http://www.rabinovich.org/G2/gallery-nightly';
 
@@ -58,7 +58,7 @@ $folderPermissionList = array('777', '755', '555');
 $availableExtensions = array('zip', 'tar.gz');
 /* Available versions of G2 */
 //$availableVersions = array('stable', 'rc', 'nightly');
-$availableVersions = array('stable', 'rc', 'nightly');
+$availableVersions = array('stable', 'nightly');
 
 /*****************************************************************
  * M A I N
