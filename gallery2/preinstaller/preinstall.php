@@ -434,7 +434,7 @@ class PreInstaller {
 class Platform {
     /* Check if a specific php function is available */
     function isPhpFunctionSupported($functionName) {
-	if (in_array($functionName, split(',\s*', ini_get('disable_functions'))) || !function_exists($functionName)) {
+	if (in_array($functionName, preg_split('/,\s*/', ini_get('disable_functions'))) || !function_exists($functionName)) {
 	    return false;
 	} else {
 	    return true;
