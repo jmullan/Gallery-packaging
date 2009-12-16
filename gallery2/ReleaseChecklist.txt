@@ -110,11 +110,13 @@ Release steps:
 - Update Downloads page on the codex
   + Set version, size and URL for big button, set version in block of links
   + Add/remove link for "Latest release candidate" when entering/leaving RC stage
+  + Update README URL after a final release, to point to new branch
 - Update http://gallery.menalto.com/downloadblock
   + Always keep current stable release listed first (RC is listed below this)
 - Update "News" block of codex Main_Page
 - Update http://gallery.menalto.com/admin/gmc_versioncheck; set stable version or
   add/remove rc=... line when entering/leaving RC stage
+- Make sure DP repositories are up-to-date
 - Publish release announcement (and forum topic for RC feedback)
 - Update whatever article is pushed off of the front page on GMC to have
   comments set to be read only

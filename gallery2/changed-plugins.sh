@@ -3,8 +3,8 @@
 # Set CURRENT to where the current files for the next release are located
 # (branches/BRANCH_2_X for patch release, trunk for major release unless
 #  a branch for it has already been created)
-LAST_TAG=RELEASE_2_2_4
-CURRENT=branches/BRANCH_2_2
+LAST_TAG=RELEASE_2_3
+CURRENT=branches/BRANCH_2_3
 
 for pluginFile in `ls modules/*/module.inc themes/*/theme.inc`; do
   plugin=`echo $pluginFile | awk -F/ '{ print $2 }'`

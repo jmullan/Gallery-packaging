@@ -2,7 +2,7 @@
 <?php
 error_reporting(E_ALL);
 /* $TAG and $PATCH_FOR are not used for the nightlies */
-$TAG = 'tags/RELEASE_2_3';
+$TAG = 'tags/RELEASE_2_3_1';
 $PATCH_FOR = array();
 $SVNURL = 'https://gallery.svn.sourceforge.net/svnroot/gallery/';
 $BASEDIR = dirname(__FILE__);
