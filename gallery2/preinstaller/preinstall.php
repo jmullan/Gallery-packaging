@@ -876,7 +876,8 @@ class PhpUnzipExtractor extends ExtractMethod {
 	while ($zip_entry = zip_read($zip)) {
 	    if (zip_entry_open($zip, $zip_entry, 'r')) {
 		$buf = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
-		$dir_name = dirname(zip_entry_name($zip_entry));
+		$entry_name = zip_entry_name($zip_entry);
+		$dir_name = dirname($entry_name);
 		if ($dir_name != ".") {
 		    $dir = $baseFolder . '/';
 		    foreach ( explode('/', $dir_name) as $folderName) {
@@ -886,13 +887,14 @@ class PhpUnzipExtractor extends ExtractMethod {
 			$dir .=  '/';
 		    }
 		}
-		$fp = fopen($baseFolder . '/' . zip_entry_name($zip_entry), 'w');
+		$fp = fopen(rtrim($baseFolder . '/' . $entry_name, '/'), 'w');
 		if (!$fp) {
 		    return 'Error during php unzip: trying to open a file for writing';
 		}
 		if (fwrite($fp,$buf) != strlen($buf)) {
 		    return 'Error during php unzip: could not write the whole buffer length';
 		}
+		fclose($fp);
 		zip_entry_close($zip_entry);
 
 		if (time() - $start > 55) {
