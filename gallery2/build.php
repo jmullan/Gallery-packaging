@@ -608,6 +608,8 @@ case 'patches':
     }
     break;
 
+/* sf.net has a new file release system, so this "export" code is obsolete.
+   See info about using rsync in ReleaseChecklist.txt */
 case 'export':
     verify_dirs();
     foreach (glob("$DISTDIR/*.{tar.gz,zip}", GLOB_BRACE) as $file) {

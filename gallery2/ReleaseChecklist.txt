@@ -73,7 +73,6 @@ Release steps:
     patch-xxx.txt files.  You can ignore that for now because even though we're building
     those patch files, we're not actually including them in the update zip files.
 - build.php preinstaller
-- build.php export (or use rsync as mentioned below)
 - Update upgrade/patch documentation if necessary (Gallery2:Upgrading_to_2.2.x)
 - Prepare release announcement
   + Create story; unpublished, promote to front page, short url = gallery_{version}_released
@@ -82,18 +81,19 @@ Release steps:
     short url = forum/gallery_2.x_RCy_feedback
   + For final release, make a "press release" version of this announcement
 - Create releases and add files using sf.net web interface
-  + You can use rsync to upload: `rsync -avP -e ssh * ${USER}@frs.sourceforge.net:uploads/`
   + Create a new release in 'gallery2' package named with just the version number (example: 2.2.1)
-    = For Release notes and Change log put this URL with the approprate release tag:
+    = Use rsync to upload: cd dist; rsync -avP -e ssh gallery-* preinstaller-* update-* \
+        ${USER},gallery@frs.sourceforge.net:/home/frs/project/g/ga/gallery/gallery2/{VERSION}
+    = (optional) For Release notes and Change log put this URL with the approprate release tag:
       http://gallery.svn.sourceforge.net/viewvc/*checkout*/gallery/tags/{release tag}/gallery2/README.html#whats_new
-    = Add all gallery-* packages, the preinstaller and any update-2.*-to-2.* files to this release
   + For an RC-1 create a new release in 'gallery2 plugins' package,
     named using just the version number, don't add RC-1 (example: 2.2)
     = Leave Release notes and Change log blank
-  + Add all g2-* plugin packages to the gallery2 plugins release (note that
-    some plugins won't be change so the release system won't let you add
-    duplicates. this is fine!)
-- Use releaseforge.sf.net for the following:
+  + Add all g2-* plugin packages to the gallery2 plugins release
+    = v-- This does NOT work due to space in "gallery2 plugins".. need to figure out --v
+    = Use rsync to upload: cd dist; rsync -avP -e ssh g2-* \
+        "${USER},gallery@frs.sourceforge.net:/home/frs/project/g/ga/gallery/gallery2 plugins/{BASE_VERSION}"
+- (obsolete) Use releaseforge.sf.net for the following:
   + Check "Email Release Notification"
   + Set the file types and architecture (arch = Any, file type = .gz or .zip)
   + Hide older releases (if necessary)
@@ -101,27 +101,28 @@ Release steps:
     = for final release, hide previous RC and N-2 release (ie, G2.2 hides G2.0)
     = for patch release, hide release it patches
 - Update Gallery2:Download on the codex
-  + Edit RELEASE in update-codex-download-page.php
+  + Edit VERSION in update-codex-download-page.php
   + Run update-codex-download-page.php
   + Cut and paste its output on to Gallery2:Download
   + Click "show changes" and verify what you see
+    NOTE: script wasn't updated for -en packages in G2.3+.. fix script or manually add these.
   + Save changes; for RC release then reapply the previous revision so that Gallery2:Download
     has the current stable release and the RC page can be accessed via oldid query parameter
 - Update Downloads page on the codex
   + Set version, size and URL for big button, set version in block of links
   + Add/remove link for "Latest release candidate" when entering/leaving RC stage
   + Update README URL after a final release, to point to new branch
+- Update http://gallery.menalto.com/admin/gmc_versioncheck; set stable version or
+  add/remove rc=... line when entering/leaving RC stage
 - Update http://gallery.menalto.com/downloadblock
   + Always keep current stable release listed first (RC is listed below this)
 - Update "News" block of codex Main_Page
-- Update http://gallery.menalto.com/admin/gmc_versioncheck; set stable version or
-  add/remove rc=... line when entering/leaving RC stage
 - Make sure DP repositories are up-to-date
 - Publish release announcement (and forum topic for RC feedback)
 - Update whatever article is pushed off of the front page on GMC to have
   comments set to be read only
   Publish press release too for final release
-- Update version/date/URL in pad/gallery.xml in GMC SVN
+- Update version/date/URL/filesize in pad/gallery.xml in GMC SVN
   For final 2.x.0 release, update language list in gallery.xml and also
   on sf.net (admin/public info/trove) for set of languages more than 50% translated
 - Publish other announcements

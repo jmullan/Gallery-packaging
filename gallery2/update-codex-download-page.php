@@ -2,7 +2,7 @@
 <?php
 $SOURCE_DIR = dirname(__FILE__) . '/src/gallery2';
 $PACKAGE_DIR = dirname(__FILE__) .'/dist/';
-$VERSION = '2.2.6';
+$VERSION = '2.3.1';
 $RELEASE = "gallery-$VERSION";
 $EXPORT_PAGE = 'http://codex.gallery2.org/Special:Export/Gallery2:Download';
 
